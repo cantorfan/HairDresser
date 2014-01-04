@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NewClosingDetailsReport_page5_service_analysis_pie" pageWidth="550" pageHeight="300" whenNoDataType="AllSectionsNoDetail" columnWidth="550" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<parameter name="CUR_DATE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+COALESCE(inv.`name`, "NoName") as 'product',
+sum(if (rec.status <> 3 and rec.status <> 5,
+            if(rec.status = 4,
+                -tic.`qty`,
+                tic.`qty`
+            ),
+            0
+        ))  as 'qty',
+sum(if (rec.status <> 3 and rec.status <> 5,
+            if(rec.status = 4,
+                -(tic.`price`*tic.`qty`)*(1 - tic.`discount`/100),
+                (tic.`price`*tic.`qty`)*(1 - tic.`discount`/100)
+            ),
+            0
+        ))  as 'amount'
+from `ticket` tic
+left join `employee`em on em.`id` = tic.`employee_id`
+left join `reconciliation` rec on rec.`code_transaction` = tic.`code_transaction`
+left join `inventory` inv on inv.`id` = tic.`product_id`
+left join service ser on ser.id = tic.service_id
+where
+     rec.`status` not in (2,6) and
+     tic.`service_id` = 0 and
+     tic.`product_id` != 0 and
+     DATE(rec.`created_dt`) = DATE($P{CUR_DATE})
+group by product
+order by product]]>
+	</queryString>
+	<field name="product" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="qty" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="amount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="300" splitType="Stretch">
+			<pieChart>
+				<chart>
+					<reportElement x="0" y="0" width="550" height="300"/>
+					<chartTitle>
+						<font size="8"/>
+					</chartTitle>
+					<chartSubtitle>
+						<font size="8"/>
+					</chartSubtitle>
+					<chartLegend position="Bottom">
+						<font size="8"/>
+					</chartLegend>
+				</chart>
+				<pieDataset>
+					<keyExpression><![CDATA[$F{product}]]></keyExpression>
+					<valueExpression><![CDATA[$F{amount}]]></valueExpression>
+				</pieDataset>
+				<piePlot isCircular="true" labelFormat="{0}" legendLabelFormat="{0} ({2})">
+					<plot/>
+				</piePlot>
+			</pieChart>
+		</band>
+	</summary>
+</jasperReport>

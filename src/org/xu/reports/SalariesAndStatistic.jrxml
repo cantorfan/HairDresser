@@ -1,0 +1,610 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SalariesAndStatistic" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<subDataset name="pie1">
+		<parameter name="START_DATE" class="java.lang.String"/>
+		<parameter name="END_DATE" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[select
+COALESCE(c1.`details`, c2.`details`, "NoName") as 'category',
+(sum(if (rec.status <> 3 and rec.status <> 5,
+            if(rec.status = 4,
+                -(tic.`price`*tic.`qty`)*(1 - tic.`discount`/100)*(1 - COALESCE(em.`commission`,0)/100),
+                (tic.`price`*tic.`qty`)*(1 - tic.`discount`/100)*(1 - COALESCE(em.`commission`,0)/100)
+            ),
+            0
+        )) * 100)/(select
+sum(if (rec.status <> 3 and rec.status <> 5,
+            if(rec.status = 4,
+                -(tic.`price`*tic.`qty`)*(1 - tic.`discount`/100)*(1 - COALESCE(em.`commission`,0)/100),
+                (tic.`price`*tic.`qty`)*(1 - tic.`discount`/100)*(1 - COALESCE(em.`commission`,0)/100)
+            ),
+            0
+        ))
+ as 'net_sale'
+from `ticket` tic
+left join `employee`em on em.`id` = tic.`employee_id`
+left join `reconciliation` rec on rec.`code_transaction` = tic.`code_transaction`
+left join service ser on ser.id = tic.service_id
+left join inventory inv on inv.id = tic.`product_id`
+left join `category` c1 on c1.`id` = ser.`category_id`
+left join `category` c2 on c2.`id` = inv.`category_id`
+where rec.`status` not in (2,6) and
+    DATE(rec.`created_dt`) BETWEEN DATE($P{START_DATE}) and DATE($P{END_DATE}))
+ as 'net_sale'
+from `ticket` tic
+left join `employee`em on em.`id` = tic.`employee_id`
+left join `reconciliation` rec on rec.`code_transaction` = tic.`code_transaction`
+left join service ser on ser.id = tic.service_id
+left join inventory inv on inv.id = tic.`product_id`
+left join `category` c1 on c1.`id` = ser.`category_id`
+left join `category` c2 on c2.`id` = inv.`category_id`
+where rec.`status` not in (2,6) and
+    DATE(rec.`created_dt`) BETWEEN DATE($P{START_DATE}) and DATE($P{END_DATE})
+GROUP by category
+order by net_sale]]>
+		</queryString>
+		<field name="category" class="java.lang.String"/>
+		<field name="net_sale" class="java.math.BigDecimal"/>
+	</subDataset>
+	<subDataset name="graph">
+		<parameter name="START_DATE" class="java.lang.String"/>
+		<parameter name="END_DATE" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[select
+COALESCE(CONCAT(em.`fname`," ",em.`lname`), "") as flNameEmp,
+sum(if (rec.status <> 3 and rec.status <> 5,
+            if(rec.status = 4,
+                -(tic.`price`*tic.`qty`)*(1 - tic.`discount`/100)*(1 - COALESCE(em.`commission`,0)/100),
+                (tic.`price`*tic.`qty`)*(1 - tic.`discount`/100)*(1 - COALESCE(em.`commission`,0)/100)
+            ),
+            0
+        ))
+ as 'net_sale',
+ rec.`created_dt`
+from `ticket` tic
+left join `employee`em on em.`id` = tic.`employee_id`
+left join `reconciliation` rec on rec.`code_transaction` = tic.`code_transaction`
+left join service ser on ser.id = tic.service_id
+left join inventory inv on inv.id = tic.`product_id`
+left join `category` c1 on c1.`id` = ser.`category_id`
+left join `category` c2 on c2.`id` = inv.`category_id`
+where rec.`status` not in (2,6) and
+    DATE(rec.`created_dt`) BETWEEN DATE($P{START_DATE}) and DATE($P{END_DATE})
+group by created_dt,flNameEmp]]>
+		</queryString>
+		<field name="flNameEmp" class="java.lang.String"/>
+		<field name="net_sale" class="java.math.BigDecimal"/>
+		<field name="created_dt" class="java.sql.Timestamp"/>
+	</subDataset>
+	<parameter name="START_DATE" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["E:\\HairDresser\\trunk\\sources\\src\\org\\xu\\reports\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="END_DATE" class="java.lang.String"/>
+	<parameter name="EMPLOYEE_ID" class="java.lang.Long" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[select
+COALESCE(CONCAT(em.`fname`," ",em.`lname`), "") as flNameEmp,
+COALESCE(c1.`details`, c2.`details`) as 'category',
+if(tic.`status` = 4 or tic.`status` = 3,
+    -(tic.`price`*tic.`qty`)*(1 - tic.`discount`/100),
+    (tic.`price`*tic.`qty`)*(1 - tic.`discount`/100)
+) as sum_total,
+if(rec.status = 3 or rec.status = 4,
+          -rec.taxe,
+          rec.taxe
+) as 'taxe',
+if (rec.status <> 3 and rec.status <> 5,
+            if(rec.status = 4,
+                -(tic.`price`*tic.`qty`)*(1 - tic.`discount`/100),
+                (tic.`price`*tic.`qty`)*(1 - tic.`discount`/100)
+            ),
+            0
+        )
+ as 'net_sale',
+(1 - COALESCE(em.`commission`,0)/100) as commission
+from `ticket` tic
+left join `employee`em on em.`id` = tic.`employee_id`
+left join `reconciliation` rec on rec.`code_transaction` = tic.`code_transaction`
+left join service ser on ser.id = tic.service_id
+left join inventory inv on inv.id = tic.`product_id`
+left join `category` c1 on c1.`id` = ser.`category_id`
+left join `category` c2 on c2.`id` = inv.`category_id`
+where rec.`status` not in (2,6) and
+    DATE(rec.`created_dt`) BETWEEN DATE($P{START_DATE}) and DATE($P{END_DATE})
+order by flNameEmp]]>
+	</queryString>
+	<field name="flNameEmp" class="java.lang.String"/>
+	<field name="category" class="java.lang.String"/>
+	<field name="sum_total" class="java.math.BigDecimal"/>
+	<field name="taxe" class="java.math.BigDecimal"/>
+	<field name="net_sale" class="java.math.BigDecimal"/>
+	<field name="commission" class="java.math.BigDecimal"/>
+	<variable name="SUM_net_sale_1" class="java.math.BigDecimal" resetType="Group" resetGroup="StylistGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{net_sale}]]></variableExpression>
+	</variable>
+	<variable name="SUM_taxe_1" class="java.math.BigDecimal" resetType="Group" resetGroup="StylistGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{taxe}]]></variableExpression>
+	</variable>
+	<variable name="SUM_sum_total_1" class="java.math.BigDecimal" resetType="Group" resetGroup="StylistGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{sum_total}]]></variableExpression>
+	</variable>
+	<variable name="SUM_net_com" class="java.math.BigDecimal" resetType="Group" resetGroup="StylistGroup" calculation="Sum">
+		<variableExpression><![CDATA[$F{net_sale}.multiply( $F{commission} )]]></variableExpression>
+	</variable>
+	<variable name="sum_total_for_pie" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{net_sale}.multiply( $F{commission} )]]></variableExpression>
+	</variable>
+	<variable name="sum_total_gross" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{net_sale}.add( $F{taxe} )]]></variableExpression>
+	</variable>
+	<variable name="sum_total_net" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{net_sale}]]></variableExpression>
+	</variable>
+	<variable name="sum_total_com" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{net_sale}.multiply( $F{commission} )]]></variableExpression>
+	</variable>
+	<group name="StylistGroup">
+		<groupExpression><![CDATA[$F{flNameEmp}]]></groupExpression>
+		<groupHeader>
+			<band height="46" splitType="Stretch">
+				<staticText>
+					<reportElement key="staticText-20" x="0" y="6" width="48" height="17" backcolor="#999999"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="10"/>
+					</textElement>
+					<text><![CDATA[Employee:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="false">
+					<reportElement key="textField" x="54" y="6" width="88" height="18"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{flNameEmp}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-21" x="1" y="29" width="99" height="17" backcolor="#999999"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="10"/>
+					</textElement>
+					<text><![CDATA[Tax]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-22" x="100" y="29" width="100" height="17" backcolor="#999999"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="10"/>
+					</textElement>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-23" x="200" y="29" width="100" height="17" backcolor="#999999"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="10"/>
+					</textElement>
+					<text><![CDATA[Gross sale]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-24" x="300" y="29" width="102" height="17" backcolor="#999999"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="10"/>
+					</textElement>
+					<text><![CDATA[Net sales]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-25" x="402" y="29" width="100" height="17" backcolor="#999999"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="SansSerif" size="10"/>
+					</textElement>
+					<text><![CDATA[Commision total]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="22" splitType="Stretch">
+				<line>
+					<reportElement key="line-1" x="0" y="18" width="535" height="1"/>
+				</line>
+				<textField pattern="##0.00" isBlankWhenNull="false">
+					<reportElement key="textField" x="0" y="0" width="100" height="18"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_taxe_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="##0.00" isBlankWhenNull="false">
+					<reportElement key="textField-3" x="200" y="0" width="100" height="18"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_net_sale_1}.add($V{SUM_taxe_1})]]></textFieldExpression>
+				</textField>
+				<textField pattern="##0.00" isBlankWhenNull="false">
+					<reportElement key="textField-4" x="300" y="0" width="100" height="18"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_net_sale_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="##0.00" isBlankWhenNull="false">
+					<reportElement key="textField-5" x="400" y="0" width="100" height="18"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_net_com}]]></textFieldExpression>
+				</textField>
+				<textField pattern="##0.00" isBlankWhenNull="false">
+					<reportElement key="textField" x="100" y="0" width="100" height="18"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{SUM_sum_total_1}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="36" splitType="Stretch">
+			<textField evaluationTime="Report" pattern="dd/MM/yyyy" isBlankWhenNull="false">
+				<reportElement key="textField" x="453" y="1" width="82" height="18"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-19" x="110" y="1" width="322" height="26"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="18"/>
+				</textElement>
+				<text><![CDATA[Salaries and statistic]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="26" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-2" x="115" y="5" width="180" height="18"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[on Closing details for the day report]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-1" x="95" y="5" width="21" height="18"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-3" x="54" y="5" width="42" height="18"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[Page]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="28" splitType="Stretch">
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField" x="402" y="2" width="62" height="18"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page " + $V{PAGE_NUMBER} + " из "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="false">
+				<reportElement key="textField" x="464" y="2" width="71" height="18"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["of " + $V{PAGE_NUMBER} + ""]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="34" splitType="Stretch">
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-2" x="490" y="6" width="40" height="18"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-16" x="460" y="6" width="28" height="18"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[Page]]></text>
+			</staticText>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band height="368" splitType="Stretch">
+			<pieChart>
+				<chart>
+					<reportElement key="element-1" x="10" y="43" width="512" height="152"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend textColor="#000000" backgroundColor="#FFFFFF" position="Right"/>
+				</chart>
+				<pieDataset>
+					<dataset>
+						<datasetRun subDataset="pie1">
+							<datasetParameter name="START_DATE">
+								<datasetParameterExpression><![CDATA[$P{START_DATE}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="END_DATE">
+								<datasetParameterExpression><![CDATA[$P{END_DATE}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+					</dataset>
+					<keyExpression><![CDATA[$F{category}.concat( " = " ).concat($F{net_sale}.setScale(3,BigDecimal.ROUND_HALF_DOWN).toString())]]></keyExpression>
+					<valueExpression><![CDATA[$F{net_sale}]]></valueExpression>
+					<labelExpression><![CDATA[$F{net_sale}.setScale(3,BigDecimal.ROUND_HALF_DOWN).toString()]]></labelExpression>
+				</pieDataset>
+				<piePlot>
+					<plot orientation="Horizontal"/>
+				</piePlot>
+			</pieChart>
+			<staticText>
+				<reportElement key="staticText-23" x="15" y="9" width="80" height="17" backcolor="#999999"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[Total gross sale:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-23" x="180" y="9" width="70" height="17" backcolor="#999999"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[Total net sales:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-23" x="331" y="9" width="90" height="17" backcolor="#999999"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[Commision total:]]></text>
+			</staticText>
+			<textField pattern="###0.00" isBlankWhenNull="false">
+				<reportElement key="textField" x="101" y="9" width="67" height="17"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sum_total_gross}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="false">
+				<reportElement key="textField" x="257" y="9" width="62" height="17"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sum_total_net}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="false">
+				<reportElement key="textField" x="422" y="9" width="100" height="17"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sum_total_com}]]></textFieldExpression>
+			</textField>
+			<timeSeriesChart>
+				<chart>
+					<reportElement key="element-32" x="10" y="200" width="512" height="167"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend textColor="#000000" backgroundColor="#FFFFFF"/>
+				</chart>
+				<timeSeriesDataset>
+					<dataset>
+						<datasetRun subDataset="graph">
+							<datasetParameter name="START_DATE">
+								<datasetParameterExpression><![CDATA[$P{START_DATE}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="END_DATE">
+								<datasetParameterExpression><![CDATA[$P{END_DATE}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+					</dataset>
+					<timeSeries>
+						<seriesExpression><![CDATA[$F{flNameEmp}]]></seriesExpression>
+						<timePeriodExpression><![CDATA[$F{created_dt}]]></timePeriodExpression>
+						<valueExpression><![CDATA[$F{net_sale}]]></valueExpression>
+						<labelExpression><![CDATA[$F{net_sale}.setScale(3,BigDecimal.ROUND_HALF_DOWN).toString()]]></labelExpression>
+					</timeSeries>
+				</timeSeriesDataset>
+				<timeSeriesPlot>
+					<plot/>
+					<timeAxisFormat>
+						<axisFormat>
+							<labelFont/>
+							<tickLabelFont/>
+						</axisFormat>
+					</timeAxisFormat>
+					<valueAxisFormat>
+						<axisFormat>
+							<labelFont/>
+							<tickLabelFont/>
+						</axisFormat>
+					</valueAxisFormat>
+				</timeSeriesPlot>
+			</timeSeriesChart>
+		</band>
+	</summary>
+</jasperReport>

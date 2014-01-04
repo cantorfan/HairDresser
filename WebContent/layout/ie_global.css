@@ -1,0 +1,432 @@
+TD {
+	FONT-WEIGHT: normal; FONT-SIZE: 9pt; COLOR: #000000; FONT-FAMILY: 'Courier New', 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+UL {
+	FONT-WEIGHT: normal; FONT-SIZE: 9pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+OL {
+	FONT-WEIGHT: normal; FONT-SIZE: 9pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+LI {
+	FONT-WEIGHT: normal; FONT-SIZE: 9pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.forecastOverrideManager {
+	BACKGROUND-COLOR: #ff0000
+}
+.forecastOverride {
+	BACKGROUND-COLOR: #ff6666
+}
+.forecastDefaultRollup {
+	BACKGROUND-COLOR: #ff9999
+}
+.forecastTotalRow {
+	BACKGROUND-COLOR: #99ccff
+}
+.forecastAdjustmentRow {
+	BACKGROUND-COLOR: #6699cc
+}
+TEXTAREA {
+	FONT-SIZE: 9pt; FONT-FAMILY: 'Arial', 'Helvetica'
+}
+INPUT {
+	FONT-SIZE: 9pt; FONT-FAMILY: 'Arial', 'Helvetica'
+}
+INPUT.button {
+	BORDER-RIGHT: #666666 1px solid; BORDER-TOP: #336699 1px solid; FONT-WEIGHT: bold; FONT-SIZE: 8pt; BORDER-LEFT: #336699 1px solid; CURSOR: hand; COLOR: #ffffff; BORDER-BOTTOM: #666666 1px solid; FONT-FAMILY: 'Arial', 'Helvetica'; BACKGROUND-COLOR: #ff9b02
+}
+INPUT.button2 {
+	BORDER-RIGHT: #666666 1px solid; BORDER-TOP: #336699 1px solid; FONT-WEIGHT: bold; FONT-SIZE: 8pt; BORDER-LEFT: #336699 1px solid; CURSOR: hand; COLOR: #ffffff; BORDER-BOTTOM: #666666 1px solid; FONT-FAMILY: 'Arial', 'Helvetica'; BACKGROUND-COLOR: #003366
+}
+SELECT {
+	FONT-SIZE: 9pt; FONT-FAMILY: 'Arial', 'Helvetica'
+}
+.roleHighlight {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; BACKGROUND-COLOR: #dddddd; TEXT-DECORATION: none
+}
+.bodyBold {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+A.bodyBold:link {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.bodyItalic {
+	FONT-SIZE: 9pt; COLOR: #000000; FONT-STYLE: italic; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+A.bodyItalic:link {
+	FONT-SIZE: 9pt; COLOR: #000000; FONT-STYLE: italic; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.bodyBoldGrey {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #666666; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+A.bodyBoldGrey:link {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #666666; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.bodyBoldSmallGrey {
+	FONT-WEIGHT: bold; FONT-SIZE: 8pt; COLOR: #666666; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+A.bodyBoldSmallGrey:link {
+	FONT-WEIGHT: bold; FONT-SIZE: 8pt; COLOR: #666666; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.bodyBoldBlue {
+	FONT-WEIGHT: bold; FONT-SIZE: 8pt; COLOR: #0066cc; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+A.bodyBoldBlue:link {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #0066cc; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.bodySmall {
+	FONT-WEIGHT: normal; FONT-SIZE: 8pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+A.bodySmall:link {
+	FONT-WEIGHT: normal; FONT-SIZE: 8pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.bodySmallUnderline {
+	FONT-WEIGHT: normal; FONT-SIZE: 8pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: underline
+}
+A.bodySmallUnderline:link {
+	FONT-WEIGHT: normal; FONT-SIZE: 8pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: underline
+}
+.bodySmallBold {
+	FONT-WEIGHT: bold; FONT-SIZE: 8pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+A.bodySmallBold:link {
+	FONT-WEIGHT: bold; FONT-SIZE: 8pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.greyedLink {
+	FONT-WEIGHT: normal; FONT-SIZE: 9pt; COLOR: #666666; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.bodySuperSmall {
+	FONT-WEIGHT: normal; FONT-SIZE: 7pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+A.bodySuperSmall:link {
+	FONT-WEIGHT: normal; FONT-SIZE: 7pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.bodySuperSmallBold {
+	FONT-WEIGHT: bold; FONT-SIZE: 7pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+A.bodySuperSmallBold:link {
+	FONT-WEIGHT: normal; FONT-SIZE: 7pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.greyBold {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #666666; FONT-FAMILY: 'Arial', 'Helvetica'
+}
+.bodyWhite {
+	FONT-WEIGHT: normal; FONT-SIZE: 9pt; COLOR: #ffffff; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+A.bodyWhite:link {
+	FONT-WEIGHT: normal; FONT-SIZE: 9pt; COLOR: #ffffff; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.bodyBoldWhite {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #ffffff; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+A.bodyBoldWhite:link {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #ffffff; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.bodyBoldYellow {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #ffcc33; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+A.bodyBoldYellow:link {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #ffcc33; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.bodySmallWhite {
+	FONT-WEIGHT: normal; FONT-SIZE: 8pt; COLOR: #ffffff; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+A.bodySmallWhite:link {
+	FONT-WEIGHT: normal; FONT-SIZE: 8pt; COLOR: #ffffff; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.bodySmallBoldWhite {
+	FONT-WEIGHT: bold; FONT-SIZE: 8pt; COLOR: #ffffff; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+A.bodySmallBoldWhite:link {
+	FONT-WEIGHT: bold; FONT-SIZE: 8pt; COLOR: #ffffff; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.bodySmallGrey {
+	FONT-WEIGHT: normal; FONT-SIZE: 8pt; COLOR: #666666; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+A.bodySmallGrey:link {
+	FONT-WEIGHT: normal; FONT-SIZE: 8pt; COLOR: #666666; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.bodySmallBoldGrey {
+	FONT-WEIGHT: bold; FONT-SIZE: 8pt; COLOR: #666666; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+A.bodySmallBoldGrey:link {
+	FONT-WEIGHT: bold; FONT-SIZE: 8pt; COLOR: #666666; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.bodySmallRed {
+	FONT-WEIGHT: normal; FONT-SIZE: 8pt; COLOR: #ff0000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+A.bodySmallRed:link {
+	FONT-WEIGHT: normal; FONT-SIZE: 8pt; COLOR: #ff0000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.pageTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 11pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.moduleTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 11pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.userMsg {
+	FONT-WEIGHT: bold; FONT-SIZE: 8pt; COLOR: #990000; FONT-FAMILY: 'Arial', 'Helvetica'
+}
+.columnHeadInactiveWhite {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #ffffff; FONT-FAMILY: 'Arial', 'Helvetica'
+}
+.columnHeadActiveWhite {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #ffffff; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: underline
+}
+A.columnHeadActiveWhite:link {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #ffffff; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: underline
+}
+A.columnHeadActiveWhite:hover {
+	COLOR: #ffffff
+}
+.columnHeadInactiveBlack {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'
+}
+.columnHeadActiveBlack {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: underline
+}
+A.columnHeadActiveBlack:link {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: underline
+}
+A.columnHeadActiveBlack:hover {
+	COLOR: #000000
+}
+.actionLink {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'
+}
+A.actionLink:link {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'
+}
+.disabledLink {
+	FONT-WEIGHT: normal; FONT-SIZE: 9pt; COLOR: #666666; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: underline
+}
+.disabledActionLink {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #666666; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: underline
+}
+A.resource:hover {
+	FONT-SIZE: 10pt; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: underline
+}
+A.resource {
+	FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.resourceField {
+	LINE-HEIGHT: 16px; BACKGROUND-COLOR: #eeeeee; TEXT-ALIGN: left
+}
+A.task:hover {
+	FONT-SIZE: 10pt; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: underline
+}
+A.task {
+	FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.taskField {
+	LINE-HEIGHT: 16px; BACKGROUND-COLOR: #eeeeee; TEXT-ALIGN: left
+}
+.setupNavtree {
+	BACKGROUND-COLOR: #cccccc
+}
+.setupSection {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: 'Verdana', 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+A.setupSection:hover {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: 'Verdana', 'Arial', 'Helvetica'; TEXT-DECORATION: underline
+}
+.setupFolder {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #666666; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.setupHighlightFolder {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #ffffff; FONT-FAMILY: 'Arial', 'Helvetica'; BACKGROUND-COLOR: #336699; TEXT-DECORATION: none
+}
+A.setupHighlightFolder:hover {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #ffffff; FONT-FAMILY: 'Arial', 'Helvetica'; BACKGROUND-COLOR: #336699; TEXT-DECORATION: underline
+}
+A.setupFolder:hover {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #666666; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: underline
+}
+.setupLeaf {
+	FONT-SIZE: 10pt; COLOR: #666666; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.setupHighlightLeaf {
+	FONT-SIZE: 10pt; COLOR: #ffffff; FONT-FAMILY: 'Arial', 'Helvetica'; BACKGROUND-COLOR: #336699; TEXT-DECORATION: none
+}
+A.setupHighlightLeaf:hover {
+	FONT-SIZE: 10pt; COLOR: #ffffff; FONT-FAMILY: 'Arial', 'Helvetica'; BACKGROUND-COLOR: #336699; TEXT-DECORATION: underline
+}
+A.setupLeaf:hover {
+	FONT-SIZE: 10pt; COLOR: #666666; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: underline
+}
+.dataLabel {
+	FONT-WEIGHT: normal; FONT-SIZE: 9pt; COLOR: #000000; LINE-HEIGHT: 16px; FONT-FAMILY: 'Arial', 'Helvetica'; BACKGROUND-COLOR: #dddddd; TEXT-ALIGN: right
+}
+.dataSmallLabel {
+	FONT-WEIGHT: normal; FONT-SIZE: 8pt; COLOR: #000000; LINE-HEIGHT: 14px; FONT-FAMILY: 'Arial', 'Helvetica'; BACKGROUND-COLOR: #dddddd; TEXT-ALIGN: right
+}
+.dataField {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #000000; LINE-HEIGHT: 16px; FONT-FAMILY: 'Arial', 'Helvetica'; BACKGROUND-COLOR: #eeeeee; TEXT-ALIGN: left
+}
+.Required {
+	FONT-WEIGHT: normal; FONT-SIZE: 9pt; COLOR: #990000; FONT-FAMILY: 'Arial', 'Helvetica'
+}
+.requiredInput {
+	FONT-WEIGHT: normal; FONT-SIZE: 9pt; COLOR: #ffffff; LINE-HEIGHT: 16px; FONT-FAMILY: 'Arial', 'Helvetica'; BACKGROUND-COLOR: #990000; TEXT-ALIGN: right
+}
+.errorMsg {
+	FONT-WEIGHT: bold; FONT-SIZE: 8pt; COLOR: #990000; FONT-FAMILY: 'Arial', 'Helvetica'
+}
+.calTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #ffffff; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-ALIGN: center; TEXT-DECORATION: none
+}
+.calDays {
+	FONT-WEIGHT: bold; FONT-SIZE: 8pt; COLOR: #ffffff; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-ALIGN: center; TEXT-DECORATION: none
+}
+.calActive {
+	FONT-WEIGHT: normal; FONT-SIZE: 8pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: underline
+}
+.calInactive {
+	FONT-WEIGHT: normal; FONT-SIZE: 8pt; COLOR: #999999; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: underline
+}
+.calToday {
+	FONT-WEIGHT: bold; FONT-SIZE: 8pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: underline
+}
+.calAddEvent {
+	FONT-WEIGHT: normal; FONT-SIZE: 8pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-ALIGN: right; TEXT-DECORATION: underline
+}
+.calMotif {
+	COLOR: #ffffff; FONT-FAMILY: 'Arial', 'Helvetica'; BACKGROUND-COLOR: #003366
+}
+.overdueTask {
+	FONT-WEIGHT: normal; FONT-SIZE: 9pt; COLOR: #990000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.blackLine {
+	BACKGROUND-COLOR: #000000
+}
+.moduleLine {
+	BACKGROUND-COLOR: #336699
+}
+.tableDiv {
+	BACKGROUND-COLOR: #666666
+}
+.wizardTitle {
+	FONT-WEIGHT: normal; FONT-SIZE: 13pt; COLOR: #ffffff; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.wizardTitleBold {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.wizardTitleBoldWhite {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #ffffff; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.wizardProgress {
+	FONT-WEIGHT: normal; FONT-SIZE: 7pt; COLOR: #666666; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: underline
+}
+TR.d {
+	BACKGROUND-COLOR: #eeeeee
+}
+TR.l {
+	BACKGROUND-COLOR: #ffffff
+}
+.dashboardTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 14pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.dashboardNote {
+	FONT-WEIGHT: normal; FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.dashboardComponentHeader {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #ffffff; FONT-FAMILY: 'Arial', 'Helvetica'; BACKGROUND-COLOR: #990000; TEXT-DECORATION: none
+}
+.dashboardComponentFooter {
+	FONT-SIZE: 9pt; COLOR: #000000; FONT-STYLE: italic; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.dashboardToolbar {
+	FONT-SIZE: 8pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+A.dash:hover {
+	TEXT-DECORATION: underline
+}
+.dash {
+	TEXT-DECORATION: none
+}
+A.dash:link {
+	TEXT-DECORATION: none
+}
+INPUT.redButton {
+	BORDER-RIGHT: #000000 1px solid; BORDER-TOP: #000000 1px solid; FONT-WEIGHT: bold; FONT-SIZE: 8pt; BORDER-LEFT: #000000 1px solid; CURSOR: hand; COLOR: #ffffff; BORDER-BOTTOM: #000000 1px solid; FONT-FAMILY: 'Arial', 'Helvetica'; BACKGROUND-COLOR: #cc0000
+}
+INPUT.yellowButton {
+	BORDER-RIGHT: #000000 1px solid; BORDER-TOP: #000000 1px solid; FONT-WEIGHT: bold; FONT-SIZE: 8pt; BORDER-LEFT: #000000 1px solid; CURSOR: hand; COLOR: #ffff00; BORDER-BOTTOM: #000000 1px solid; FONT-FAMILY: 'Arial', 'Helvetica'; BACKGROUND-COLOR: #003366
+}
+INPUT.greyButton {
+	BORDER-RIGHT: #999999 1px solid; BORDER-TOP: #999999 1px solid; FONT-WEIGHT: bold; FONT-SIZE: 8pt; BORDER-LEFT: #999999 1px solid; CURSOR: hand; COLOR: #666666; BORDER-BOTTOM: #999999 1px solid; FONT-FAMILY: 'Arial', 'Helvetica'; BACKGROUND-COLOR: #cccccc
+}
+INPUT.orangeButton {
+	BORDER-RIGHT: #666666 1px solid; BORDER-TOP: #336699 1px solid; FONT-WEIGHT: bold; FONT-SIZE: 8pt; BORDER-LEFT: #336699 1px solid; CURSOR: hand; COLOR: #ffffff; BORDER-BOTTOM: #666666 1px solid; FONT-FAMILY: 'Arial', 'Helvetica'; BACKGROUND-COLOR: #ff9b02
+}
+.red {
+	FONT-WEIGHT: normal; FONT-SIZE: 9pt; COLOR: #cc0000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.redLink {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #cc0000; FONT-FAMILY: 'Arial', 'Helvetica'
+}
+A.redLink:link {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #cc0000; FONT-FAMILY: 'Arial', 'Helvetica'
+}
+.redNonBoldLink {
+	FONT-WEIGHT: normal; FONT-SIZE: 9pt; COLOR: #cc0000; FONT-FAMILY: 'Arial', 'Helvetica'
+}
+A.redNonBoldLink:link {
+	FONT-WEIGHT: normal; FONT-SIZE: 9pt; COLOR: #cc0000; FONT-FAMILY: 'Arial', 'Helvetica'
+}
+.redTitleBold {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; COLOR: #cc0000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.redTitleBoldSmall {
+	FONT-WEIGHT: bold; FONT-SIZE: 8pt; COLOR: #cc0000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.redLargeBold {
+	FONT-WEIGHT: bold; FONT-SIZE: 12pt; COLOR: #cc0000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+.redHugeBold {
+	FONT-WEIGHT: bold; FONT-SIZE: 30pt; COLOR: #cc0000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: none
+}
+A.categoryNode {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: underline
+}
+A.categorySubNode {
+	FONT-WEIGHT: normal; FONT-SIZE: 9pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica'; TEXT-DECORATION: underline
+}
+.legendnumber {
+	PADDING-RIGHT: 2px; PADDING-LEFT: 2px; FONT-WEIGHT: bold; FONT-SIZE: 11px; PADDING-BOTTOM: 1px; COLOR: #ffffff; PADDING-TOP: 1px; FONT-FAMILY: Arial, Helvetica, sans-serif; BACKGROUND-COLOR: #cc0000
+}
+.exampleBox {
+	BORDER-RIGHT: #cad2d9 1px solid; BORDER-TOP: #cad2d9 1px solid; BORDER-LEFT: #cad2d9 1px solid; BORDER-BOTTOM: #cad2d9 1px solid; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; BACKGROUND-COLOR: #e1eaf2
+}
+.translationValue {
+	FONT-WEIGHT: normal; FONT-SIZE: 9pt; COLOR: #000000; FONT-FAMILY: 'Arial', 'Helvetica', sans-serif; TEXT-DECORATION: none
+}
+A:link {
+	COLOR: blue; TEXT-DECORATION: underline
+}
+A:visited {
+	COLOR: blue; TEXT-DECORATION: underline
+}
+.mRecentItem {
+	PADDING-RIGHT: 8px; BORDER-TOP: #fff 2px solid; PADDING-LEFT: 8px; MARGIN-BOTTOM: 10px; PADDING-BOTTOM: 2px; PADDING-TOP: 12px; BACKGROUND-COLOR: #e8e8e8
+}
+.mRecentItem .header {
+	PADDING-RIGHT: 2px; PADDING-LEFT: 6px; FONT-WEIGHT: bold; PADDING-BOTTOM: 0px; PADDING-TOP: 2px
+}
+.mRecentItem .body {
+	MARGIN: 0.6em 2px 0.6em 31px; POSITION: relative
+}
+.mRecentItem .body IMG {
+	LEFT: -25px; POSITION: absolute
+}
+.mRecentItem A {
+	TEXT-DECORATION: none
+}
+.mRecentItem .mruText {
+	TEXT-DECORATION: underline
+}
+.mRecentItem .calendarSidebarShortcut {
+	MARGIN-BOTTOM: 1em
+}
+.mRecentItem .calendarSidebarShortcut A {
+	TEXT-DECORATION: underline
+}

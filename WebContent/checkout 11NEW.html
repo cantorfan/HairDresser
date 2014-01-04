@@ -1,0 +1,383 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<title>checkout</title>
+<style>
+*{
+	margin-right: auto;
+	margin-left: auto;
+	font-family: Arial, Helvetica, sans-serif;
+}
+body{
+	background-color: #101010;
+	color: #FFFFFF;
+}
+.banner{
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+.banner img{
+	border-top-width: medium;
+	border-right-width: medium;
+	border-bottom-width: medium;
+	border-left-width: medium;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #4A4A4A;
+	border-right-color: #6E9AAD;
+	border-bottom-color: #4A4A4A;
+	border-left-color: #4A4A4A;
+	padding: 2px;
+}
+#mev{
+	color: #6E6E6E;
+	text-transform: capitalize;
+	font-size: 14pt;
+}
+.left {
+	padding-top: 2px;
+	border: medium solid #000000;
+}
+.a{
+	font-weight: bold;
+	text-transform: capitalize;
+	color: #CB2A0F;
+	padding-left: 20px;	
+	
+}
+.b{
+	text-transform: capitalize;
+	color: #888888;
+	padding-left: 15px;
+	font-weight: bold;
+	font-size: 12px;
+}
+div{
+	margin: 0px;
+	padding: 0px;
+}
+.bg{
+	/*background-image: url(./images/bg_content.gif);*/
+	background-repeat: no-repeat;
+	background-position: bottom;
+}
+.d{
+	color: #464646;
+	font-weight: bold;
+	text-transform: capitalize;
+	font-size: 12px;
+	padding-left: 10px;
+}
+.c{
+	color:#B7B7B7;
+	font-size: 12px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	background-image: url(images/schdule_12.jpg);
+	background-repeat: no-repeat;
+	width: 20px;
+}
+.e{
+	border: 1px solid #999999;
+}
+.g{
+	border-left-width: 1px;
+	border-left-style: solid;
+	border-left-color: #929191;
+}
+#g{
+	background-image: url(images/checkout-11NEW_26.gif);
+	background-repeat: no-repeat;
+	background-position: bottom;
+}
+#f{
+	margin-top: 45px;
+	margin-left: 20px;
+}
+#f td{
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-right-color: #929191;
+	border-bottom-color: #929191;
+}
+.m{
+background-image: url(images/ADMIN_04.gif);
+	background-repeat: no-repeat;
+	background-position: left;
+	height: 47px;
+}
+.m_1{
+	background-image: url(images/ADMIN_04.gif);
+	background-repeat: no-repeat;
+	background-position: left;
+	height: 47px;
+}
+.h{
+	scrollbar-highlight-color : #353535;
+	scrollbar-track-color : #101010;
+	scrollbar-base-color : #353535;
+	scrollbar-arrow-color : #101010;
+	background-color: #101010;
+	border: 2px solid #000000;
+	font-size: 12px;
+	float: left;
+	padding: 5px;
+	color: #D2D2D2;
+}
+.i{
+	font-weight: bold;
+	text-transform: capitalize;
+	color: #6E6E6E;
+	font-size: 12px;
+	padding-left: 10px;
+}
+.j td{
+	padding-top: 27px;	
+}
+a:link {color: #6E6E6E; text-decoration: none} /* 未访问的链接 */
+a:visited {color: #6E6E6E; text-decoration: none} /* 已访问的链接 */
+a:hover {color: #6E6E6E; text-decoration: underline} /* 鼠标在链接上 */
+a:active {color: #6E6E6E; text-decoration: underline} /* 激活链接 */
+.STYLE1 {
+	font-size: 10px;
+	color: #999999;
+}
+.STYLE3 {color: #999999}
+.STYLE4 {font-size: 10px}
+.STYLE5 {
+	font-size: 10;
+	color: #999999;
+}
+.STYLE6 {font-weight: bold; text-transform: capitalize; color: #666666; font-size: 12px; padding-left: 10px; }
+.STYLE8 {color: #cc0099}
+.STYLE9 {color: #339966}
+.STYLE10 {color: #0033ff}
+.STYLE12 {border-left-style: solid; border-left-color: #929191; color: #999999; font-size: 12px; border-left-width: 1px;}
+.STYLE13 {font-size: 12px}
+.STYLE14 {font-size: 12px; color: #999999; }
+.STYLE15 {color: #FF0000; padding-left: 20px; text-transform: capitalize;}
+.STYLE16 {color: #CB2A0F; padding-left: 10px; text-transform: capitalize;}
+.STYLE17 {color: #666666; font-size: 11px; font-family: Verdana, Arial, Helvetica, sans-serif; }
+</style>
+<script type="text/JavaScript">
+<!--
+function MM_swapImgRestore() { //v3.0
+  var i,x,a=document.MM_sr; for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;
+}
+
+function MM_preloadImages() { //v3.0
+  var d=document; if(d.images){ if(!d.MM_p) d.MM_p=new Array();
+    var i,j=d.MM_p.length,a=MM_preloadImages.arguments; for(i=0; i<a.length; i++)
+    if (a[i].indexOf("#")!=0){ d.MM_p[j]=new Image; d.MM_p[j++].src=a[i];}}
+}
+
+function MM_findObj(n, d) { //v4.01
+  var p,i,x;  if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {
+    d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}
+  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
+  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=MM_findObj(n,d.layers[i].document);
+  if(!x && d.getElementById) x=d.getElementById(n); return x;
+}
+
+function MM_swapImage() { //v3.0
+  var i,j=0,x,a=MM_swapImage.arguments; document.MM_sr=new Array; for(i=0;i<(a.length-2);i+=3)
+   if ((x=MM_findObj(a[i]))!=null){document.MM_sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}
+}
+//-->
+</script>
+</head>
+<body  topmargin="0px" onload="MM_preloadImages('../HAIR 233/images/home red.gif','../HAIR 233/images/schedule red.gif')"  >
+<table width="998"  border="0" cellpadding="0" cellspacing="0" bgcolor="#000000" >
+  <tr valign="top">
+    <td width="214" height="90" ><img src="./images/schdule_02.gif" /></td>
+    <td width="784" class="banner"  align="right"><img src="./images/schdule1.gif" /> </td>
+  </tr>
+  <tr>
+    <td height="47" background="./images/ADMIN_03.gif" colspan="2" ><table width="998" border="0" cellspacing="0" cellpadding="0" id="mev">
+        <tr>
+          <td width="300"></td>
+          <td width="120"  align="center"  class="m"><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image14','','../HAIR 233/images/home red.gif',1)"><img src="../HAIR 233/images/home.gif" name="Image14" width="96" height="39" border="0" id="Image14" /></a><a href="#"></a></td>
+          <td width="120" align="center"class="m"><a href="#"></a><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image15','','../HAIR 233/images/schedule red.gif',1)"><img src="../HAIR 233/images/schedule.gif" name="Image15" width="96" height="39" border="0" id="Image15" /></a></td>
+          <td width="120" align="center" class="m"><a href="#"></a><img src="../HAIR 233/images/checkout red 2.gif" width="96" height="39" /></td>
+		  <td width="120" align="center" class="m"><a href="#"></a></td>
+		 
+          <td width="158">&nbsp;</td>
+        </tr>
+      </table></td>
+  </tr>
+</table>
+<table width="998" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><table width="998" border="0" cellpadding="0" cellspacing="0" >
+        <tr>
+          <td valign="top"><table width="218" border="0" cellspacing="0" cellpadding="0" bgcolor="#101010">
+              <tr>
+                <td height="4"></td>
+              </tr>
+              <tr>
+                <td width="18"></td>
+                <td  align="right"  ><table width="200" border="0" cellspacing="0" cellpadding="0" class="left">
+                  <tr   >
+                    <td colspan="3" align="left" class="STYLE15" ><span class="STYLE16">checkout&nbsp;&gt;&nbsp;main</span></td>
+                  </tr>
+				  <tr><td height="15" colspan="3"></td>
+				  </tr>
+                  <tr>
+                    <td width="20" valign="top" class="STYLE6" >employee</td>
+					<td width="120"  align="left"   >
+<table width="108%" border="0" cellspacing="0" cellpadding="0"class="h">
+  <tr>
+    <td width="95%" ><span class="STYLE1">Rachel Green<br />
+      Monica Geller<br />
+      Pheebe<br />
+      Ross Geller<br />
+      Chandler Bing<br />
+      Joe<br />
+      Ross Geller<br />
+      Chandler Bing</span><br>	</td>
+    <td width="9%" align="right" valign="middle"><img src="images/checkout22.gif" /></td>
+  </tr>
+</table>					</td>
+					<td width="5"></td>
+                  </tr>
+                  		  <tr><td height="15" colspan="3"></td>
+				  </tr>
+                  <tr>
+                    <td width="20" valign="top" class="STYLE6" >employee</td>
+					<td width="120"  align="left"   >
+<table width="100%" border="0" cellspacing="0" cellpadding="0"class="h">
+  <tr>
+    <td >
+	<span class="STYLE1">Service A</span><span class="STYLE3"><br>
+	<span class="STYLE4">Service B </span><br>
+	<span class="STYLE4">Service C </span><br>
+	<span class="STYLE4">Service D </span><br>
+	<span class="STYLE4">Service A </span><br>
+	<span class="STYLE4">Service B </span><br>
+	<span class="STYLE4">Service C </span><br>
+	<span class="STYLE4">Service D </span></span><br>	</td>
+    <td align="right" valign="middle"><img src="images/checkout22.gif" /></td> 
+  </tr>
+</table>					</td>
+					<td width="5"></td>
+                  </tr>
+				  		  <tr><td height="15" colspan="3"></td>
+				  </tr>
+                  <tr>
+                    <td width="20" valign="top" class="STYLE6" >employee</td>
+					<td width="120"  align="left"   >
+<table width="100%" border="0" cellspacing="0" cellpadding="0"class="h">
+  <tr>
+    <td ><span class="STYLE5">Product A <br>
+      Product B <br>
+      Product C <br>
+      Product D <br>
+      Product E <br>
+      Product F <br>
+      Product G <br>
+      Product H <br>
+
+	</span></td>
+    <td align="right" valign="middle"><img src="images/checkout22.gif" /></td>
+  </tr>
+</table>					</td>
+					<td width="5"></td>
+                  </tr>
+<tr><td height="135"></td>
+</tr>
+                  
+                  
+                  
+
+                </table></td>
+              </tr>
+            </table></td>
+			<td width="5"></td>
+          <td width="775" height="629" align="left" valign="top" id="g"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="40" colspan="3" bgcolor="#101010"><table width="100%" border="0" cellspacing="0" cellpadding="0"class="j">
+      <tr>
+	  <td width="335" ></td>
+        <td width="51" height="20"><img src="images/checkout-check-out_03.gif" /></td>
+		<td width="3" ></td>
+      <td width="51"><img src="images/checkout-check-out_05.gif" /></td>
+	  	<td width="1" ></td>
+       <td width="96"><img src="images/checkout-check-out_07.gif" /></td>
+	   	<td width="82" ><img src="images/checkout-check-out_09.gif" /></td>
+  <td width="147"><img src="images/复件 giftcard.gif" width="61" height="19" /></td>
+ <td width="9"></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td colspan="3"><table width="661" border="0" align="left" cellpadding="0" cellspacing="0" id="f">
+  <tr>
+    <td width="110" height="28" background="images/checkout-check-out_16.gif" class="g" >&nbsp;</td>
+    <td width="111" background="images/checkout-check-out_17.gif">&nbsp;</td>
+    <td width="109" background="images/checkout-check-out_18.gif">&nbsp;</td>
+    <td width="111" background="images/checkout-check-out_19.gif">&nbsp;</td>
+    <td width="111" background="images/checkout-check-out_20.gif">&nbsp;</td>
+    <td width="109" background="images/checkout-check-out_21.gif">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="110" class="STYLE12">&nbsp; Employee A </td>
+    <td width="111" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="STYLE14">Service A </span></td>
+    <td width="109">&nbsp;</td>
+    <td  width="111"><span class="STYLE12">&nbsp; 50% </span></td>
+    <td width="111"><span class="STYLE12">&nbsp; $30.00 </span></td>
+    <td width="109" align="center"><img src="images/checkout-check-out_29.gif" /></td>
+  </tr>
+  <tr>
+    <td width="110" class="g STYLE13 STYLE3">  &nbsp; Employee B</td>
+    <td width="111">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="STYLE14">Service B </span></td>
+    <td width="109">&nbsp;</td>
+    <td  width="111"><span class="STYLE12">&nbsp; 30% </span></td>
+    <td width="111"><span class="STYLE12">&nbsp; $30.00 </span></td>
+   <td width="109" align="center"><img src="images/checkout-check-out_29.gif" /></td>
+  </tr>
+  <tr>
+    <td class="g" width="110"><span class="g STYLE13 STYLE3">&nbsp;&nbsp;Employee C </span></td>
+    <td width="111">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="STYLE14">Service C </span></td>
+    <td width="109">&nbsp;</td>
+    <td  width="111"><span class="STYLE12">&nbsp; 100% </span></td>
+    <td width="111"><span class="STYLE12">&nbsp; $30.00 </span></td>
+  <td width="109" align="center"><img src="images/checkout-check-out_29.gif" /></td>
+  </tr>
+  <tr>
+    
+    <td width="661" height="24"  colspan="6" align="center" class="g"><span class="STYLE8">Summary:</span> &nbsp; <span class="STYLE9">Total: $999.99</span> &nbsp;&nbsp;   <span class="STYLE10">Taxes: $120.00 </span></td>
+  </tr>
+  
+  
+ 
+</table></td>
+  </tr>
+   <tr ><td height="399" colspan="3"></td>
+   </tr>
+    <tr align="center" valign="bottom"><td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr align="center" valign="bottom">
+      <td width="35%" valign="top"><div align="right"><span class="STYLE17"><a href="#">About Us </a>| <a href="#">Privacy</a> | <a href="#">FAQ</a></span></div></td>
+      <td width="3%">&nbsp;</td>
+      <td width="62%" valign="top"><div align="left"><span class="STYLE17">&copy;2008 DreamHair Inc. All Rights Reserved.</span></div></td>
+    </tr>
+</table>
+
+</td>
+        </tr>
+      </table></td>
+  </tr>
+  
+</table>
+
+</body>
+</html>

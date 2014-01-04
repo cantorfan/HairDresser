@@ -1,0 +1,370 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<title>checkout main</title>
+<style>
+*{
+	margin-right: auto;
+	margin-left: auto;
+	font-family: Arial;
+}
+body{
+	background-color: #101010;
+	color: #FFFFFF;
+}
+.banner{
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+.banner img{
+	border-top-width: medium;
+	border-right-width: medium;
+	border-bottom-width: medium;
+	border-left-width: medium;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #4A4A4A;
+	border-right-color: #6E9AAD;
+	border-bottom-color: #4A4A4A;
+	border-left-color: #4A4A4A;
+	padding: 2px;
+}
+#mev{
+	color: #6E6E6E;
+	text-transform: capitalize;
+	font-size: 14pt;
+}
+.left {
+	padding-top: 2px;
+	border: medium solid #000000;
+}
+.a{
+	font-weight: bold;
+	text-transform: capitalize;
+	color: #CB2A0F;
+	padding-left: 20px;	
+	
+}
+.b{
+	text-transform: capitalize;
+	color: #888888;
+	padding-left: 15px;
+	font-weight: bold;
+	font-size: 12px;
+}
+div{
+	margin: 0px;
+	padding: 0px;
+}
+.bg{
+	/*background-image: url(./images/bg_content.gif);*/
+	background-repeat: no-repeat;
+	background-position: bottom;
+}
+.d{
+	color: #464646;
+	font-weight: bold;
+	text-transform: capitalize;
+	font-size: 12px;
+	padding-left: 10px;
+}
+.c{
+	color:#B7B7B7;
+	font-size: 12px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	background-image: url(images/schdule_12.jpg);
+	background-repeat: no-repeat;
+	width: 20px;
+}
+.e{
+	border: 1px solid #999999;
+}
+.g{
+	border-left-width: 1px;
+	border-left-style: solid;
+	border-left-color: #929191;
+}
+#g{
+	background-image: url(images/checkout-11NEW_26.gif);
+	background-repeat: no-repeat;
+	background-position: bottom;
+}
+#f{
+	margin-top: 15px;
+	margin-left: 20px;
+}
+#f td{
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-right-color: #929191;
+	border-bottom-color: #929191;
+}
+.m{
+background-image: url(images/ADMIN_04.gif);
+	background-repeat: no-repeat;
+	background-position: left;
+	height: 47px;
+}
+.m_1{
+	background-image: url(images/ADMIN_04.gif);
+	background-repeat: no-repeat;
+	background-position: left;
+	height: 47px;
+}
+a:link {color: #6E6E6E; text-decoration: none} /* 未访问的链接 */
+a:visited {color: #6E6E6E; text-decoration: none} /* 已访问的链接 */
+a:hover {color: #6E6E6E; text-decoration: underline} /* 鼠标在链接上 */
+a:active {color: #6E6E6E; text-decoration: underline} /* 激活链接 */
+.STYLE1 {color: #CB2A0F; padding-left: 10px; text-transform: capitalize;}
+.STYLE2 {text-transform: capitalize; font-size: 12px; padding-left: 10px; color: #464646;}
+.STYLE3 {border-left-width: 1px; border-left-style: solid; border-left-color: #929191; color: #FF9900; }
+.STYLE4 {
+	color: #339966;
+	font-size: 12px;
+}
+.STYLE5 {font-size: 12px}
+.STYLE6 {color: #0033FF}
+.STYLE7 {color: #CC0099}
+.STYLE10 {color: #666666; font-size: 11px; font-family: Verdana, Arial, Helvetica, sans-serif; }
+.STYLE17 {color: #666666}
+</style>
+<script type="text/JavaScript">
+<!--
+function MM_swapImgRestore() { //v3.0
+  var i,x,a=document.MM_sr; for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;
+}
+
+function MM_preloadImages() { //v3.0
+  var d=document; if(d.images){ if(!d.MM_p) d.MM_p=new Array();
+    var i,j=d.MM_p.length,a=MM_preloadImages.arguments; for(i=0; i<a.length; i++)
+    if (a[i].indexOf("#")!=0){ d.MM_p[j]=new Image; d.MM_p[j++].src=a[i];}}
+}
+
+function MM_findObj(n, d) { //v4.01
+  var p,i,x;  if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {
+    d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}
+  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
+  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=MM_findObj(n,d.layers[i].document);
+  if(!x && d.getElementById) x=d.getElementById(n); return x;
+}
+
+function MM_swapImage() { //v3.0
+  var i,j=0,x,a=MM_swapImage.arguments; document.MM_sr=new Array; for(i=0;i<(a.length-2);i+=3)
+   if ((x=MM_findObj(a[i]))!=null){document.MM_sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}
+}
+//-->
+</script>
+</head>
+<body  topmargin="0px" onload="MM_preloadImages('images/home red.gif','images/schedule red.gif','images/checkout.gif')"  >
+<table width="998"  border="0" cellpadding="0" cellspacing="0" bgcolor="#000000" >
+  <tr valign="top">
+    <td width="214" height="90" ><img src="./images/schdule_02.gif" /></td>
+    <td width="784" class="banner"  align="right"><img src="./images/schdule1.gif" /> </td>
+  </tr>
+  <tr>
+    <td height="47" background="./images/ADMIN_03.gif" colspan="2" ><table width="998" border="0" cellspacing="0" cellpadding="0" id="mev">
+        <tr>
+          <td width="300"></td>
+          <td width="120"  align="center"  class="m"><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image20','','images/home red.gif',1)"><img src="images/home.gif" name="Image20" width="96" height="39" border="0" id="Image20" /></a><a href="#"></a></td>
+          <td width="120" align="center"class="m"><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image21','','images/schedule red.gif',1)"><img src="images/schedule.gif" name="Image21" width="96" height="39" border="0" id="Image21" /></a><a href="#"></a></td>
+          <td width="120" align="center" class="m"><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image22','','images/checkout.gif',1)"></a><a href="#"></a>&nbsp;&nbsp;&nbsp;<img src="images/checkout red 2.gif" name="Image22" width="96" height="39" border="0" id="Image22" /></td>
+		  <td width="120" align="center" class="m"><a href="#"></a></td>
+		 
+          <td width="158">&nbsp;</td>
+        </tr>
+      </table></td>
+  </tr>
+</table>
+<table width="998" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><table width="998" border="0" cellpadding="0" cellspacing="0" >
+        <tr>
+          <td valign="top"><table width="218" border="0" cellspacing="0" cellpadding="0" bgcolor="#101010">
+              <tr>
+                <td height="4"></td>
+              </tr>
+              <tr>
+                <td height="4"></td>
+              </tr>
+              <tr>
+                <td width="18"></td>
+                <td  align="right"  ><table width="200" border="0" cellspacing="0" cellpadding="0" class="left">
+                  <tr   >
+                    <td align="left" class="STYLE1">checkout&nbsp;>&nbsp;main</td>
+                  </tr>
+                  <tr>
+                    <td height="30"  ></td>
+                  </tr>
+                  <tr>
+                    <td align="center"><img src="./images/checkoutweb.gif" /></td>
+                  </tr>
+                  <tr>
+                    <td align="left" class="c"></td>
+                  </tr>
+                  <tr>
+                    <td align="left" class="c"></td>
+                  </tr>
+                  <tr>
+                    <td height="110"></td>
+                  </tr>
+                  <tr>
+                    <td  ><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                          <td width="10"></td>
+                          <td class="c"></td>
+                          <td align="left" class="STYLE2">cash&nbsp;in/out</td>
+                        </tr>
+                    </table></td>
+                  </tr>
+                  <tr>
+                    <td  ><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                          <td width="10"></td>
+                          <td class="c"></td>
+                          <td align="left" class="STYLE2">add&nbsp;in/transaction</td>
+                        </tr>
+                    </table></td>
+                  </tr>
+                  <tr>
+                    <td  ><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                          <td width="10"></td>
+                          <td class="c"></td>
+                          <td align="left" class="STYLE2">end&nbsp;of&nbsp;the&nbsp;day</td>
+                        </tr>
+                    </table></td>
+                  </tr>
+                  <tr>
+                    <td height="150"></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+			<td width="5"></td>
+          <td width="775" height="579" align="left" valign="top" id="g"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="10" colspan="3" bgcolor="#101010"></td>
+  </tr>
+  <tr>
+    <td height="10" colspan="3" bgcolor="#101010"></td>
+  </tr>
+  <tr>
+    <td colspan="3"><table width="640" border="0" align="left" cellpadding="0" cellspacing="0" id="f">
+  <tr>
+    <td width="53" height="24" background="images/checkout-11NEW_02.gif" class="g" >&nbsp;</td>
+    <td width="59" background="images/checkout-11NEW_04.gif">&nbsp;</td>
+    <td width="102" background="images/checkout-11NEW_06.gif">&nbsp;</td>
+    <td width="36" background="images/checkout-11NEW_08.gif">&nbsp;</td>
+    <td width="50" background="images/checkout-11NEW_10.gif">&nbsp;</td>
+    <td width="80" background="images/checkout-11NEW_12.gif">&nbsp;</td>
+    <td width="50" background="images/checkout-11NEW_14.gif">&nbsp;</td>
+    <td width="101" background="images/checkout-11NEW_16.gif">&nbsp;</td>
+	<td width="109" background="images/checkoutadd.gif" >&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="g" width="53">&nbsp;</td>
+    <td width="59">&nbsp;</td>
+    <td width="102">&nbsp;</td>
+    <td  width="36">&nbsp;</td>
+    <td width="50">&nbsp;</td>
+    <td  width="80">&nbsp;</td>
+    <td width="50">&nbsp;</td>
+    <td width="101">&nbsp;</td>
+<td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr align="center">
+    <td><img src="images/checkout9.gif" /><img src="images/checkout10.gif" /><img src="images/checkout11.gif" /></td>
+    </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td class="g">&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+	<td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td align="center"><img src="images/checkout9.gif" /><img src="images/checkout10.gif" /><img src="images/checkout11.gif" /></td>
+    </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td class="g">&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+	<td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr align="center">
+    <td><img src="images/checkout9.gif" /><img src="images/checkout10.gif" /><img src="images/checkout11.gif" /></td>
+    </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td class="g">&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+	<td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr align="center">
+    <td><img src="images/checkout9.gif" /><img src="images/checkout10.gif" /><img src="images/checkout11.gif" /></td>
+    </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td class="g">&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+	<td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr align="center">
+    <td><img src="images/checkout9.gif" /><img src="images/checkout10.gif" /><img src="images/checkout11.gif" /></td>
+    </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td height="33" colspan="2" class="STYLE3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="STYLE5">&nbsp;Ddily Total: </span></td>
+    <td colspan="7"><span class="STYLE4">Cash: $10.00.</span><span class="STYLE5"> <span class="STYLE6">Credit card: $60.00.</span> <span class="STYLE7">Check: $120.00 </span></span></td>
+    </tr>
+ 
+</table></td>
+  </tr>
+   <tr ><td height="390" colspan="3"></td>
+   </tr>
+    <tr align="center" valign="bottom"><td width="33%" valign="middle"><div align="right"><span class="STYLE10"><a href="#">About Us </a>| <a href="#">Privacy</a> | <a href="#">FAQ</a></span></div></td>
+      <td width="3%">&nbsp;</td>
+      <td width="64%" valign="middle"><div align="left"><span class="STYLE10">&nbsp;&copy;2008 DreamHair Inc. All Rights Reserved.</span></div></td>
+    </tr>
+</table>
+
+</td>
+        </tr>
+      </table></td>
+  </tr>
+  
+</table>
+
+</body>
+</html>

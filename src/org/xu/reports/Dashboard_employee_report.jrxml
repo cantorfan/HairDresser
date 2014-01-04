@@ -1,0 +1,1075 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="dashboard_employee_report" pageWidth="802" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<parameter name="START_DATE" class="java.lang.String"/>
+	<parameter name="END_DATE" class="java.lang.String"/>
+	<parameter name="p_service_id" class="java.lang.String"/>
+	<parameter name="p_product_id" class="java.lang.String"/>
+	<parameter name="service_name" class="java.lang.String"/>
+	<parameter name="product_name" class="java.lang.String"/>
+	<parameter name="flag" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[CALL dashboard_print_report($P{START_DATE},$P{END_DATE},$P{p_service_id},$P{p_product_id},$P{flag});]]>
+	</queryString>
+	<field name="stylist" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="service_service_total" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="service_service_tax" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="service_service_qty" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="product_product_tax" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="product_product_qty" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="product_product_total" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ser_total_total" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ser_total_tax" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="prod_total_total" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="prod_total_tax" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="employee_salary" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="subtotal" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{ser_total_total}.add( $F{prod_total_total} )]]></variableExpression>
+	</variable>
+	<variable name="totals_tax" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{ser_total_tax}.add( $F{prod_total_tax} )]]></variableExpression>
+	</variable>
+	<variable name="totals_total" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{ser_total_total}.add( $F{ser_total_tax}.add( $F{prod_total_total}.add( $F{prod_total_tax} ) ) )]]></variableExpression>
+	</variable>
+	<variable name="salary_service" class="java.math.BigDecimal"/>
+	<variable name="ser_total" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{service_service_total}.add( $F{service_service_tax} )]]></variableExpression>
+	</variable>
+	<variable name="prod_total" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{prod_total_total}.add( $F{prod_total_tax} )]]></variableExpression>
+	</variable>
+	<variable name="product_totals_total" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{prod_total_total}.add($F{prod_total_tax} )]]></variableExpression>
+	</variable>
+	<variable name="service_totals_total" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{ser_total_total}.add( $F{ser_total_tax} )]]></variableExpression>
+	</variable>
+	<variable name="ser_total_total_SUM" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{ser_total_total}]]></variableExpression>
+	</variable>
+	<variable name="service_service_total_SUM" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{service_service_total}]]></variableExpression>
+	</variable>
+	<variable name="sum_ser_qty" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{service_service_qty}]]></variableExpression>
+	</variable>
+	<variable name="sum_ser_tax" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{service_service_tax}]]></variableExpression>
+	</variable>
+	<variable name="sum_ser_total" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{ser_total}]]></variableExpression>
+	</variable>
+	<variable name="sum_ser_totals_tax" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{ser_total_tax}]]></variableExpression>
+	</variable>
+	<variable name="sum_ser_totals_total" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{service_totals_total}]]></variableExpression>
+	</variable>
+	<variable name="sum_prod_qty" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{product_product_qty}]]></variableExpression>
+	</variable>
+	<variable name="sum_prod_tax" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{product_product_tax}]]></variableExpression>
+	</variable>
+	<variable name="sum_prod_total" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{prod_total}]]></variableExpression>
+	</variable>
+	<variable name="sum_prod_totals_tax" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{prod_total_tax}]]></variableExpression>
+	</variable>
+	<variable name="sum_prod_totals_total" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{product_totals_total}]]></variableExpression>
+	</variable>
+	<variable name="sum_subtotal" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{subtotal}]]></variableExpression>
+	</variable>
+	<variable name="sum_totals_tax" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{totals_tax}]]></variableExpression>
+	</variable>
+	<variable name="sum_totals_total" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{totals_total}]]></variableExpression>
+	</variable>
+	<variable name="sum_salary" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{employee_salary}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="46" splitType="Stretch">
+			<rectangle>
+				<reportElement x="1" y="24" width="52" height="22" forecolor="#E7E8E9" backcolor="#E7E8E9"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="749" y="24" width="52" height="22" forecolor="#E7E8E9" backcolor="#E7E8E9"/>
+			</rectangle>
+			<line>
+				<reportElement x="1" y="26" width="1" height="20"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="802" y="26" width="1" height="20"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</graphicElement>
+			</line>
+			<rectangle radius="10">
+				<reportElement x="0" y="0" width="802" height="46" forecolor="#000000" backcolor="#CCCCCC"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#666666"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="1" y="1" width="801" height="45"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="24"/>
+				</textElement>
+				<text><![CDATA[EMPLOYEE REPORT]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement x="1" y="0" width="800" height="20" forecolor="#E7E8E9" backcolor="#E7E8E9"/>
+			</rectangle>
+			<line>
+				<reportElement x="802" y="0" width="1" height="20"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="0" width="1" height="20"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</graphicElement>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="69" splitType="Stretch">
+			<rectangle>
+				<reportElement x="1" y="0" width="801" height="69" forecolor="#E7E8E9" backcolor="#E7E8E9"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="53" y="9" width="169" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SERVICES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="53" y="49" width="25" height="20"/>
+				<box>
+					<topPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="0.0" lineColor="#CCCCCC"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Qty]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="78" y="49" width="25" height="20"/>
+				<box>
+					<topPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<leftPen lineColor="#CBCDCE"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Tax]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="102" y="49" width="35" height="20"/>
+				<box>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="137" y="49" width="25" height="20"/>
+				<box>
+					<topPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="0.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="0.0" lineColor="#CCCCCC"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="162" y="49" width="25" height="20"/>
+				<box>
+					<topPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<leftPen lineColor="#CBCDCE"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Tax]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="187" y="49" width="35" height="20"/>
+				<box>
+					<topPen lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="232" y="9" width="169" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRODUCT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="410" y="9" width="150" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTALS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="410" y="29" width="50" height="40"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Subtotals]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="460" y="29" width="50" height="40"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Tax]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="510" y="29" width="50" height="40"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="568" y="9" width="219" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COMMISSION/SALARY]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="568" y="29" width="60" height="40"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[% Services]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="628" y="29" width="53" height="40"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[%Product]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="681" y="29" width="53" height="40"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[% Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="734" y="29" width="53" height="40"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Salary]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="53" y="29" width="84" height="20"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{service_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="137" y="29" width="85" height="20"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Totals]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="316" y="29" width="85" height="20"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Totals]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="257" y="49" width="25" height="20"/>
+				<box>
+					<topPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<leftPen lineColor="#CBCDCE"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Tax]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="316" y="49" width="25" height="20"/>
+				<box>
+					<topPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="0.0" lineColor="#CCCCCC"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[%]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="366" y="49" width="35" height="20"/>
+				<box>
+					<topPen lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="232" y="29" width="84" height="20"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{product_name}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="281" y="49" width="35" height="20"/>
+				<box>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="341" y="49" width="25" height="20"/>
+				<box>
+					<topPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<leftPen lineColor="#CBCDCE"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Tax]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="232" y="49" width="25" height="20"/>
+				<box>
+					<topPen lineWidth="1.0" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="0.0" lineColor="#CCCCCC"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Qty]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="0" width="1" height="69"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="802" y="0" width="1" height="69"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<rectangle>
+				<reportElement x="1" y="0" width="52" height="22" forecolor="#E7E8E9" backcolor="#E7E8E9"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="222" y="0" width="10" height="22" forecolor="#E7E8E9" backcolor="#E7E8E9"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="401" y="0" width="9" height="22" forecolor="#E7E8E9" backcolor="#E7E8E9"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="560" y="0" width="8" height="22" forecolor="#E7E8E9" backcolor="#E7E8E9"/>
+			</rectangle>
+			<textField evaluationTime="Auto" pattern="###0.00">
+				<reportElement x="137" y="0" width="25" height="22"/>
+				<box>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[new Double($F{service_service_total}.add( $F{service_service_tax} ).multiply(new BigDecimal(100) ).doubleValue()  / $F{ser_total_total}.add( $F{ser_total_tax} ).doubleValue())]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="162" y="0" width="25" height="22"/>
+				<box>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{ser_total_tax}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="187" y="0" width="35" height="22"/>
+				<box>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{service_totals_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0">
+				<reportElement x="232" y="0" width="25" height="22"/>
+				<box>
+					<leftPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isItalic="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{product_product_qty}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="257" y="0" width="24" height="22"/>
+				<box>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{product_product_tax}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="281" y="0" width="35" height="22"/>
+				<box>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{prod_total}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Auto" pattern="###0.00">
+				<reportElement x="316" y="0" width="25" height="22"/>
+				<box>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[new Double( $F{product_product_total}.add($F{product_product_tax} ).multiply( new BigDecimal(100) ).doubleValue() / $F{prod_total_total}.add( $F{prod_total_tax} ).doubleValue() )]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="341" y="0" width="25" height="22"/>
+				<box>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{prod_total_tax}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="366" y="0" width="35" height="22"/>
+				<box>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{product_totals_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="410" y="0" width="50" height="22"/>
+				<box>
+					<leftPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{subtotal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="460" y="0" width="50" height="22"/>
+				<box>
+					<leftPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totals_tax}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="510" y="0" width="50" height="22"/>
+				<box>
+					<leftPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{totals_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="681" y="0" width="53" height="22"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<topPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<leftPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[new Double(0)]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Auto" pattern="###0.00">
+				<reportElement x="568" y="0" width="60" height="22"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<topPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<leftPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[new Double( $F{ser_total_total}.add( $F{ser_total_tax} ).multiply( new BigDecimal(100) ).doubleValue() / $F{ser_total_total}.add( $F{ser_total_tax} ).add($F{prod_total_total}.add($F{prod_total_tax})).doubleValue() )]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="787" y="0" width="14" height="22" forecolor="#E7E8E9" backcolor="#E7E8E9"/>
+			</rectangle>
+			<textField evaluationTime="Auto" pattern="###0.00">
+				<reportElement x="628" y="0" width="53" height="22"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<topPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<leftPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[new Double( $F{prod_total_total}.add( $F{prod_total_tax} ).multiply( new BigDecimal(100) ).doubleValue() / $F{ser_total_total}.add( $F{ser_total_tax} ).add($F{prod_total_total}.add( $F{prod_total_tax} )).doubleValue() )]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="0" width="52" height="22" backcolor="#FFFFFF"/>
+				<box>
+					<topPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{stylist}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="734" y="0" width="53" height="22"/>
+				<box>
+					<pen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<topPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<leftPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{employee_salary}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0">
+				<reportElement x="53" y="0" width="25" height="22"/>
+				<box>
+					<leftPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{service_service_qty}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="102" y="0" width="35" height="22"/>
+				<box>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{ser_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="78" y="0" width="25" height="22"/>
+				<box>
+					<bottomPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{service_service_tax}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="1" height="22"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="802" y="0" width="1" height="22"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch">
+			<rectangle>
+				<reportElement x="1" y="0" width="52" height="22" forecolor="#E7E8E9" backcolor="#E7E8E9"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="1" y="22" width="801" height="20" forecolor="#E7E8E9" backcolor="#E7E8E9"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="401" y="0" width="9" height="22" forecolor="#E7E8E9" backcolor="#E7E8E9"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="787" y="0" width="14" height="22" forecolor="#E7E8E9" backcolor="#E7E8E9"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="560" y="0" width="8" height="22" forecolor="#E7E8E9" backcolor="#E7E8E9"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="222" y="0" width="10" height="22" forecolor="#E7E8E9" backcolor="#E7E8E9"/>
+			</rectangle>
+			<textField pattern="###0.00">
+				<reportElement x="366" y="0" width="35" height="22"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<bottomPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<rightPen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sum_prod_totals_total}== null? new BigDecimal(0):$V{sum_prod_totals_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="232" y="0" width="25" height="22"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sum_prod_qty} == null? new BigDecimal(0):$V{sum_prod_qty}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="162" y="0" width="25" height="22"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="0.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<rightPen lineWidth="0.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sum_ser_totals_tax} == null? new BigDecimal(0):$V{sum_ser_totals_tax}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Auto" pattern="###0.00">
+				<reportElement x="568" y="0" width="60" height="22"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[new Double( $V{sum_ser_totals_total}.multiply( new BigDecimal(100) ).doubleValue() / $V{sum_totals_total}.doubleValue() )]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Auto" pattern="###0.00">
+				<reportElement x="316" y="0" width="25" height="22"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[new Double( $V{sum_prod_total}.multiply( new BigDecimal(100) ).doubleValue() / $V{sum_prod_totals_total}.doubleValue() )]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="257" y="0" width="24" height="22"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="0.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<rightPen lineWidth="0.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sum_prod_tax}== null? new BigDecimal(0):$V{sum_prod_tax}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="78" y="0" width="25" height="22"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="0.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<rightPen lineWidth="0.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sum_ser_tax} == null? new BigDecimal(0):$V{sum_ser_tax}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="102" y="0" width="35" height="22"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<bottomPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<rightPen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sum_ser_total}== null? new BigDecimal(0):$V{sum_ser_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="281" y="0" width="35" height="22"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<bottomPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<rightPen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sum_prod_total}== null? new BigDecimal(0):$V{sum_prod_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="410" y="0" width="50" height="22"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sum_subtotal} == null? new BigDecimal(0):$V{sum_subtotal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0">
+				<reportElement x="53" y="0" width="25" height="22"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sum_ser_qty}==null?(new BigDecimal(0)):$V{sum_ser_qty}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Auto" pattern="###0.00">
+				<reportElement x="137" y="0" width="25" height="22"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[new Double( $V{sum_ser_total}.multiply( new BigDecimal(100) ).doubleValue() /  $V{sum_ser_totals_total}.doubleValue())]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Auto" pattern="###0.00">
+				<reportElement x="628" y="0" width="53" height="22"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="0.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<rightPen lineWidth="0.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[new Double( $V{sum_prod_totals_total}.multiply( new BigDecimal(100) ).doubleValue() / $V{sum_totals_total}.doubleValue() )]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="460" y="0" width="50" height="22"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="0.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<rightPen lineWidth="0.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sum_totals_tax} == null? new BigDecimal(0):$V{sum_totals_tax}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="0" width="52" height="22"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTALS]]></text>
+			</staticText>
+			<textField pattern="###0.00">
+				<reportElement x="341" y="0" width="25" height="22"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="0.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<rightPen lineWidth="0.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sum_prod_totals_tax}== null? new BigDecimal(0):$V{sum_prod_totals_tax}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="734" y="0" width="53" height="22"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="0.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<rightPen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sum_salary} == null? new BigDecimal(0):$V{sum_salary}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="510" y="0" width="50" height="22"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="1.0" lineColor="#A4A6A9"/>
+					<bottomPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<rightPen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sum_totals_total} == null? new BigDecimal(0):$V{sum_totals_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="187" y="0" width="35" height="22"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<bottomPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<rightPen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{sum_ser_totals_total}== null? new BigDecimal(0):$V{sum_ser_totals_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="681" y="0" width="53" height="22"/>
+				<box>
+					<topPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<leftPen lineWidth="1.0" lineColor="#CBCDCE"/>
+					<bottomPen lineWidth="2.0" lineColor="#A4A6A9"/>
+					<rightPen lineWidth="1.0" lineColor="#CBCDCE"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[new Double(0)]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="41" width="801" height="1"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="0" width="1" height="41"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="802" y="0" width="1" height="41"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#A4A6A9"/>
+				</graphicElement>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

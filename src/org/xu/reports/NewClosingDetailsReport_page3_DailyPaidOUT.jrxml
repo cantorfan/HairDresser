@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NewClosingDetailsReport_page3_DailyPaidOUT" pageWidth="555" pageHeight="700" whenNoDataType="AllSectionsNoDetail" columnWidth="535" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<parameter name="CUR_DATE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+rec.`code_transaction` as 'invoice_n',
+COALESCE(cas.`vendor`,"") as 'operator',
+rec.`sub_total` as 'amount',
+COALESCE(cas.`description`,"") as 'comment',
+COALESCE(rec.`amex` + rec.`visa` + rec.`mastercard`,0) as 'card',
+COALESCE(rec.`cashe`,0) as 'cash',
+COALESCE(rec.`cheque`,0) as 'check'
+from `reconciliation` rec
+left join `cashio` cas on cas.`reconcilation_id` = rec.`id`
+where rec.`status`=3 and DATE(rec.`created_dt`) = DATE($P{CUR_DATE})]]>
+	</queryString>
+	<field name="invoice_n" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="operator" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="amount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="comment" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="card" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cash" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="check" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="Total_Amount" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
+	</variable>
+	<variable name="Total_Card" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{card}]]></variableExpression>
+	</variable>
+	<variable name="Total_Cash" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{cash}]]></variableExpression>
+	</variable>
+	<variable name="Total_Check" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{check}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="35" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement x="0" y="0" width="555" height="34"/>
+				<graphicElement>
+					<pen lineWidth="3.0" lineColor="#CCCCCC"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="2" y="0" width="553" height="35"/>
+				<textElement textAlignment="Center">
+					<font size="26" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Pay-out Report]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="18" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="2" y="0" width="77" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Invoice No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="79" y="0" width="79" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Operator]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="158" y="0" width="79" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="237" y="0" width="314" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Comment]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="2" y="0" width="77" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoice_n}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="79" y="0" width="79" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{operator}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="158" y="0" width="79" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="237" y="0" width="314" height="20" forecolor="#FFFFFF"/>
+			</rectangle>
+			<textField>
+				<reportElement x="248" y="0" width="297" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{comment}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="120" splitType="Stretch">
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="158" y="20" width="79" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{Total_Card} == null ? new BigDecimal(0) : $V{Total_Card}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="158" y="40" width="79" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{Total_Cash} == null ? new BigDecimal(0) : $V{Total_Cash}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="158" y="60" width="79" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{Total_Check} == null ? new BigDecimal(0) : $V{Total_Check}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="18" y="85" width="219" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<staticText>
+				<reportElement mode="Opaque" x="18" y="58" width="79" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Check]]></text>
+			</staticText>
+			<line>
+				<reportElement x="2" y="3" width="555" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<textField pattern="$#,##0.00" isBlankWhenNull="false">
+				<reportElement x="158" y="97" width="79" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{Total_Amount} == null ? new BigDecimal(0) : $V{Total_Amount}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="18" y="40" width="79" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Cash]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="18" y="20" width="79" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Credit card]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="18" y="97" width="79" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<line>
+				<reportElement x="18" y="89" width="219" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="2" y="0" width="555" height="1" forecolor="#CCCCCC"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

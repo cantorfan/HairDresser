@@ -1,0 +1,36 @@
+#newEntityTarget {
+	DISPLAY: none
+}
+.editPage #newEntityList LI {
+	DISPLAY: none
+}
+.bNext .clear {
+	DISPLAY: none
+}
+.bPageTitle .ptBody .links .linkBlank {
+	DISPLAY: none
+}
+.bPageTitle .blank {
+	DISPLAY: none
+}
+.setup .bPageBlock .detailList .required .requiredMark {
+	DISPLAY: none
+}
+.bPageBlock .pbFooter {
+	DISPLAY: none
+}
+.listElementBottomNav {
+	DISPLAY: none
+}
+.multiuserCalendar .eventCtnr .callout {
+	DISPLAY: none
+}
+.mCreateNew {
+	DISPLAY: none
+}
+.lookup .bPageBlock .pbHeader {
+	DISPLAY: none
+}
+.lookup .bPageBlock .pbFooter {
+	DISPLAY: none
+}

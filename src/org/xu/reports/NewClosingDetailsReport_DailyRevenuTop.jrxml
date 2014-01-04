@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NewClosingDetailsReport_DailyRevenuTop" pageWidth="555" pageHeight="300" whenNoDataType="AllSectionsNoDetail" columnWidth="535" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<subDataset name="pie1">
+		<parameter name="CUR_DATE_PIE" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[SELECT
+COALESCE(SUM(if(res.`status` <> 2 and res.`status` <> 6,
+    if(res.`status` = 4,
+        if(tic.`service_id` <> 0,
+            0,
+            if(tic.`product_id` <> 0,
+                if(tic.`status` = 4,
+                    (tic.`price`*tic.`qty`)*(1 - tic.`discount`/100),
+                    0
+                ),
+                0
+            )
+        ),
+        if(tic.`service_id` <> 0,
+            0,
+            if(tic.`product_id` <> 0,
+                (tic.`price`*tic.`qty`)*(1 - tic.`discount`/100),
+                0
+            )
+        )
+    ),
+    0
+)),0) as 'grosss_sale_of_product',
+COALESCE(SUM(if(res.`status` <> 2 and res.`status` <> 6,
+    if(res.`status` = 4,
+        if(tic.`service_id` <> 0,
+            if(tic.`status` = 4,
+                -(tic.`price`*tic.`qty`)*(1 - tic.`discount`/100),
+                0
+            ),
+            0
+        ),
+        if(tic.`service_id` <> 0,
+            (tic.`price`*tic.`qty`)*(1 - tic.`discount`/100),
+            0
+        )
+    ),
+    0
+)),0) as 'grosss_sale_of_service',
+COALESCE(SUM(if(res.`status` <> 2 and res.`status` <> 6,
+    if(res.`status` <> 3 and res.`status` <> 5,
+        if(res.`status` = 4,
+            -(tic.`price`*tic.`qty`)*(1 - tic.`discount`/100),
+            (tic.`price`*tic.`qty`)*(1 - tic.`discount`/100)
+        ),
+        0
+    ),
+    0
+)),0) as 'net_sales',
+(select
+COALESCE(SUM(if(res.`status` <> 2 and res.`status` <> 6,
+    if(res.`status` = 4,
+        if(tic.`service_id` <> 0,
+            if(tic.`status` = 4,
+                -(tic.`price`*tic.`qty`)*(1 - tic.`discount`/100),
+                0
+            ),
+            0
+        ),
+        if(tic.`service_id` <> 0,
+            (tic.`price`*tic.`qty`)*(1 - tic.`discount`/100),
+            0
+        )
+    ),
+    0
+)),0)
+from `appointment` app
+inner join `ticket` tic on tic.`id` = app.`ticket_id`
+left join `reconciliation` res on res.`code_transaction` = tic.`code_transaction`
+where app.`request` = 1
+AND res.id_location=1 AND res.status != 1 AND DATE(res.Created_dt) = DATE($P{CUR_DATE_PIE})
+)  as 'request'
+FROM reconciliation res
+left join `ticket` tic on tic.`code_transaction` = res.`code_transaction`
+where ISNULL(tic.`id`)  = 0 and
+res.id_location=1 AND res.status != 1 AND DATE(res.Created_dt) = DATE($P{CUR_DATE_PIE})]]>
+		</queryString>
+		<field name="grosss_sale_of_product" class="java.math.BigDecimal">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="grosss_sale_of_service" class="java.math.BigDecimal">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="net_sales" class="java.math.BigDecimal">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="request" class="java.math.BigDecimal">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+	</subDataset>
+	<parameter name="CUR_DATE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+sum(amex) as 'amex',
+sum(visa) as 'visa',
+sum(mastercard) as 'mastercard',
+sum(cashe) as 'cashe',
+sum(cheque) as 'cheque',
+sum(giftcard) as 'giftcard',
+sum(refund) as 'refund',
+sum(pay_in) as 'pay_in',
+sum(pay_out) as 'pay_out'
+from
+(
+select
+if(res.`status` <> 2 and res.`status` <> 6,
+    if(res.`status` = 3 or res.`status` = 4,
+            -res.amex,
+            res.amex
+        ),
+        0
+  ) as 'amex',
+if(res.`status` <> 2 and res.`status` <> 6,
+    if(res.`status` = 3 or res.`status` = 4,
+            -res.visa,
+            res.visa
+        ),
+        0
+  ) as 'visa',
+if(res.`status` <> 2 and res.`status` <> 6,
+    if(res.`status` = 3 or res.`status` = 4,
+            -res.mastercard,
+            res.mastercard
+        ),
+        0
+  ) as 'mastercard',
+if(res.`status` <> 2 and res.`status` <> 6,
+    if(res.`status` = 3 or res.`status` = 4,
+            -(res.cashe-res.chg),
+            res.cashe-res.chg
+        ),
+        0
+  ) as 'cashe',
+if(res.`status` <> 2 and res.`status` <> 6,
+    if(res.`status` = 3 or res.`status` = 4,
+            -res.cheque,
+            res.cheque
+        ),
+        0
+  ) as 'cheque',
+if(res.`status` <> 2 and res.`status` <> 6,
+    if(res.`status` = 3 or res.`status` = 4,
+            -res.giftcard,
+            res.giftcard
+        ),
+        0
+  ) as 'giftcard',
+if(res.`status` <> 2 and res.`status` <> 6,
+    if(res.`status` = 4,
+            res.`total`,
+            0
+        ),
+        0
+) as 'refund',
+if(res.`status` <> 2 and res.`status` <> 6,
+    if(res.`status` = 5,
+            res.`total`,
+            0
+        ),
+        0
+) as 'pay_in',
+if(res.`status` <> 2 and res.`status` <> 6,
+    if(res.`status` = 3,
+            res.`total`,
+            0
+        ),
+        0
+) as 'pay_out'
+FROM reconciliation res
+where DATE(res.`created_dt`) = DATE($P{CUR_DATE}) and res.`status`<>1
+UNION ALL
+select
+0 as 'amex',
+0 as 'visa',
+0 as 'mastercard',
+0 as 'cashe',
+0 as 'cheque',
+0 as 'giftcard',
+0 as 'refund',
+0 as 'pay_in',
+0 as 'pay_out') as sdf]]>
+	</queryString>
+	<field name="amex" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="visa" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="mastercard" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cashe" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cheque" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="giftcard" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="refund" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="pay_in" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="pay_out" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="37" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement x="1" y="0" width="555" height="34"/>
+				<graphicElement>
+					<pen lineWidth="3.0" lineColor="#CCCCCC"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="1" y="2" width="555" height="35"/>
+				<textElement textAlignment="Center">
+					<font size="26" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Revenue report]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="222" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="17" y="9" width="88" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Credit Cards]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="17" y="35" width="78" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Cash]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="17" y="65" width="78" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Check]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="17" y="92" width="78" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[GiftCard]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="16" y="120" width="78" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Refund]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="16" y="147" width="78" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Pay-in]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="16" y="175" width="78" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Pay-out]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="155" y="9" width="78" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amex}.add( $F{visa}.add( $F{mastercard} ))]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="155" y="37" width="78" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{cashe}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="155" y="65" width="78" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{cheque}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="155" y="93" width="78" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{giftcard}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00">
+				<reportElement x="155" y="121" width="78" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{refund}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00">
+				<reportElement x="155" y="149" width="78" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{pay_in}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00">
+				<reportElement x="155" y="177" width="78" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{pay_out}]]></textFieldExpression>
+			</textField>
+			<pieChart>
+				<chart isShowLegend="false" theme="default">
+					<reportElement x="243" y="9" width="312" height="202"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend position="Right"/>
+				</chart>
+				<pieDataset>
+					<dataset>
+						<datasetRun subDataset="pie1">
+							<datasetParameter name="CUR_DATE_PIE">
+								<datasetParameterExpression><![CDATA[$P{CUR_DATE}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+					</dataset>
+					<pieSeries>
+						<keyExpression><![CDATA["Product"]]></keyExpression>
+						<valueExpression><![CDATA[$F{grosss_sale_of_product}.add( new BigDecimal(0.001) )]]></valueExpression>
+					</pieSeries>
+					<pieSeries>
+						<keyExpression><![CDATA["Service"]]></keyExpression>
+						<valueExpression><![CDATA[$F{grosss_sale_of_service}.add( new BigDecimal(0.001) )]]></valueExpression>
+					</pieSeries>
+				</pieDataset>
+				<piePlot labelFormat="{2}" legendLabelFormat="{0} ({2})">
+					<plot/>
+				</piePlot>
+			</pieChart>
+			<line>
+				<reportElement x="1" y="211" width="554" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="1" y="216" width="554" height="1" forecolor="#CCCCCC"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

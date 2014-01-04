@@ -1,0 +1,75 @@
+BODY {
+	MARGIN-TOP: 0px; FONT-SIZE: 12px; MARGIN-LEFT: 0px; MARGIN-RIGHT: 0px; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif
+}
+TD {
+	FONT-SIZE: 12px; FONT-FAMILY: Courier New, Arial, Helvetica, sans-serif
+}
+TH {
+	FONT-SIZE: 12px; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif
+}
+.detail {
+	FONT-SIZE: 2px; COLOR: black; FONT-FAMILY: Verdana
+}
+.ListHeader {
+	FONT-WEIGHT: bold; FONT-SIZE: 2px; COLOR: white; FONT-FAMILY: Verdana; BACKGROUND-COLOR: #003399
+}
+.Title {
+	FONT-WEIGHT: bold; FONT-SIZE: 16px; COLOR: darkslateblue; FONT-FAMILY: Arial
+}
+.GridHeader {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; VERTICAL-ALIGN: sub; COLOR: #2f3d3f; FONT-FAMILY: Tahoma, Verdana; HEIGHT: 26px; BACKGROUND-COLOR: #ecfcff; TEXT-DECORATION: none
+}
+.GridItem {
+	FONT-SIZE: 11px; BACKGROUND-POSITION-Y: bottom; BACKGROUND-IMAGE: url(/DMD/pic/dot_line_07.gif); COLOR: #0471b9; BACKGROUND-REPEAT: repeat-x; FONT-FAMILY: Tahoma, Verdana; HEIGHT: 26px; BACKGROUND-COLOR: transparent; TEXT-DECORATION: none
+}
+.GridAlternate {
+	FONT-SIZE: 11px; BACKGROUND-POSITION-Y: bottom; BACKGROUND-IMAGE: url(/DMD/pic/dot_line_07.gif); COLOR: #0471b9; BACKGROUND-REPEAT: repeat-x; FONT-FAMILY: Tahoma, Verdana; HEIGHT: 26px; TEXT-DECORATION: none
+}
+.SearchBar {
+	FONT-WEIGHT: bold; FONT-SIZE: 13px; FONT-FAMILY: Verdana; BACKGROUND-COLOR: #cfdee8
+}
+.BoldFont {
+	FONT-WEIGHT: bold; FONT-SIZE: 13px; COLOR: black; FONT-FAMILY: Verdana
+}
+.CommonFont {
+	FONT-SIZE: 13px; COLOR: black; FONT-FAMILY: Verdana
+}
+TEXTAREA {
+	FONT-SIZE: 9pt; FONT-FAMILY: 'Arial', 'Helvetica'
+}
+INPUT {
+	FONT-SIZE: 9pt; FONT-FAMILY: 'Arial', 'Helvetica'
+}
+INPUT.xbutton {
+	BORDER-RIGHT: #666666 1px solid; BORDER-TOP: #336699 1px solid; FONT-WEIGHT: bold; FONT-SIZE: 8pt; BORDER-LEFT: #336699 1px solid; CURSOR: hand; COLOR: #ffffff; BORDER-BOTTOM: #666666 1px solid; FONT-FAMILY: 'Arial', 'Helvetica'; BACKGROUND-COLOR: #003366
+}
+INPUT.button {
+	BORDER-RIGHT: #666666 1px solid; BORDER-TOP: #336699 1px solid; FONT-WEIGHT: bold; FONT-SIZE: 8pt; BORDER-LEFT: #336699 1px solid; CURSOR: hand; COLOR: #ffffff; BORDER-BOTTOM: #666666 1px solid; FONT-FAMILY: 'Arial', 'Helvetica'; BACKGROUND-COLOR: #ff9b02
+}
+.HiddenControl {
+	DISPLAY: none
+}
+.PlusImg {
+	DISPLAY: inline; CURSOR: hand
+}
+.ReportContent {
+	FONT-SIZE: 13px; COLOR: black; FONT-FAMILY: Verdana
+}
+.ReportHeader {
+	FONT-SIZE: 13px; COLOR: white; FONT-FAMILY: Verdana; BACKGROUND-COLOR: #003399
+}
+.FieldLabel {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; FONT-FAMILY: 'Arial', 'Helvetica'; BACKGROUND-COLOR: #dddddd; TEXT-ALIGN: left
+}
+.FieldMapLabel {
+	FONT-WEIGHT: normal; FONT-SIZE: 9pt; FONT-FAMILY: 'Arial', 'Helvetica'; BACKGROUND-COLOR: #eeeeee; TEXT-ALIGN: left
+}
+.toprowclass {
+	HEIGHT: 3px; BACKGROUND-COLOR: #a0d6d5
+}
+.bottomrowclass {
+	HEIGHT: 1px; BACKGROUND-COLOR: #d6d6d6
+}
+DIV#ed {
+	DISPLAY: none
+}

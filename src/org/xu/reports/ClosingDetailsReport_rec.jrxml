@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="rec"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Landscape"
+		 pageWidth="330"
+		 pageHeight="50"
+		 columnWidth="330"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<parameter name="CUR_DATE" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="RecSubReport" isForPrompting="false" class="net.sf.jasperreports.engine.JasperReport"/>
+	<queryString><![CDATA[SELECT
+(tt.card_st_all - (tt.card_st3+tt.card_st4)*2) as 'card_total',
+(tt.cash_st_all - (tt.cash_st3+tt.cash_st4)*2) as 'cash_total',
+(tt.cheque_st_all - (tt.cheque_st3+tt.cheque_st4)*2) as 'cheque_total',
+(tt.gift_st_all - (tt.gift_st3+tt.gift_st4)*2) as 'gift_total'
+from
+(
+SELECT
+SUM(COALESCE((case status when 3 then (amex + visa + mastercard) end), 0)) as 'card_st3',
+SUM(COALESCE((case status when 4 then (amex + visa + mastercard) end), 0)) as 'card_st4',
+SUM((amex + visa + mastercard)) as 'card_st_all',
+
+SUM(COALESCE((case status when 3 then (cashe) end), 0)) as 'cash_st3',
+SUM(COALESCE((case status when 4 then (cashe) end), 0)) as 'cash_st4',
+SUM((cashe)) as 'cash_st_all',
+
+SUM(COALESCE((case status when 3 then (cheque) end), 0)) as 'cheque_st3',
+SUM(COALESCE((case status when 4 then (cheque) end), 0)) as 'cheque_st4',
+SUM((cheque)) as 'cheque_st_all',
+
+SUM(COALESCE((case status when 3 then (giftcard) end), 0)) as 'gift_st3',
+SUM(COALESCE((case status when 4 then (giftcard) end), 0)) as 'gift_st4',
+SUM((giftcard)) as 'gift_st_all'
+
+FROM reconciliation
+WHERE STATUS not in (1,2,6)
+and DATE(created_dt) = DATE($P{CUR_DATE})
+) tt]]></queryString>
+
+	<field name="card_total" class="java.math.BigDecimal"/>
+	<field name="cash_total" class="java.math.BigDecimal"/>
+	<field name="cheque_total" class="java.math.BigDecimal"/>
+	<field name="gift_total" class="java.math.BigDecimal"/>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="22"  isSplitAllowed="true" >
+				<rectangle radius="0" >
+					<reportElement
+						mode="Opaque"
+						x="1"
+						y="0"
+						width="329"
+						height="20"
+						forecolor="#000000"
+						backcolor="#999999"
+						key="element-1"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
+				<staticText>
+					<reportElement
+						x="84"
+						y="0"
+						width="80"
+						height="20"
+						forecolor="#FFFFFF"
+						key="element-3"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="" size="12"/>
+					</textElement>
+				<text><![CDATA[Cash total]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="166"
+						y="0"
+						width="80"
+						height="20"
+						forecolor="#FFFFFF"
+						key="element-4"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="" size="12"/>
+					</textElement>
+				<text><![CDATA[Check total]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="248"
+						y="0"
+						width="80"
+						height="20"
+						forecolor="#FFFFFF"
+						key="element-5"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="" size="12"/>
+					</textElement>
+				<text><![CDATA[Gift card total]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="2"
+						y="0"
+						width="80"
+						height="20"
+						forecolor="#FFFFFF"
+						key="element-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font fontName="" size="12"/>
+					</textElement>
+				<text><![CDATA[Credit card]]></text>
+				</staticText>
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="27"  isSplitAllowed="true" >
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="25"
+						width="329"
+						height="1"
+						forecolor="#808080"
+						key="line"
+						positionType="FixRelativeToBottom"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<textField isStretchWithOverflow="false" pattern="###0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="2"
+						y="6"
+						width="80"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{card_total}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="###0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="166"
+						y="6"
+						width="80"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{cheque_total}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="###0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="248"
+						y="6"
+						width="80"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{gift_total}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="###0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="84"
+						y="6"
+						width="80"
+						height="18"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{cash_total}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

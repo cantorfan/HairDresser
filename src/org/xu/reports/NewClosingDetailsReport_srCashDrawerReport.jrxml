@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NewClosingDetailsReport_srCashDrawerReport" pageWidth="555" pageHeight="230" whenNoDataType="AllSectionsNoDetail" columnWidth="535" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<parameter name="CUR_DATE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+sum(pennies) as 'pennies',
+sum(nickels) as 'nickels',
+sum(dimes) as 'dimes',
+sum(quarters) as 'quarters',
+sum(half_dollars) as 'half_dollars',
+sum(dollars) as 'dollars',
+sum(singles) as 'singles',
+sum(fives) as 'fives',
+sum(tens) as 'tens',
+sum(twenties) as 'twenties',
+sum(fifties) as 'fifties',
+sum(hundreds) as 'hundreds',
+sum(cash_over) as 'cash_over',
+sum(cash_short) as 'cash_short',
+sum(opening_cash) as 'opening_cash',
+1 as 'location_id'
+from
+(SELECT
+cd.pennies/100 as 'pennies',
+cd.nickels/20 as 'nickels',
+cd.dimes/10 as 'dimes',
+cd.quarters/4 as 'quarters',
+cd.half_dollars/2 as 'half_dollars',
+cd.dollars as 'dollars',
+cd.singles as 'singles',
+cd.fives*5 as 'fives',
+cd.tens*10 as 'tens',
+cd.twenties*20 as 'twenties',
+cd.fifties*50 as 'fifties',
+cd.hundreds*100 as 'hundreds',
+cd.cash_over as 'cash_over',
+cd.cash_short as 'cash_short',
+(SELECT
+cd.pennies/100 +
+cd.nickels/20 +
+cd.dimes/10 +
+cd.quarters/4 +
+cd.half_dollars/2 +
+cd.dollars +
+cd.singles +
+cd.fives*5 +
+cd.tens*10 +
+cd.twenties*20 +
+cd.fifties*50 +
+cd.hundreds*100
+FROM `cash_drawing` cd
+WHERE DATE(date)=DATE($P{CUR_DATE})
+AND openClose = 0 LIMIT 0,1) as 'opening_cash',
+location_id
+FROM `cash_drawing` cd
+WHERE DATE(date)=DATE($P{CUR_DATE})
+AND openClose = 2
+LIMIT 0,1
+UNION ALL
+select
+0 as 'pennies',
+0 as 'nickels',
+0 as 'dimes',
+0 as 'quarters',
+0 as 'half_dollars',
+0 as 'dollars',
+0 as 'singles',
+0 as 'fives',
+0 as 'tens',
+0 as 'twenties',
+0 as 'fifties',
+0 as 'hundreds',
+0 as 'cash_over',
+0 as 'cash_short',
+0 as 'opening_cash',
+1 as 'location_id') as sdf
+group by location_id]]>
+	</queryString>
+	<field name="pennies" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nickels" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dimes" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="quarters" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="half_dollars" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dollars" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="singles" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="fives" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tens" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="twenties" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="fifties" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="hundreds" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cash_over" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cash_short" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="opening_cash" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="location_id" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="total" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{pennies}.add($F{nickels}).add($F{dimes}).add($F{quarters}).add($F{half_dollars}).add($F{dollars}).add($F{singles}).add($F{fives}).add($F{tens}).add($F{twenties}).add($F{fifties}).add($F{hundreds})]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="37" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement x="0" y="0" width="555" height="34"/>
+				<graphicElement>
+					<pen lineWidth="3.0" lineColor="#CCCCCC"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="35"/>
+				<textElement textAlignment="Center">
+					<font size="26" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Cash drawer report]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="230" splitType="Stretch">
+			<staticText>
+				<reportElement x="19" y="58" width="76" height="20"/>
+				<textElement>
+					<font size="12" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Pennies]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="179" y="58" width="69" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{pennies}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="19" y="78" width="76" height="20"/>
+				<textElement>
+					<font size="12" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Nickels]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="179" y="78" width="69" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{nickels}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="19" y="98" width="76" height="20"/>
+				<textElement>
+					<font size="12" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Dimes]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="179" y="98" width="69" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{dimes}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="19" y="118" width="76" height="20"/>
+				<textElement>
+					<font size="12" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Quarters]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="179" y="118" width="69" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{quarters}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="19" y="138" width="76" height="20"/>
+				<textElement>
+					<font size="12" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[1/2 Dollars]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="179" y="138" width="69" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{half_dollars}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="19" y="158" width="76" height="20"/>
+				<textElement>
+					<font size="12" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Dollars]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="179" y="158" width="69" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{dollars}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="301" y="58" width="76" height="20"/>
+				<textElement>
+					<font size="12" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Singles]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="461" y="58" width="69" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{singles}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="301" y="78" width="76" height="20"/>
+				<textElement>
+					<font size="12" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Fives]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="461" y="78" width="69" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{fives}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="301" y="98" width="76" height="20"/>
+				<textElement>
+					<font size="12" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Tens]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="461" y="98" width="69" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{tens}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="301" y="118" width="76" height="20"/>
+				<textElement>
+					<font size="12" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Twenties]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="461" y="118" width="69" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{twenties}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="301" y="138" width="76" height="20"/>
+				<textElement>
+					<font size="12" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Fifties]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="461" y="138" width="69" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{fifties}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="301" y="158" width="76" height="20"/>
+				<textElement>
+					<font size="12" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Hundreds]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="461" y="158" width="69" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{hundreds}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="157" y="201" width="88" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{total}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="97" y="201" width="34" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="385" y="201" width="35" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Short]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="261" y="201" width="40" height="20" forecolor="#FF3333"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Over]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="431" y="201" width="50" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{cash_short}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="311" y="201" width="50" height="20" forecolor="#FF3333"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{cash_over}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="13" y="7" width="118" height="20"/>
+				<textElement>
+					<font size="12" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Opening cash Drawer]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00" isBlankWhenNull="true">
+				<reportElement x="197" y="7" width="51" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{opening_cash}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="13" y="31" width="235" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<staticText>
+				<reportElement x="127" y="34" width="30" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Qty]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="179" y="34" width="69" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<line>
+				<reportElement x="179" y="51" width="66" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="127" y="52" width="30" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<textField pattern="###0" isBlankWhenNull="true">
+				<reportElement x="127" y="118" width="30" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{quarters}.divide( new  BigDecimal(4))]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0" isBlankWhenNull="true">
+				<reportElement x="127" y="98" width="30" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{dimes}.divide( new  BigDecimal(10))]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0" isBlankWhenNull="true">
+				<reportElement x="127" y="58" width="30" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{pennies}.divide( new  BigDecimal(100))]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0" isBlankWhenNull="true">
+				<reportElement x="127" y="78" width="30" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{nickels}.divide( new  BigDecimal(20))]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0" isBlankWhenNull="true">
+				<reportElement x="127" y="138" width="30" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{half_dollars}.divide( new  BigDecimal(1))]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0" isBlankWhenNull="true">
+				<reportElement x="127" y="158" width="30" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{dollars}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="274" y="52" width="2" height="126" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="461" y="51" width="66" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<staticText>
+				<reportElement x="461" y="34" width="69" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<line>
+				<reportElement x="409" y="52" width="30" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<staticText>
+				<reportElement x="409" y="34" width="30" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Qty]]></text>
+			</staticText>
+			<textField pattern="###0" isBlankWhenNull="true">
+				<reportElement x="409" y="158" width="30" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{hundreds}.divide( new BigDecimal(100) )]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0" isBlankWhenNull="true">
+				<reportElement x="409" y="58" width="30" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{singles}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0" isBlankWhenNull="true">
+				<reportElement x="409" y="118" width="30" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{twenties}.divide( new BigDecimal(20) )]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0" isBlankWhenNull="true">
+				<reportElement x="409" y="138" width="30" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{fifties}.divide( new BigDecimal(50) )]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0" isBlankWhenNull="true">
+				<reportElement x="409" y="98" width="30" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{tens}.divide( new BigDecimal(10) )]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0" isBlankWhenNull="true">
+				<reportElement x="409" y="78" width="30" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{fives}.divide( new BigDecimal(5) )]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="13" y="186" width="517" height="1" forecolor="#CCCCCC"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

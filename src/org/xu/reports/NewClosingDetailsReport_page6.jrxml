@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NewClosingDetailsReport_page6" pageWidth="555" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<parameter name="Page5Product" class="net.sf.jasperreports.engine.JasperReport"/>
+	<parameter name="Page5ProductPie" class="net.sf.jasperreports.engine.JasperReport"/>
+	<parameter name="CUR_DATE" class="java.lang.String"/>
+	<group name="field">
+		<groupHeader>
+			<band height="50">
+				<subreport>
+					<reportElement x="0" y="0" width="230" height="41"/>
+					<subreportParameter name="CUR_DATE">
+						<subreportParameterExpression><![CDATA[$P{CUR_DATE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{Page5Product}]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="pie">
+		<groupHeader>
+			<band height="50">
+				<subreport>
+					<reportElement x="0" y="0" width="323" height="41"/>
+					<subreportParameter name="CUR_DATE">
+						<subreportParameterExpression><![CDATA[$P{CUR_DATE}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{Page5ProductPie}]]></subreportExpression>
+				</subreport>
+				<break>
+					<reportElement x="0" y="47" width="100" height="1"/>
+				</break>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="92" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="554" height="35"/>
+				<textElement textAlignment="Center">
+					<font size="16" isBold="false"/>
+				</textElement>
+				<text><![CDATA[SUMMARY DAILY PRODUCTS ANALYSIS REPORT]]></text>
+			</staticText>
+			<rectangle radius="10">
+				<reportElement x="0" y="54" width="555" height="34"/>
+				<graphicElement>
+					<pen lineWidth="3.0" lineColor="#CCCCCC"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="54" width="555" height="35"/>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Products Analysis]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NewClosingDetailsReport_page5_service_analysis_pie" pageWidth="550" pageHeight="300" whenNoDataType="AllSectionsNoDetail" columnWidth="550" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<parameter name="START_DATE" class="java.lang.String"/>
+	<parameter name="END_DATE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[ select
+                    COALESCE(list_data.visa, 0) as 'visa',
+                    COALESCE(list_data.mastercard, 0) as 'mastercard',
+                    COALESCE(list_data.amex, 0) as 'amex',
+                    COALESCE(list_data.cashe, 0) as 'cashe',
+                    COALESCE(list_data.cheque, 0) as 'cheque'
+                    from
+                     (select
+                    sum(if(res.`status` <> 2 and res.`status` <> 6,
+                        if(res.`status` = 3 or res.`status` = 4,
+                                -res.visa,
+                                res.visa
+                            ),
+                            0
+                      )) as 'visa',
+                    sum(if(res.`status` <> 2 and res.`status` <> 6,
+                        if(res.`status` = 3 or res.`status` = 4,
+                                -res.mastercard,
+                                res.mastercard
+                            ),
+                            0
+                      )) as 'mastercard',
+                    sum(if(res.`status` <> 2 and res.`status` <> 6,
+                        if(res.`status` = 3 or res.`status` = 4,
+                                -res.amex,
+                                res.amex
+                            ),
+                            0
+                      )) as 'amex',
+                    sum(if(res.`status` <> 2 and res.`status` <> 6,
+                        if(res.`status` = 3 or res.`status` = 4,
+                                -res.cashe,
+                                res.cashe
+                            ),
+                            0
+                      )) as 'cashe',
+                    sum(if(res.`status` <> 2 and res.`status` <> 6,
+                        if(res.`status` = 3 or res.`status` = 4,
+                                -res.cheque,
+                                res.cheque
+                            ),
+                            0
+                      )) as 'cheque'
+
+                    FROM reconciliation res
+                    where res.`status`<>1 and (DATE(res.`created_dt`) BETWEEN DATE($P{START_DATE}) and DATE($P{END_DATE}))
+                    ) list_data ;]]>
+	</queryString>
+	<field name="visa" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="mastercard" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="amex" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cashe" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cheque" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="300" splitType="Stretch">
+			<pieChart>
+				<chart>
+					<reportElement x="0" y="0" width="550" height="300"/>
+					<chartTitle>
+						<font size="8"/>
+					</chartTitle>
+					<chartSubtitle>
+						<font size="8"/>
+					</chartSubtitle>
+					<chartLegend position="Bottom">
+						<font size="8"/>
+					</chartLegend>
+				</chart>
+				<pieDataset>
+					<pieSeries>
+						<keyExpression><![CDATA["VISA"]]></keyExpression>
+						<valueExpression><![CDATA[$F{visa}]]></valueExpression>
+					</pieSeries>
+					<pieSeries>
+						<keyExpression><![CDATA["MASTERCARD"]]></keyExpression>
+						<valueExpression><![CDATA[$F{mastercard}]]></valueExpression>
+					</pieSeries>
+					<pieSeries>
+						<keyExpression><![CDATA["AMEX"]]></keyExpression>
+						<valueExpression><![CDATA[$F{amex}]]></valueExpression>
+					</pieSeries>
+					<pieSeries>
+						<keyExpression><![CDATA["CASH"]]></keyExpression>
+						<valueExpression><![CDATA[$F{cashe}]]></valueExpression>
+					</pieSeries>
+					<pieSeries>
+						<keyExpression><![CDATA["CHECK"]]></keyExpression>
+						<valueExpression><![CDATA[$F{cheque}]]></valueExpression>
+					</pieSeries>
+				</pieDataset>
+				<piePlot isCircular="true" labelFormat="{0}" legendLabelFormat="{0} ({2})">
+					<plot/>
+				</piePlot>
+			</pieChart>
+		</band>
+	</summary>
+</jasperReport>

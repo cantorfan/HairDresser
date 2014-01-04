@@ -1,0 +1,13 @@
+.clear{
+    clear: both;
+}
+.floatLeft{
+    float: left;
+}
+.centerText{
+    text-align: center;
+}
+.submitBTN input { display: block; height: 24px; border: none; color: #FFF; text-align: center; font-weight: bold; cursor: pointer; }
+.submitBTN input.button_small { width: 80px; background: #000 url(../images/button_small.jpg) no-repeat; }
+.submitBTN input:hover { background-position: 0px -24px; }
+

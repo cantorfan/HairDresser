@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Dashboard_Summary_report_2" pageWidth="555" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="535" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<parameter name="START_DATE" class="java.lang.String"/>
+	<parameter name="END_DATE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+COALESCE(CONCAT(em.`fname`," ",em.`lname`), "") as 'flNameEmp',
+COALESCE(inv.`name`, "NoName") as 'product',
+sum(if (rec.status <> 3 and rec.status <> 5,
+          if(rec.status = 4,
+              -tic.`qty`,
+              tic.`qty`
+          ),
+          0
+      ))  as 'qty',
+sum(if (rec.status <> 3 and rec.status <> 5,
+          if(rec.status = 4,
+              -(tic.`price`*tic.`qty`)*(1 - tic.`discount`/100),
+              (tic.`price`*tic.`qty`)*(1 - tic.`discount`/100)
+          ),
+          0
+      ))  as 'amount'
+from `ticket` tic
+left join `employee`em on em.`id` = tic.`employee_id`
+left join `reconciliation` rec on rec.`code_transaction` = tic.`code_transaction`
+left join `inventory` inv on inv.`id` = tic.`product_id`
+left join service ser on ser.id = tic.service_id
+where
+   rec.`status` not in (1,2,6) and
+   tic.`service_id` = 0 and
+   tic.`product_id` != 0
+   and DATE(rec.`created_dt`) BETWEEN DATE($P{START_DATE}) AND DATE($P{END_DATE})
+group by product
+order by product]]>
+	</queryString>
+	<field name="flNameEmp" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="product" class="java.lang.String"/>
+	<field name="amount" class="java.math.BigDecimal"/>
+	<field name="qty" class="java.lang.String"/>
+	<variable name="amount_SUM" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="23" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement x="0" y="0" width="265" height="20"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#CCCCCC"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="4" y="3" width="255" height="17"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[%    PRODUCTS                          QTY                TOTAL]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="19" splitType="Stretch">
+			<textField pattern="$#,##0.00">
+				<reportElement x="201" y="3" width="58" height="13" forecolor="#000000"/>
+				<textElement textAlignment="Right">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="146" y="3" width="55" height="13" forecolor="#000000"/>
+				<textElement textAlignment="Center">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{qty}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="34" y="3" width="112" height="13" forecolor="#000000"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{product}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Auto" pattern="#,##0%">
+				<reportElement x="4" y="3" width="30" height="13"/>
+				<textElement textAlignment="Center">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[new Double( $F{amount}.doubleValue() / $V{amount_SUM}.doubleValue() )]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="10" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,448 @@
+/*
+WICK: Web Input Completion Kit
+http://wick.sourceforge.net/
+Copyright (c) 2004, Christopher T. Holland,
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+Neither the name of the Christopher T. Holland, nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
+
+body{
+    font-family: Arial;
+}
+
+.floater {
+z-index:2;
+display:none;
+padding:0;
+}
+
+.floater td {
+font-family: Gill, Helvetica, sans-serif;
+background-color:white;
+border:1px inset #979797;
+color:black;
+}
+
+.matchedSmartInputItem {
+font-size:0.8em;
+padding: 5px 10px 1px 5px;
+margin:0;
+cursor:pointer;
+text-align:left;
+}
+
+.selectedSmartInputItem {
+color:white;
+background-color:#3875D7;
+}
+
+#smartInputResults {
+padding:0;margin:0;
+}
+
+.siwCredit {
+margin:0;padding:0;margin-top:10px;font-size:0.7em;color:black;
+}
+
+.wickEnabled{
+/*	color:#FFFFFF;*/ 
+	background-color: #333333; 
+	border-top-width: 1px; 
+	border-right-width: 1px; 
+	border-bottom-width: 1px; 
+	border-left-width: 1px; 
+	border-top-style: solid;
+	border-right-style: solid; 
+	border-bottom-style: solid; 
+	border-left-style: solid; 
+	border-top-color: #2f2e2e; 
+	border-right-color: #2f2e2e; 
+	border-bottom-color: #2f2e2e; 
+	border-left-color: #2f2e2e;
+}
+
+BODY{
+	padding: 0;
+	margin: 0;
+	background-color: #000000;
+	color: #FFFFFF;
+}
+
+#page_separator{
+	height: 45px;
+	border-bottom: 1px solid #959699;
+	background-color: #4D4C4D;
+}
+
+#schedule_column{
+	background-color: #4D4C4D;
+	width: 785px;
+}
+
+.schedule_header_names_control{
+	width: 85px;
+	height: 57px;
+	background-color: #7E7E80;
+	border-right: 1px solid #959699;
+	text-align:left;
+	vertical-align: top;
+	background: url("../img/names_frame_bg.png");
+}
+
+.schedule_header_names_control .frame{
+	position:absolute;
+	z-index: 2;
+	margin-left: 16px;
+	width: 52px;
+	height: 43px;
+}
+
+.schedule_header_names_control .photo{
+	position: absolute;
+	z-index: 1;
+	margin-left: 16px;
+	width: 52px;
+	height: 43px;
+}
+
+.schedule_header_names_control .name{
+	width: 85px;
+	text-align:center;
+	position: absolute;
+	z-index: 3;
+	margin-top: 40px;
+}
+
+
+#schedule_header_control #left_arrow_control{
+	width: 45px;
+	height: 57px;
+	border-right: 1px solid #959699;
+}
+
+#schedule_header_control #left_arrow_control img{
+	width: 45px;
+	height: 57px;
+}
+
+#schedule_header_control #right_arrow_control{
+	width: 45px;
+	height: 57px;
+	padding: 0;
+	margin: 0;
+	white-space: nowrap;
+	padding-right:1px;
+/*	background: url("../img/time_column/background.png");*/
+}
+
+#schedule_header_control #right_arrow_control img{
+	width: 45px;
+	height: 57px;
+	padding: 0;
+	margin: 0;
+}
+
+#schedule_comments_control #mainCalendar_header_bottom_comment td{
+	font-size: 7pt;
+	text-align:center;
+	vertical-align: middle;
+	border-top: solid 2px #000000;
+	border-right: 1px solid #959699;
+	border-bottom: solid 2px #000000;
+	height: 20px;
+    background-image: url(../img/time_column/background.png);
+}
+
+#schedule_comments_control td.header_left{
+	font-size: 7pt;
+	text-align:center;
+	vertical-align: middle;
+	width: 45px;
+    background-image: url(../img/time_column/background.png);
+    border-top: solid 2px #000000;
+    border-bottom: solid 2px #000000;
+    border-right: 1px solid #959699;
+    height: 20px;
+}
+
+#schedule_comments_control td.header_right{
+	font-size: 7pt;
+	text-align:center;
+	vertical-align: middle;
+	border-right: 0;
+	width: 45px;
+    background-image: url(../img/time_column/background.png);
+    border-top: solid 2px #000000;
+    border-bottom: solid 2px #000000;
+    height: 20px;
+}
+
+.time_column{
+	background: url("../img/time_column/background.png");
+    vertical-align: top;
+}
+
+.time_column .time_row_first{
+	height: 34px;
+	width: 45px;
+	font-size:10pt;
+}
+
+.time_column .time_row{
+	height: 44px;
+	width: 45px;
+	font-size:10pt;
+}
+
+
+.time_table1 td{
+	background-color: #E2E3E4;
+	height: 20px;
+	font-size: 1pt;
+	border-bottom: solid 1px #D9DADB;
+	border-right: solid 1px #B3B4B7;
+}
+
+.time_table0 td{
+	background-color: #E2E3E4;
+	height: 20px;
+	font-size: 2pt;
+	border-bottom: solid 2px #4D4C4D;
+	border-right: solid 1px #B3B4B7;
+}
+
+#schedule_footer_control table td{
+	text-align:center;
+	vertical-align: middle;
+	border-right: 1px solid #959699;
+	border-bottom: 0;
+	height: 20px;	
+	border-top: solid 1px #000000;
+    background: url("../img/time_column/background.png");
+}
+
+#schedule_footer_controltd{
+	text-align:center;
+	vertical-align: middle;
+	border-right: 1px solid #959699;
+	border-bottom: 0;
+	height: 20px;
+	border-top: solid 1px #000000;
+    background: url("../img/time_column/background.png");
+}
+
+#schedule_footer_control td.footer_left{
+	font-size: 7pt;
+	text-align:center;
+	vertical-align: middle;
+	width: 45px;
+	border-top: 0;
+	border-bottom: 0;
+	border-right: 0;
+    height: 20px;
+}
+
+#schedule_footer_control td.footer_right{
+	font-size: 7pt;
+	text-align:center;
+	vertical-align: middle;
+	border-right: 0;
+	width: 45px;
+	border-top: 0;
+	border-bottom: 0;
+	border-right: 0;
+    height: 20px;
+}
+
+span.business_hours{
+	font-size: 10pt;
+	color: #FF6800;
+}
+
+table.business_hours th{
+	font-weight: normal;
+	font-size: 7pt;
+	color: #C7C8CA;
+}
+
+.business_hours_input{
+	background: url('../img/bussiness_hours_frame.png') no-repeat;
+	width: 35px;
+	height: 18px;
+	font-size: 8pt;
+	text-align:center;
+	padding-top: 2px;
+	padding-right: 2px;
+	padding-left: 2px;
+	margin: 0px;
+	border: 0;
+	background-color: #000000;
+    color: #000000;
+    vertical-align:top;
+}
+
+
+.services_header{
+	width: 100%;
+	float: left;
+    font-weight: normal;
+    font-size: 14pt;
+    color: #FF6800;
+    padding-bottom: 3px;
+    text-align: left;
+}
+
+.services_unit{
+	width: 90px;
+	float: left;
+	height: 26px;
+	background: url(../img/services_button.png) no-repeat;
+	font-size: 11pt;
+	margin-right: 5px;
+	margin-bottom: 5px;
+    cursor: move; 
+}
+
+.services_unit .name{
+	width: 45px;
+	float: left;
+	height: 25px;
+	overflow: hidden;
+	text-align: left;
+	padding-top: 5px;
+	padding-left: 5px;
+}
+
+.services_unit .cost{
+	width: 35px;
+	float: right;
+	height: 23px;
+	padding-top: 0;
+	text-align: right;
+    padding-right: 5px;
+}
+
+table.services .services_unit .cost sup{
+	font-size: 8pt;
+    width: 5px;
+}
+
+.input_text{
+	background: url('../img/inputtext.png') repeat-x;
+	width: 115px;
+	height: 19px;
+	font-size: 8pt;
+	text-align:left;
+	padding-top: 3px;
+	padding-right: 2px;
+	padding-left: 5px;
+	margin: 0px;
+	border: 0;
+	background-color: #000000;
+}
+
+.input_checkbox{
+	background: url('../img/checkbox.png') no-repeat;
+	width: 21px;
+	height: 19px;
+	font-size: 8pt;
+	text-align:left;
+	padding-top: 3px;
+	padding-right: 2px;
+	padding-left: 5px;
+	margin: 0px;
+	border: 0;
+	background-color: #000000;
+	overflow: hidden;
+}
+
+.input_checkbox_checked{
+	background: url('../img/checkbox_checked.png') no-repeat;
+	width: 21px;
+	height: 19px;
+	font-size: 8pt;
+	text-align:left;
+	padding-top: 3px;
+	padding-right: 2px;
+	padding-left: 5px;
+	margin: 0px;
+	border: 0;
+	background-color: #000000;
+	overflow: hidden;
+}
+
+.input_textarea{
+	background: url('../img/textfield.png') repeat-y;	
+	width: 112px;
+	height: 45px;
+	overflow: hidden;
+	font-size: 8pt;
+	text-align:left;
+	padding-top: 3px;
+	padding-right: 2px;
+	padding-left: 5px;
+	margin: 0px;
+	border: 0;
+	background-color: #000000;
+}
+
+table.form th{
+	font-weight: normal;
+	text-align: right;
+	font-size: 10pt;
+	vertical-align:middle;
+}
+
+.input_select{
+    background: url('../img/input_select.png') repeat-y;
+    width: 115px;
+    height: 15px;
+    /*overflow: hidden;*/
+    font-size: 8pt;
+    text-align:left;
+    padding-top: 0px;
+    padding-right: 2px;
+    padding-left: 5px;
+    margin: 0px;
+    border: 0;
+    background-color:#e2e3e4;
+    margin-left: -3px;
+}
+
+span.radio {
+  width: 25px;
+  height: 25px;
+  padding: 0 5px 0 0;
+  background: url(../img/radio.png) no-repeat;
+  display: block;
+  clear: left;
+  float: left;
+}
+
+
+
+span.select {
+  position: absolute;
+  width: 83px; /* With the padding included, the width is 190 pixels: the actual width of the image. */
+  height: 15px;
+  line-height: 15px;
+  padding: 0 24px 0 8px;
+  color: #000000;
+  font: 12px/21px arial,sans-serif;
+  background: url(../img/input_select.png) no-repeat;
+  overflow: hidden;
+}
+
+
+.hd1{
+    font-size: 14pt;
+    font-family: Calibri;
+    text-align: center;
+}

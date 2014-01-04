@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NewClosingDetailsReport_page5_service_analysis" pageWidth="400" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="400" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<parameter name="CUR_DATE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+COALESCE(ser.`name`, "NoName") as 'service',
+COALESCE(ser.`code`, "NoName") as 'abriviation',
+sum(if (rec.status <> 3 and rec.status <> 5,
+            if(rec.status = 4,
+                -tic.`qty`,
+                tic.`qty`
+            ),
+            0
+        ))  as 'qty',
+sum(if (rec.status <> 3 and rec.status <> 5,
+            if(rec.status = 4,
+                -(tic.`price`*tic.`qty`)*(1 - tic.`discount`/100),
+                (tic.`price`*tic.`qty`)*(1 - tic.`discount`/100)
+            ),
+            0
+        ))  as 'amount'
+from `ticket` tic
+left join `employee`em on em.`id` = tic.`employee_id`
+left join `reconciliation` rec on rec.`code_transaction` = tic.`code_transaction`
+left join service ser on ser.id = tic.service_id
+where
+     rec.`status` not in (1,2,6) and
+     tic.`service_id` != 0 and
+     DATE(rec.`created_dt`) = DATE($P{CUR_DATE})
+group by service
+order by amount]]>
+	</queryString>
+	<field name="service" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="abriviation" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="qty" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="amount" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="amount_SUM" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{amount}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="50" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="19" y="14" width="120" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Services]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="203" y="14" width="29" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Qty]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="258" y="14" width="63" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="348" y="14" width="35" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[%]]></text>
+			</staticText>
+			<line>
+				<reportElement x="21" y="31" width="50" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="203" y="32" width="29" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="258" y="32" width="63" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="348" y="32" width="52" height="1" forecolor="#CCCCCC"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="185" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{service}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0">
+				<reportElement x="203" y="0" width="29" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{qty}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00">
+				<reportElement x="258" y="0" width="63" height="20"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Auto" pattern="#,##0 %">
+				<reportElement x="348" y="0" width="52" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[new Double( ($F{amount}.doubleValue() / $V{amount_SUM}.doubleValue()) )]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="51" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="0" width="400" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="0" y="4" width="400" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<staticText>
+				<reportElement x="19" y="19" width="100" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00">
+				<reportElement x="221" y="19" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{amount_SUM} == null ? new BigDecimal(0) : $V{amount_SUM}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,67 @@
+body {
+	background-color: #000000;
+}
+.style18 {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 24px;
+	font-weight: normal;
+	text-transform: uppercase;
+	color: #999999;
+}
+.style18a {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 18px;
+	font-weight: normal;
+	text-transform: capitalize;
+	color: #999999;
+}
+.STYLE16w {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	font-weight: normal;
+	text-transform: capitalize;
+	color: #CCCCCC;
+}
+.style12w {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: capitalize;
+	color: #CCCCCC;
+	text-indent: 10px;
+}
+.style12wW {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: normal;
+	text-transform: capitalize;
+	color: #CCCCCC;
+}
+
+
+
+
+.style12 {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: normal;
+	color: #000000;
+	text-transform: capitalize;
+}
+.style16 {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	font-weight: normal;
+	color: #FF0000;
+}
+.STYLE19 {font-family: Geneva, Arial, Helvetica, sans-serif; font-size: 16px; font-weight: normal; text-transform: uppercase; color: #999999; }
+#Layer1 {
+	position:absolute;
+	width:456px;
+	height:326px;
+	z-index:1;
+	left: 16px;
+	top: 20px;
+	visibility: hidden;
+}

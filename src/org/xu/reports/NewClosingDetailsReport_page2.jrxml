@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NewClosingDetailsReport_page2" pageWidth="555" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="535" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<parameter name="CUR_DATE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+COALESCE(CONCAT(em.`fname`," ",em.`lname`), "") as 'flNameEmp',
+SUM(COALESCE(if(res.`status` <> 2 and res.`status` <> 6,
+    if(res.`status` = 4,
+        if(tic.`service_id` <> 0,
+            0,
+            if(tic.`product_id` <> 0,
+                if(tic.`status` = 4,
+                    (tic.`price`*tic.`qty`)*(1 - tic.`discount`/100),
+                    0
+                ),
+                0
+            )
+        ),
+        if(tic.`service_id` <> 0,
+            0,
+            if(tic.`product_id` <> 0,
+                (tic.`price`*tic.`qty`)*(1 - tic.`discount`/100),
+                0
+            )
+        )
+    ),
+    0
+),0)) as 'grosss_sale_of_product',
+SUM(COALESCE(if(res.`status` <> 2 and res.`status` <> 6,
+    if(res.`status` = 4,
+        if(tic.`service_id` <> 0,
+            if(tic.`status` = 4,
+                -(tic.`price`*tic.`qty`)*(1 - tic.`discount`/100),
+                0
+            ),
+            0
+        ),
+        if(tic.`service_id` <> 0,
+            (tic.`price`*tic.`qty`)*(1 - tic.`discount`/100),
+            0
+        )
+    ),
+    0
+),0)) as 'grosss_sale_of_service',
+COALESCE(SUM(
+if(res.`status` <> 2 and res.`status` <> 6,
+    if(res.`status` = 4,
+        if(tic.`service_id` <> 0,
+           if(tic.`status` = 4,
+                -(tic.`price`*tic.`qty`)*(1 - tic.`discount`/100),
+                0
+            ),
+            if(tic.`product_id` <> 0,
+                if(tic.`status` = 4,
+                    -(tic.`price`*tic.`qty`)*(1 - tic.`discount`/100),
+                    0
+                ),
+                0
+            )
+        ),
+        if(tic.`service_id` <> 0,
+            (tic.`price`*tic.`qty`)*(1 - tic.`discount`/100),
+            if(tic.`product_id` <> 0,
+                (tic.`price`*tic.`qty`)*(1 - tic.`discount`/100),
+                0
+            )
+        )
+    )
+,0)),0) as 'net_sales',
+SUM(COALESCE(
+if(res.`status` <> 2 and res.`status` <> 6,
+    if(res.`status` = 4 or res.`status` = 3,
+	-tic.taxe,
+	tic.taxe),
+	0
+)
+,0)) as 'sales_tax',
+SUM(COALESCE(request.req,0)) as 'req'
+FROM reconciliation res
+left join `ticket` tic on tic.`code_transaction` = res.`code_transaction`
+left join `employee`em on em.`id` = tic.`employee_id`
+left join (select tic.`id` as 'id',
+COALESCE(if(res.`status` <> 2 and res.`status` <> 6,
+    if(res.`status` = 4,
+        if(tic.`service_id` <> 0,
+            if(tic.`status` = 4,
+                -(tic.`price`*tic.`qty`)*(1 - tic.`discount`/100),
+                0
+            ),
+            0
+        ),
+        if(tic.`service_id` <> 0,
+            (tic.`price`*tic.`qty`)*(1 - tic.`discount`/100),
+            0
+        )
+    ),
+    0
+),0) as 'req'
+from `appointment` app
+inner join `ticket` tic on tic.`id` = app.`ticket_id`
+left join `reconciliation` res on res.`code_transaction` = tic.`code_transaction`
+where app.`request` = 1
+AND res.id_location=1 AND res.status != 1 AND DATE(res.Created_dt) = DATE($P{CUR_DATE})
+)  request on request.id = tic.`id`
+where ISNULL(tic.`id`)  = 0 and
+res.id_location=1 AND res.status != 1 AND DATE(res.Created_dt) = DATE($P{CUR_DATE})
+group by flNameEmp
+order by flNameEmp]]>
+	</queryString>
+	<field name="flNameEmp" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="grosss_sale_of_product" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="grosss_sale_of_service" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="net_sales" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="sales_tax" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="req" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="56" splitType="Stretch">
+			<staticText>
+				<reportElement x="1" y="0" width="554" height="35"/>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="false"/>
+				</textElement>
+				<text><![CDATA[SUMMARY DAILY REPORT BY EMPLOYEE]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="174" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement x="1" y="0" width="554" height="20"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineColor="#CCCCCC"/>
+				</graphicElement>
+			</rectangle>
+			<textField pattern="$#,##0.00">
+				<reportElement x="143" y="101" width="81" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{sales_tax}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00">
+				<reportElement x="143" y="53" width="81" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{grosss_sale_of_service}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00">
+				<reportElement x="143" y="29" width="81" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{grosss_sale_of_product}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00">
+				<reportElement x="143" y="77" width="81" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{net_sales}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00">
+				<reportElement x="143" y="140" width="81" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{net_sales}.add($F{sales_tax})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="113" y="0" width="85" height="20" forecolor="#000000"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{flNameEmp}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="15" y="0" width="73" height="20" forecolor="#000000"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Operator]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="18" y="32" width="15" height="15" forecolor="#FFFFFF" backcolor="#5555FF"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="18" y="101" width="52" height="20"/>
+				<textElement>
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[TAX]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="18" y="58" width="15" height="15" forecolor="#FFFFFF" backcolor="#FF5555"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="18" y="140" width="52" height="20"/>
+				<textElement>
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="18" y="77" width="81" height="20"/>
+				<textElement>
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[SUBTOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="37" y="29" width="76" height="22"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[PRODUCT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="37" y="53" width="77" height="22"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[SERVICES]]></text>
+			</staticText>
+			<line>
+				<reportElement x="18" y="125" width="206" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="18" y="128" width="206" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<pieChart>
+				<chart isShowLegend="false" theme="default">
+					<reportElement x="234" y="27" width="321" height="140"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend position="Right"/>
+				</chart>
+				<pieDataset>
+					<pieSeries>
+						<keyExpression><![CDATA["Product"]]></keyExpression>
+						<valueExpression><![CDATA[$F{grosss_sale_of_product}.add( new BigDecimal(0.001) )]]></valueExpression>
+					</pieSeries>
+					<pieSeries>
+						<keyExpression><![CDATA["Service"]]></keyExpression>
+						<valueExpression><![CDATA[$F{grosss_sale_of_service}.add( new BigDecimal(0.001) )]]></valueExpression>
+					</pieSeries>
+				</pieDataset>
+				<piePlot labelFormat="{2}" legendLabelFormat="{0} ({2})">
+					<plot/>
+				</piePlot>
+			</pieChart>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="6" splitType="Stretch">
+			<break>
+				<reportElement x="0" y="3" width="100" height="1"/>
+			</break>
+		</band>
+	</summary>
+</jasperReport>

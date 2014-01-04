@@ -1,0 +1,297 @@
+<style>
+table {
+    border: solid 1px black;
+    border-right: 0;
+    border-bottom: 0;
+    font-size: 90%;
+}
+table td{
+    border-bottom: solid 1px black;
+    border-right: solid 1px black;
+}
+
+table th{
+    border-bottom: solid 1px black;
+    border-right: solid 1px black;
+}
+</style>
+<div style="width: 820px; height: 700px">
+    <div style="width: 820px; height: 200px">
+        <div style="width: 405px; height: 200px; float:left">
+            <fieldset style="width: 375px; height: 180px;">
+                <legend>Brief list</legend>
+                <div style="width: 375px; height: 170px; overflow-y: scroll;">
+                <table cellspacing=0 cellpadding=2 align=center width="100%">
+                    <tr>
+                        <th colspan=2>Employee</th>
+                        <th>Mon</th>
+                        <th>Tue</th>
+                        <th>Wed</th>
+                        <th>Thu</th>
+                        <th>Fri</th>
+                        <th>Sat</th>
+                        <th>Sun</th>
+                    </tr>
+                    <!--data-->            
+                    <tr>
+                        <td rowspan=3>L I N A</td>
+                        <td>WorkTime</td>
+                        <td>Mon</td>
+                        <td>Tue</td>
+                        <td>Wed</td>
+                        <td>Thu</td>
+                        <td>Fri</td>
+                        <td>Sat</td>
+                        <td>Sun</td>
+                    </tr>
+                    <tr>
+                        <td>Appointments</td>
+                        <td>Mon</td>
+                        <td>Tue</td>
+                        <td>Wed</td>
+                        <td>tdu</td>
+                        <td>Fri</td>
+                        <td>Sat</td>
+                        <td>Sun</td>
+                    </tr>
+                    <tr>
+                        <td>Customers</td>
+                        <td>Mon</td>
+                        <td>Tue</td>
+                        <td>Wed</td>
+                        <td>tdu</td>
+                        <td>Fri</td>
+                        <td>Sat</td>
+                        <td>Sun</td>
+                    </tr>
+                    <!--/data-->
+
+                  </table>
+                  </div>
+            </fieldset>
+        </div>
+        <div style="width: 405px; height: 200px; float:right">
+            <fieldset style="width: 375px; height: 180px">
+                <legend>Statistics</legend>
+                <div style="width: 375px; height: 100px; overflow-y: scroll;">
+                    <table cellspacing=0 cellpadding=2 align=center width="100%">
+                        <tr>
+                            <td>Number of customers per day</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>Number of customers per employee</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>Average appointment time</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>Average profit for a customer</td>
+                            <td>1</td>
+                        </tr>
+                    </table>
+                </div>
+                <input type="radio" value="Average" name="StatisticsPeriod" id="AverageSP"/>Average<br />
+                <input type="radio" value="PerDay" name="StatisticsPeriod" id="PerDaySP" />Per day
+                <select name="SMonth" id="SMonth">
+                    <option value="">Month</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+                <select name="SDay" id="SDay">
+                    <option value="">Day</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                    <option value="20">20</option>
+                    <option value="21">21</option>
+                    <option value="22">22</option>
+                    <option value="23">23</option>
+                    <option value="24">24</option>
+                    <option value="25">25</option>
+                    <option value="26">26</option>
+                    <option value="27">27</option>
+                    <option value="28">28</option>
+                    <option value="29">29</option>
+                    <option value="30">30</option>
+                    <option value="31">31</option>
+                </select>
+                <select name="SYear" id="SYear">
+                    <option value="">Year</option>
+                    <option value="2007">2007</option>
+                    <option value="2008">2008</option>
+                    <option value="2009">2009</option>
+                    <option value="2010">2010</option>
+                    <option value="2011">2011</option>
+                </select>
+                <input type="submit" name="Recalc" value="Recalc" />
+            </fieldset>
+        </div>
+    </div>
+    <div style="width: 820px; height: 500px;">
+            <fieldset style="width: 790px; height: 490px">
+                <legend>Charts</legend>
+                <div style="width: 820px; height: 405px">
+                    <div style="width: 605px; height: 405px; float: left;">                
+                        <img src="chart.png" width=600 height=400 border=0/>
+                    </div>
+                    <div style="width: 180px; height: 200px; float: right; text-align:right">
+                        <fieldset style="width: 150px; height: 150px;">
+                            <legend>View charts</legend>
+                            <div style="width: 150px; height: 130px; overflow-y: scroll; text-align:left">
+                                <input type="checkbox" />Appointments<br />
+                                <input type="checkbox" />Profit<br />
+                                <input type="checkbox" />Customers<br />
+                                <input type="checkbox" />Services<br />
+                            </div>
+                        </fieldset>                
+                    </div>
+                </div>
+                From:
+                <select name="CFromMonth" id="CFromMonth">
+                    <option value="">Month</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+                <select name="CFromDay" id="CFromDay">
+                    <option value="">Day</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                    <option value="20">20</option>
+                    <option value="21">21</option>
+                    <option value="22">22</option>
+                    <option value="23">23</option>
+                    <option value="24">24</option>
+                    <option value="25">25</option>
+                    <option value="26">26</option>
+                    <option value="27">27</option>
+                    <option value="28">28</option>
+                    <option value="29">29</option>
+                    <option value="30">30</option>
+                    <option value="31">31</option>
+                </select>
+                <select name="CFromYear" id="CFromYear">
+                    <option value="">Year</option>
+                    <option value="2007">2007</option>
+                    <option value="2008">2008</option>
+                    <option value="2009">2009</option>
+                    <option value="2010">2010</option>
+                    <option value="2011">2011</option>
+                </select> <br />  
+                &nbsp;&nbsp;&nbsp;&nbsp;To:
+                <select name="CToMonth" id="CToMonth">
+                    <option value="">Month</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+                <select name="CToDay" id="CToDay">
+                    <option value="">Day</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                    <option value="20">20</option>
+                    <option value="21">21</option>
+                    <option value="22">22</option>
+                    <option value="23">23</option>
+                    <option value="24">24</option>
+                    <option value="25">25</option>
+                    <option value="26">26</option>
+                    <option value="27">27</option>
+                    <option value="28">28</option>
+                    <option value="29">29</option>
+                    <option value="30">30</option>
+                    <option value="31">31</option>
+                </select>
+                <select name="CToYear" id="CToYear">
+                    <option value="">Year</option>
+                    <option value="2007">2007</option>
+                    <option value="2008">2008</option>
+                    <option value="2009">2009</option>
+                    <option value="2010">2010</option>
+                    <option value="2011">2011</option>
+                </select>
+                <input type="submit" name="RedrawCharts" value="Redraw charts">                 
+            </fieldset>
+    </div>
+</div>

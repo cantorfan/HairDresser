@@ -1,0 +1,116 @@
+.toolbar {
+    height: 50px;
+    text-align: left;
+    width: 100%;
+    background-image: url( '../images/img03.jpg' );
+    background-repeat: no-repeat;
+}
+
+a {
+    color: white;
+}
+
+.toolbar a {
+    color: white;
+}
+
+.layoutMainTable {    
+    width: 80%;
+    text-align: center;
+    border-spacing: 0px;
+}
+
+.layoutMainTable tfoot table, .layoutMainTable tbody table {
+    height: 100%;
+    color: white;
+}
+
+body {
+    background-color: black;
+    height: 100%;
+}
+
+table.checkout, table.checkout td, table.checkout th {
+    border: 1px gray solid;
+    border-spacing: 0px;
+    text-align: center;
+    color: white;
+    background-color: black;
+    empty-cells: show;
+}
+
+table.the_day_start_stop, table.the_day_start_stop td {
+    border: 1px gray solid;
+    border-spacing: 0px;
+    text-align: center;
+    color: white;
+    table-layout: fixed;
+}
+
+input.transbutton1 {
+    float:left;
+    display: block;
+    background: url( "../images/tabright.gif" ) no-repeat center top;
+    padding: 5px 15px 4px 6px;
+    color: white;
+    cursor: pointer;
+    width:70%;
+}
+
+input.transbutton {
+    float:left;
+    display: block;
+    background: url( "../images/tabright.gif" ) no-repeat center top;
+    padding: 5px 15px 4px 6px;
+    color: white;
+    cursor: pointer;    
+}
+
+a.transbutton { 
+    background: url( "../images/tabright.gif" ) no-repeat left top;
+    padding: 5px 15px 4px 6px;
+    color: white;
+    cursor: pointer;
+}
+
+select {
+    background-color: black;
+    color: white;
+    width: 100%;
+}
+
+/* Autocompleate styles */
+div.autocomplete {
+    position: absolute;
+    width: 600px;
+    background-color: black;
+    color: white;
+    border: 1px solid #888;
+    margin: 0px;
+    padding: 0px;
+}
+
+div.autocomplete ul {
+    list-style-type: none;
+    margin: 0px;
+    padding: 0px;
+}
+
+div.autocomplete ul li.selected {
+    background-color: red;
+}
+
+div.autocomplete ul li {
+    list-style-type: none;
+    display: table-row;
+    margin: 0;
+    padding: 2px;
+    height: 32px;
+    cursor: pointer;
+}
+
+input.loginButton{
+    background: url( "../images/login22.gif" ) no-repeat right top;
+    width:93px;
+    height:35px;
+}

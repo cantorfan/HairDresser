@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NewClosingDetailsReport_page_refund" pageWidth="555" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="535" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<parameter name="START_DATE" class="java.lang.String"/>
+	<parameter name="END_DATE" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+					
+                    COALESCE(list_data.visa, 0) as 'visa',
+                    COALESCE(list_data.mastercard, 0) as 'mastercard',
+                    COALESCE(list_data.amex, 0) as 'amex',
+                    COALESCE(list_data.cashe, 0) as 'cashe',
+                    COALESCE(list_data.cheque, 0) as 'cheque',
+                    COALESCE(list_data.total, 0) as 'total',
+                    COALESCE(DATE(list_date.date), '') as 'iden'
+                    from (
+                    select DATE(res2.`created_dt`) as date from reconciliation res2
+                    where DATE(res2.`created_dt`) BETWEEN DATE($P{START_DATE}) AND DATE($P{END_DATE})
+                    group by date) list_date
+                    left join (select
+                    sum(if(res.`status` <> 2 and res.`status` <> 6,
+                        if(res.`status` = 3 or res.`status` = 4,
+                                -res.visa,
+                                res.visa
+                            ),
+                            0
+                      )) as 'visa',
+                    sum(if(res.`status` <> 2 and res.`status` <> 6,
+                        if(res.`status` = 3 or res.`status` = 4,
+                                -res.mastercard,
+                                res.mastercard
+                            ),
+                            0
+                      )) as 'mastercard',
+                    sum(if(res.`status` <> 2 and res.`status` <> 6,
+                        if(res.`status` = 3 or res.`status` = 4,
+                                -res.amex,
+                                res.amex
+                            ),
+                            0
+                      )) as 'amex',
+                    sum(if(res.`status` <> 2 and res.`status` <> 6,
+                        if(res.`status` = 3 or res.`status` = 4,
+	            		-(res.cashe-res.chg),
+            			res.cashe-res.chg
+                            ),
+                            0
+                      )) as 'cashe',
+                    sum(if(res.`status` <> 2 and res.`status` <> 6,
+                        if(res.`status` = 3 or res.`status` = 4,
+                                -res.cheque,
+                                res.cheque
+                            ),
+                            0
+                      )) as 'cheque',
+					sum(if(res.`status` = 0,
+                             res.`total`,
+                             0
+                    )) as 'total',
+                    DATE(res.`created_dt`) as 'iden'
+                    FROM reconciliation res
+                    where res.`status`<>1 and (DATE(res.`created_dt`) BETWEEN DATE($P{START_DATE}) AND DATE($P{END_DATE}))
+                    group by EXTRACT(DAY FROM DATE(res.`created_dt`))) list_data on DATE(list_data.iden) = DATE(list_date.date)
+
+                    order by DATE(list_date.date) ASC ;]]>
+	</queryString>
+	<field name="iden" class="java.util.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="visa" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="mastercard" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="amex" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cashe" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cheque" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="Total_cashe" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{cashe}]]></variableExpression>
+	</variable>
+	<variable name="Total_visa" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{visa}]]></variableExpression>
+	</variable>
+	<variable name="Total_amex" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{amex}]]></variableExpression>
+	</variable>
+	<variable name="Total_cheque" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{cheque}]]></variableExpression>
+	</variable>
+	<variable name="Total_mastercard" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{mastercard}]]></variableExpression>
+	</variable>
+	<variable name="Total_total" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[($F{cashe}==null || $F{amex} == null || $F{mastercard} == null || $F{visa} == null || $F{cheque}==null)? new BigDecimal(0) : $F{cashe}.add($F{amex}).add($F{mastercard}).add($F{visa}).add($F{cheque})]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="2" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="29" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement x="5" y="3" width="545" height="22"/>
+				<graphicElement>
+					<pen lineWidth="3.0" lineColor="#CCCCCC"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement mode="Opaque" x="15" y="6" width="525" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATE                      CASH   MASTERCARD                    VISA                  AMEX               CHECK                TOTAL]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<textField pattern="dd/MM/yy">
+				<reportElement x="22" y="1" width="42" height="15"/>
+				<textElement verticalAlignment="Top">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{iden}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="71" y="1" width="78" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{cashe}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="150" y="1" width="78" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{mastercard}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="229" y="0" width="78" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{visa}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="308" y="0" width="78" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amex}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="387" y="0" width="78" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{cheque}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="465" y="1" width="78" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[($F{cashe}==null || $F{amex} == null || $F{mastercard} == null || $F{visa} == null || $F{cheque}==null)? new BigDecimal(0) : $F{cashe}.add($F{amex}).add($F{mastercard}).add($F{visa}).add($F{cheque})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="41" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="4" width="555" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="0" y="1" width="555" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<textField pattern="$#,##0.00" isBlankWhenNull="false">
+				<reportElement x="71" y="9" width="78" height="18"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{Total_cashe} == null ? new BigDecimal(0) : $V{Total_cashe}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="11" y="9" width="54" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTALS]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00" isBlankWhenNull="false">
+				<reportElement x="150" y="9" width="78" height="18"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{Total_mastercard} == null ? new BigDecimal(0) : $V{Total_mastercard}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00" isBlankWhenNull="false">
+				<reportElement x="229" y="9" width="78" height="18"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{Total_visa} == null ? new BigDecimal(0) : $V{Total_visa}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00" isBlankWhenNull="false">
+				<reportElement x="308" y="9" width="78" height="18"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{Total_amex} == null ? new BigDecimal(0) : $V{Total_amex}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00" isBlankWhenNull="false">
+				<reportElement x="387" y="9" width="78" height="18"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{Total_cheque} == null ? new BigDecimal(0) : $V{Total_cheque}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00" isBlankWhenNull="false">
+				<reportElement x="465" y="9" width="78" height="18"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{Total_total} == null ? new BigDecimal(0) : $V{Total_total}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

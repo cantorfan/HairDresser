@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Dashboard_byEmployee_report_3" pageWidth="555" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="535" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<parameter name="START_DATE" class="java.lang.String"/>
+	<parameter name="END_DATE" class="java.lang.String"/>
+	<parameter name="EMP_ID" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+SUM(COALESCE(if(rec1.`status` <> 2 and rec1.`status` <> 6,
+	if(rec1.`status` = 4,
+		if(tic1.`service_id` <> 0,
+			0,
+			if(tic1.`product_id` <> 0,
+				if(tic1.`status` = 4,
+					-(tic1.`price`*tic1.`qty`)*(1 - tic1.`discount`/100),
+					0
+				),
+				0
+			)
+		),
+		if(tic1.`service_id` <> 0,
+			0,
+			if(tic1.`product_id` <> 0,
+				(tic1.`price`*tic1.`qty`)*(1 - tic1.`discount`/100),
+				0
+			)
+		)
+	),
+	0
+),0)) as 'product_total',
+SUM(COALESCE(if(rec1.`status` <> 2 and rec1.`status` <> 6,
+	if(rec1.`status` = 4,
+		if(tic1.`service_id` <> 0,
+			if(tic1.`status` = 4,
+				-(tic1.`price`*tic1.`qty`)*(1 - tic1.`discount`/100),
+				0
+			),
+			0
+		),
+		if(tic1.`service_id` <> 0,
+			(tic1.`price`*tic1.`qty`)*(1 - tic1.`discount`/100),
+			0
+		)
+	),
+	0
+),0)) as 'service_total',
+SUM(COALESCE(if(rec1.`status` <> 2 and rec1.`status` <> 6,
+	if(rec1.`status` = 4,
+		if(tic1.`service_id` <> 0,
+			0,
+			if(tic1.`product_id` <> 0,
+				if(tic1.`status` = 4,
+					-((tic1.`price`*tic1.`qty`)*(1-(tic1.`discount`/100)))*(em1.`salary`/100),
+					0
+				),
+				0
+			)
+		),
+		if(tic1.`service_id` <> 0,
+			0,
+			if(tic1.`product_id` <> 0,
+				((tic1.`price`*tic1.`qty`)*(1-(tic1.`discount`/100)))*(em1.`salary`/100),
+				0
+			)
+		)
+	),
+	0
+),0)) as 'product_commission',
+SUM(COALESCE(if(rec1.`status` <> 2 and rec1.`status` <> 6,
+	if(rec1.`status` = 4,
+		if(tic1.`service_id` <> 0,
+			if(tic1.`status` = 4,
+				-((tic1.`price`*tic1.`qty`)*(1-(tic1.`discount`/100)))*(em1.`commission`/100),
+				0
+			),
+			0
+		),
+		if(tic1.`service_id` <> 0,
+			((tic1.`price`*tic1.`qty`)*(1-(tic1.`discount`/100)))*(em1.`commission`/100),
+			0
+		)
+	),
+	0
+),0)) as 'service_commission',
+SUM(COALESCE(if(rec1.`status` <> 2 and rec1.`status` <> 6,
+	if(rec1.`status` = 4,
+		if(tic1.`service_id` <> 0,
+			0,
+			if(tic1.`product_id` <> 0,
+				if(tic1.`status` = 4,
+					-tic1.`taxe`,
+					0
+				),
+				0
+			)
+		),
+		if(tic1.`service_id` <> 0,
+			0,
+			if(tic1.`product_id` <> 0,
+				tic1.`taxe`,
+				0
+			)
+		)
+	),
+	0
+),0)) as 'product_tax_total',
+SUM(COALESCE(if(rec1.`status` <> 2 and rec1.`status` <> 6,
+	if(rec1.`status` = 4,
+		if(tic1.`service_id` <> 0,
+			if(tic1.`status` = 4,
+				-tic1.`taxe`,
+				0
+			),
+			0
+		),
+		if(tic1.`service_id` <> 0,
+			tic1.`taxe`,
+			0
+		)
+	),
+	0
+),0)) as 'service_tax_total'
+from `ticket` tic1
+left join `reconciliation` rec1 on rec1.`code_transaction` = tic1.`code_transaction` and rec1.status <> 1
+left join `employee` em1 on em1.`id` = tic1.`employee_id`
+where DATE(rec1.`created_dt`) between DATE($P{START_DATE}) and DATE($P{END_DATE}) and em1.`id`=$P{EMP_ID}]]>
+	</queryString>
+	<field name="product_total" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="service_total" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="product_commission" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="service_commission" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="product_tax_total" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="service_tax_total" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="5" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="141" splitType="Stretch">
+			<textField pattern="$#,##0.00">
+				<reportElement x="143" y="79" width="81" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[($F{product_tax_total} == null || $F{service_tax_total} == null)? new BigDecimal(0):$F{product_tax_total}.add($F{service_tax_total})]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00">
+				<reportElement x="143" y="31" width="81" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{service_total} == null? new BigDecimal(0):$F{service_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00">
+				<reportElement x="143" y="7" width="81" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{product_total} == null? new BigDecimal(0):$F{product_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00">
+				<reportElement x="143" y="55" width="81" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[($F{product_total} == null || $F{service_total} == null)? new BigDecimal(0):$F{product_total}.add($F{service_total})]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00">
+				<reportElement x="143" y="118" width="81" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[($F{product_total} == null || $F{service_total} == null || $F{product_tax_total} == null || $F{service_tax_total} == null)? new BigDecimal(0):$F{product_total}.add($F{service_total}).add($F{product_tax_total}).add($F{service_tax_total})]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="18" y="10" width="15" height="15" forecolor="#FFFFFF" backcolor="#5555FF"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="18" y="79" width="52" height="20"/>
+				<textElement>
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[TAX]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="18" y="36" width="15" height="15" forecolor="#FFFFFF" backcolor="#FF5555"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="18" y="118" width="52" height="20"/>
+				<textElement>
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="18" y="55" width="81" height="20"/>
+				<textElement>
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[SUBTOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="37" y="7" width="76" height="22"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[PRODUCT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="37" y="31" width="77" height="22"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[SERVICES]]></text>
+			</staticText>
+			<line>
+				<reportElement x="18" y="103" width="206" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="18" y="106" width="206" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<pieChart>
+				<chart isShowLegend="false" theme="default">
+					<reportElement x="234" y="5" width="321" height="133"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend position="Right"/>
+				</chart>
+				<pieDataset>
+					<pieSeries>
+						<keyExpression><![CDATA["Product"]]></keyExpression>
+						<valueExpression><![CDATA[$F{product_total} != null? $F{product_total}.add( new BigDecimal(0.001) ):new BigDecimal(0)]]></valueExpression>
+					</pieSeries>
+					<pieSeries>
+						<keyExpression><![CDATA["Service"]]></keyExpression>
+						<valueExpression><![CDATA[$F{service_total}!= null? $F{service_total}.add( new BigDecimal(0.001) ):new BigDecimal(0)]]></valueExpression>
+					</pieSeries>
+				</pieDataset>
+				<piePlot labelFormat="{2}" legendLabelFormat="{0} ({2})">
+					<plot/>
+				</piePlot>
+			</pieChart>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="68" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="4" width="555" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="0" y="9" width="555" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<textField pattern="###0.00">
+				<reportElement x="189" y="43" width="100" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{service_commission} == null ? new BigDecimal(0):$F{service_commission}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00">
+				<reportElement x="320" y="43" width="100" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{product_commission} == null ? new BigDecimal(0):$F{product_commission}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00">
+				<reportElement x="445" y="43" width="100" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[($F{product_commission} == null || $F{service_commission}==null) ? new BigDecimal(0):$F{product_commission}.add($F{service_commission})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="18" y="21" width="527" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COMISSION REPORT                 % SERVICES                 % PRODUCTS                 SALARY]]></text>
+			</staticText>
+			<break>
+				<reportElement x="0" y="65" width="100" height="1"/>
+			</break>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--!DOCTYPE struts-config PUBLIC
+  "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN"
+  "http://struts.apache.org/dtds/struts-config_1_2.dtd"-->
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
+          "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+<struts-config>
+    <form-beans>
+    </form-beans>
+
+    <global-forwards>
+		<forward name="admin" path="/admin.do"/>
+		<forward name="schedule" path="/schedule.do"/>
+        <forward name="checkout" path="/checkout.do"/>
+        <forward name="audittrail" path="/admin/audittrail.do"/>
+    </global-forwards>
+    
+    <action-mappings>
+		<action path="/admin" forward="/admin/admin.jsp"/>
+
+        <action path="/admin/location"
+                type="org.xu.swan.action.LocationAction"
+                input="/admin/edit_location.jsp">
+            <forward name="add"  redirect="false"  path="/admin/edit_location.jsp?action=add"/>
+            <forward name="edit"  redirect="false"  path="/admin/edit_location.jsp?action=edit"/>
+            <forward name="list"  redirect="false"  path="/admin/list_location.jsp"/>
+        </action>
+        <action path="/admin/customer"
+                type="org.xu.swan.action.CustomerAction"
+                input="/admin/edit_customer.jsp">
+            <forward name="add"  redirect="false"  path="/admin/edit_customer.jsp?action=add"/>
+            <forward name="edit"  redirect="false"  path="/admin/edit_customer.jsp?action=edit"/>
+            <forward name="list"  redirect="false"  path="/admin/list_customer.jsp"/>
+            <forward name="hist"  redirect="false"  path="/admin/history_customer.jsp?action=hist"/>
+        </action>
+        <action path="/customer"
+                type="org.xu.swan.action.CustomerAction"
+                input="/edit_customer.jsp">
+            <forward name="add"  redirect="false"  path="/edit_customer.jsp?action=add"/>
+            <forward name="edit"  redirect="false"  path="/edit_customer.jsp?action=edit"/>
+            <!--<forward name="list"  redirect="false"  path="/list_customer.jsp"/>-->
+            <forward name="hist"  redirect="false"  path="/history_customer.jsp?action=hist"/>
+        </action>
+        <action path="/admin/user"
+                type="org.xu.swan.action.UserAction"
+                input="/admin/edit_user.jsp">
+            <forward name="add"  redirect="false"  path="/admin/edit_user.jsp?action=add"/>
+            <forward name="edit"  redirect="false"  path="/admin/edit_user.jsp?action=edit"/>
+            <forward name="list"  redirect="false"  path="/admin/list_user.jsp"/> 
+        </action>
+        <action path="/admin/category"
+                type="org.xu.swan.action.CategoryAction"
+                input="/admin/edit_category.jsp">
+            <forward name="add"  redirect="false"  path="/admin/edit_category.jsp?action=add"/>
+            <forward name="edit"  redirect="false"  path="/admin/edit_category.jsp?action=edit"/>
+            <forward name="list"  redirect="false"  path="/admin/list_category.jsp"/>
+        </action>
+        <action path="/admin/service"
+                type="org.xu.swan.action.ServiceAction"
+                input="/admin/edit_service.jsp">
+            <forward name="add"  redirect="false"  path="/admin/edit_service.jsp?action=add"/>
+            <forward name="edit"  redirect="false"  path="/admin/edit_service.jsp?action=edit"/>
+            <forward name="list"  redirect="false"  path="/admin/list_service.jsp"/>
+        </action>
+        <action path="/admin/appointment"
+                type="org.xu.swan.action.AppointmentAction"
+                input="/admin/edit_appointment.jsp">
+            <forward name="add"  redirect="false"  path="/admin/edit_appointment.jsp?action=add"/>
+            <forward name="edit"  redirect="false"  path="/admin/edit_appointment.jsp?action=edit"/>
+            <forward name="list"  redirect="false"  path="/admin/list_appointment.jsp"/>
+        </action>
+        <action path="/admin/employee"
+                type="org.xu.swan.action.EmployeeAction"
+                input="/admin/edit_employee.jsp">
+            <forward name="add"  redirect="false"  path="/admin/edit_employee.jsp?action=add"/>
+            <forward name="edit"  redirect="false"  path="/admin/edit_employee.jsp?action=edit"/>
+            <forward name="upload"  redirect="false"  path="/admin/edit_employee.jsp?action=upload"/>
+            <forward name="list"  redirect="false"  path="/admin/list_employee.jsp"/>
+            <forward name="time" path="/admin/time_employee.jsp?action=time"/>
+        </action>
+        <action path="/admin/inventory"
+                type="org.xu.swan.action.InventoryAction"
+                input="/admin/edit_inventory.jsp">
+            <forward name="add"  redirect="false"  path="/admin/edit_inventory.jsp?action=add"/>
+            <forward name="edit"  redirect="false"  path="/admin/edit_inventory.jsp?action=edit"/>
+            <forward name="list"  redirect="false"  path="/admin/list_inventory.jsp"/>
+        </action>
+        <action path="/admin/vendor"
+                type="org.xu.swan.action.VendorAction"
+                input="/admin/edit_vendor.jsp">
+            <forward name="add"  redirect="false"  path="/admin/edit_vendor.jsp?action=add"/>
+            <forward name="edit"  redirect="false"  path="/admin/edit_vendor.jsp?action=edit"/>
+            <forward name="list"  redirect="false"  path="/admin/list_vendor.jsp"/>            
+        </action>
+        <action path="/admin/brand"
+                type="org.xu.swan.action.BrandAction"
+                input="/admin/edit_brand.jsp">
+            <forward name="add"  redirect="false"  path="/admin/edit_brand.jsp?action=add"/>
+            <forward name="edit"  redirect="false"  path="/admin/edit_brand.jsp?action=edit"/>
+            <forward name="list"  redirect="false"  path="/admin/list_brand.jsp"/>            
+        </action>
+        <action path="/admin/empserv"
+                type="org.xu.swan.action.EmpServAction"
+                input="/admin/edit_empserv.jsp">
+            <!--<forward name="add"  redirect="false"  path="/admin/edit_empserv.jsp?action=add"/>-->
+            <forward name="add"  redirect="false"  path="/admin/edit_empserv.jsp?action=add"/>
+            <!--<forward name="edit"  redirect="false"  path="/admin/list_employee.jsp"/>-->
+            <forward name="edit"  redirect="false"  path="/admin/edit_empserv.jsp?action=edit"/>
+            <forward name="list"  redirect="false"  path="/admin/list_empserv.jsp"/>
+            <forward name="addall"  redirect="false"  path="/admin/edit_empserv.jsp?action=addall"/>
+            <forward name="delall"  redirect="false"  path="/admin/edit_empserv.jsp?action=delall"/>
+        </action>
+        <action path="/admin/appoint"
+                type="org.xu.swan.action.ScheduleAction"
+                input="/admin/edit_appointment.jsp">
+            <forward name="add"  redirect="false"  path="/admin/edit_appointment.jsp?action=add"/>
+            <forward name="edit"  redirect="false"  path="/admin/edit_appointment.jsp?action=edit"/>
+            <forward name="list"  redirect="false"  path="/admin/list_appointment.jsp"/>
+        </action>
+        <action path="/admin/cashio"
+                type="org.xu.swan.action.CashioAction"
+                input="/admin/edit_cashio.jsp">
+            <forward name="add"  redirect="false"  path="/admin/edit_cashio.jsp?action=add"/>
+            <forward name="edit"  redirect="false"  path="/admin/edit_cashio.jsp?action=edit"/>
+            <forward name="list"  redirect="false"  path="/admin/list_cashio.jsp"/>
+        </action>
+        <action path="/admin/nwte"
+                type="org.xu.swan.action.NWTEAction"
+                input="/admin/edit_emptime.jsp">
+            <forward name="add"  redirect="false"  path="/admin/list_employee.jsp"/>
+            <forward name="edit"  redirect="false"  path="/admin/list_employee.jsp"/>
+            <forward name="list"  redirect="false"  path="/admin/list_employee.jsp"/>
+        </action>
+
+        <action path="/admin/ShowPhoto" type="org.xu.swan.action.ShowPhotoAction"></action>
+        <action path="/admin/ShowPhotoCustomer" type="org.xu.swan.action.ShowPhotoActionForCustomer"></action>
+        <action path="/admin/ShowLocLogo" type="org.xu.swan.action.ShowLocLogo"></action>
+
+        <action path="/schedule" forward="/ScheduleMain.jsp"/>
+        <action path="/breakRedirect" forward="/breakRedirect.jsp"/>
+
+        <action path="/checkout" forward="/checkout_main.jsp"/>
+
+        <action path="/check-out"
+                type="org.xu.swan.action.CheckoutAction"
+                input="/checkout_main.jsp">
+            <forward name="add"  redirect="false"  path="/checkout.jsp?action=add"/>
+            <forward name="edit"  redirect="false"  path="/checkout.jsp?action=edit"/>
+            <forward name="list"  redirect="false"  path="/checkout_main.jsp"/>
+        </action>
+
+        <action path="/theday"
+                type="org.xu.swan.action.ThedayAction"
+                input="/theday.jsp">
+            <forward name="add"  redirect="false"  path="/theday.jsp?action=edit"/>
+            <forward name="edit"  redirect="false"  path="/theday.jsp?action=edit"/>
+            <forward name="sch"  redirect="false"  path="/schedule.do"/>
+            <forward name="chk"  redirect="false"  path="/checkout.do"/>
+        </action>
+
+        <action path="/admin/audittrail" forward="/admin/audittrail.jsp"/>
+
+    </action-mappings>
+
+    <message-resources parameter="MessageResources"/>
+
+    <!--plug-in className="
+    org.apache.struts.validator.ValidatorPlugIn">
+        <set-property property="pathnames" value="/WEB-INF/validator-rules.xml,/WEB-INF/validation.xml"/>
+    </plug-in-->
+
+    <plug-in className="org.xu.swan.db.ParameterPlugin">
+        <set-property property="db_driver" value="com.mysql.jdbc.Driver"></set-property>
+        <!--START SET PROPERTIES-->
+            <!--localhost-->
+        <!--<set-property property="db_url" value="jdbc:mysql://70.38.38.219:3306/dumbo_salon9"></set-property>-->
+        <!--<set-property property="db_user" value="dumbo_salon9"></set-property>-->
+        <!--<set-property property="db_password" value="admin1"></set-property>-->
+        <!--START SET PROPERTIES-->
+        <!--<set-property property="db_url" value="jdbc:mysql://localhost/salonjoe"></set-property>-->
+        <!--<set-property property="db_user" value="joe"></set-property>-->
+        <!--<set-property property="db_password" value="salon"></set-property>-->
+        <!--END SET PROPERTIES-->
+        
+            <!--esalonsoft/test-->
+        <set-property property="db_url" value="jdbc:mysql://localhost:3306/salonjoe"></set-property>
+        <set-property property="db_user" value="root"></set-property>
+        <set-property property="db_password" value="12345"></set-property>
+
+            <!--esalonsoft/test-->
+        <!--<set-property property="db_url" value="jdbc:mysql://localhost:3306/test"></set-property>-->
+        <!--<set-property property="db_user" value="test"></set-property>-->
+        <!--<set-property property="db_password" value="123test654"></set-property>-->
+
+            <!--esalonsoft/salonmanager-->
+        <!--<set-property property="db_url" value="jdbc:mysql://localhost:3306/dumbo_salon9"></set-property>-->
+        <!--<set-property property="db_user" value="dumbo_salon9"></set-property>-->
+        <!--<set-property property="db_password" value="admin1"></set-property>-->
+
+            <!--esalonsoft/manhattan-->
+        <!--<set-property property="db_url" value="jdbc:mysql://localhost:3306/manhattan9"></set-property>-->
+        <!--<set-property property="db_user" value="manhattan9"></set-property>-->
+        <!--<set-property property="db_password" value="admin1"></set-property>-->
+
+            <!--esalonsoft/panama-->
+        <!--<set-property property="db_url" value="jdbc:mysql://localhost:3306/panama9"></set-property>-->
+        <!--<set-property property="db_user" value="panama9"></set-property>-->
+        <!--<set-property property="db_password" value="admin1"></set-property>-->
+
+            <!--esalonsoft/freetrial-->
+        <!--<set-property property="db_url" value="jdbc:mysql://localhost:3306/dumbo_salon5"></set-property>-->
+        <!--<set-property property="db_user" value="dumbo_salon5"></set-property>-->
+        <!--<set-property property="db_password" value="admin1"></set-property>-->
+
+            <!--esalonsoft/salon1-->
+        <!--<set-property property="db_url" value="jdbc:mysql://localhost:3306/dumbo_salon1"></set-property>-->
+        <!--<set-property property="db_user" value="adminsalon2"></set-property>-->
+        <!--<set-property property="db_password" value="admin1"></set-property>-->
+
+            <!--gestionsdna/HairDresser-->
+        <!--<set-property property="db_url" value="jdbc:mysql://localhost:3306/DestionsdnaDB"></set-property>-->
+        <!--<set-property property="db_user" value="user_dect"></set-property>-->
+        <!--<set-property property="db_password" value="admin1"></set-property>-->
+
+<!--not create-->    <!--esalonsoft/vogue-->
+        <!--<set-property property="db_url" value="jdbc:mysql://localhost:3306/vogue"></set-property>-->
+        <!--<set-property property="db_user" value="vogue"></set-property>-->
+        <!--<set-property property="db_password" value="admin1"></set-property>-->
+        
+<!--not create-->   <!--esalonsoft/vipstreet-->
+        <!--<set-property property="db_url" value="jdbc:mysql://localhost:3306/vipstreet"></set-property>-->
+        <!--<set-property property="db_user" value="vipstreet"></set-property>-->
+        <!--<set-property property="db_password" value="admin1"></set-property>-->
+
+            <!--esalonsoft/lisalobue-->
+        <!--<set-property property="db_url" value="jdbc:mysql://localhost:3306/lisalobue"></set-property>-->
+        <!--<set-property property="db_user" value="lisalobue"></set-property>-->
+        <!--<set-property property="db_password" value="admin1"></set-property>-->
+
+            <!--esalonsoft/royalthaispa-->
+        <!--<set-property property="db_url" value="jdbc:mysql://localhost:3306/royalthaispa"></set-property>-->
+        <!--<set-property property="db_user" value="royalthaispa"></set-property>-->
+        <!--<set-property property="db_password" value="admin1"></set-property>-->
+
+            <!--esalonsoft/troysalon-->
+        <!--<set-property property="db_url" value="jdbc:mysql://localhost:3306/troysalon"></set-property>-->
+        <!--<set-property property="db_user" value="troysalon"></set-property>-->
+        <!--<set-property property="db_password" value="admin1"></set-property>-->
+
+            <!--esalonsoft/EveryPlug-->
+        <!--<set-property property="db_url" value="jdbc:mysql://localhost:3306/EveryPlug"></set-property>-->
+        <!--<set-property property="db_user" value="everyplug"></set-property>-->
+        <!--<set-property property="db_password" value="admin1"></set-property>-->
+        <!--END SET PROPERTIES-->
+
+    </plug-in>
+</struts-config>
