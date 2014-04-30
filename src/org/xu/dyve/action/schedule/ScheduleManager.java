@@ -722,7 +722,7 @@ public class ScheduleManager extends HttpServlet {
                         int maxCells = 1;
                         if (scheduleArray.containsKey("" + temp.getEmployee_id())) {
                             for (int count = 0; count < (endIndex - startIndex); count++) {
-                                if (scheduleArray.get("" + temp.getEmployee_id())[startIndex + count] > maxCells) {
+                                if (scheduleArray.get("" + temp.getEmployee_id()).length > startIndex + count && scheduleArray.get("" + temp.getEmployee_id())[startIndex + count] > maxCells) {
                                     maxCells = scheduleArray.get("" + temp.getEmployee_id())[startIndex + count];
                                 }
                             }
@@ -731,7 +731,7 @@ public class ScheduleManager extends HttpServlet {
 
                         if (maxWidthPerCell.containsKey("" + temp.getEmployee_id())) {
                             for (int count = 0; count < (endIndex - startIndex); count++) {
-                                if (maxWidthPerCell.get("" + temp.getEmployee_id())[startIndex + count] < width) {
+                                if (maxWidthPerCell.get("" + temp.getEmployee_id()).length > startIndex + count && maxWidthPerCell.get("" + temp.getEmployee_id())[startIndex + count] < width) {
                                     width = maxWidthPerCell.get("" + temp.getEmployee_id())[startIndex + count];
                                 }
                             }
@@ -998,7 +998,7 @@ public class ScheduleManager extends HttpServlet {
                         int maxCells = 1;
                         if (scheduleArray.containsKey("" + temp.getEmployee_id())) {
                             for (int count = 0; count < (endIndex - startIndex); count++) {
-                                if (scheduleArray.get("" + temp.getEmployee_id())[startIndex + count] > maxCells) {
+                                if (scheduleArray.get("" + temp.getEmployee_id()).length > startIndex + count && scheduleArray.get("" + temp.getEmployee_id())[startIndex + count] > maxCells) {
                                     maxCells = scheduleArray.get("" + temp.getEmployee_id())[startIndex + count];
                                 }
                             }
@@ -1007,7 +1007,7 @@ public class ScheduleManager extends HttpServlet {
 
                         if (maxWidthPerCell.containsKey("" + temp.getEmployee_id())) {
                             for (int count = 0; count < (endIndex - startIndex); count++) {
-                                if (maxWidthPerCell.get("" + temp.getEmployee_id())[startIndex + count] < width) {
+                                if (maxWidthPerCell.get("" + temp.getEmployee_id()).length > startIndex + count && maxWidthPerCell.get("" + temp.getEmployee_id())[startIndex + count] < width) {
                                     width = maxWidthPerCell.get("" + temp.getEmployee_id())[startIndex + count];
                                 }
                             }
@@ -1272,7 +1272,7 @@ public class ScheduleManager extends HttpServlet {
                         int maxCells = 1;
                         if (scheduleArray.containsKey("" + temp.getEmployee_id())) {
                             for (int count = 0; count < (endIndex - startIndex); count++) {
-                                if (scheduleArray.get("" + temp.getEmployee_id())[startIndex + count] > maxCells) {
+                                if (scheduleArray.get("" + temp.getEmployee_id()).length > startIndex + count && scheduleArray.get("" + temp.getEmployee_id())[startIndex + count] > maxCells) {
                                     maxCells = scheduleArray.get("" + temp.getEmployee_id())[startIndex + count];
                                 }
                             }
@@ -1281,7 +1281,7 @@ public class ScheduleManager extends HttpServlet {
 
                         if (maxWidthPerCell.containsKey("" + temp.getEmployee_id())) {
                             for (int count = 0; count < (endIndex - startIndex); count++) {
-                                if (maxWidthPerCell.get("" + temp.getEmployee_id())[startIndex + count] < width) {
+                                if (maxWidthPerCell.get("" + temp.getEmployee_id()).length > startIndex + count && maxWidthPerCell.get("" + temp.getEmployee_id())[startIndex + count] < width) {
                                     width = maxWidthPerCell.get("" + temp.getEmployee_id())[startIndex + count];
                                 }
                             }
@@ -2141,7 +2141,8 @@ public class ScheduleManager extends HttpServlet {
                         int rowspan = (endIndex - startIndex);
                         int[] tempArr3 = scheduleArray.get("" + temp.getEmployee_id());
                         for (int j = 0; j < rowspan; j++) {
-                            tempArr3[startIndex + j] += 1;
+                        	if(tempArr3.length > startIndex + j)
+                        		tempArr3[startIndex + j] += 1;
                         }
                         scheduleArray.put("" + temp.getEmployee_id(), tempArr3);
                     }

@@ -3,11 +3,15 @@ package org.xu.swan.db;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.mchange.v2.c3p0.DataSources;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+
+import javax.sql.DataSource;
 
 public final class DBManager {
     private static final Log Log = LogFactory.getLog(DBManager.class);
@@ -16,6 +20,7 @@ public final class DBManager {
     private static String DB_URL;
     private static String DB_USER;
     private static String DB_PASSWORD;
+    private static DataSource ds;
 
     Connection con = null;
     Statement stmt = null;
@@ -23,6 +28,7 @@ public final class DBManager {
     ResultSet rs = null;
 
     public DBManager() throws Exception {
+    	/*
         try {
             Class.forName(DB_DRIVER);
             con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
@@ -31,6 +37,16 @@ public final class DBManager {
             //ex.printStackTrace();
             throw ex;
         }
+        */
+    	if(ds == null)
+    	{
+    		Class.forName(DB_DRIVER);
+    		DataSource unpooled = DataSources.unpooledDataSource(DB_URL,
+    				DB_USER,
+    				DB_PASSWORD);
+    		ds = DataSources.pooledDataSource( unpooled );
+    	}
+    	con = ds.getConnection();
     }
 
     public Connection getCon() {
@@ -128,4 +144,6 @@ public final class DBManager {
     public static void setDB_USER(String db_user) {
         DB_USER = db_user;
     }
+    
+    
 }

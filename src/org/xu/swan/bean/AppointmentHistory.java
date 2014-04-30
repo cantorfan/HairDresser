@@ -293,7 +293,7 @@ public class AppointmentHistory {
         try{
             dbm = new DBManager();
             Statement st = dbm.getStatement();
-            ResultSet rs = st.executeQuery("select \n" +
+            String sql = "select \n" +
                     "COALESCE(app.`id`, '-1') as 'id',\n" +
                     "COALESCE(app.`appt_date`,rec.`created_dt`, '') as 'date',\n" +
                     "COALESCE(if(emp.`id` is NULL, 'none', CONCAT(emp.`fname`, \" \",emp.`lname`)),'') as 'emp_name', \n" +
@@ -315,7 +315,7 @@ public class AppointmentHistory {
                     "left join `customer` cust on cust.`id` = app.`customer_id`\n" +
                     "left join `reconciliation` rec on rec.`code_transaction` = tic.`code_transaction`\n" +
                     "left join `reconciliation` rec2 on rec2.`id` = tic.`refundtrans_id`\n" +
-                    "where (rec.`id_customer`='"+cust_id+"')"+
+                    "where (rec.`id_customer`='"+cust_id+"' and app.`customer_id`='" + cust_id + "')" +
                     "union select\n" +
                     "COALESCE(app.`id`, '-1') as 'id', \n" +
                     "COALESCE(app.`appt_date`, '') as 'date',\n" +
@@ -334,7 +334,9 @@ public class AppointmentHistory {
                     "left join `service` ser on ser.`id` = app.`service_id`\n" +
                     "left join `customer` cust on cust.`id` = app.`customer_id`\n" +
                     "where app.`customer_id`='"+cust_id+"' and app.`ticket_id`=0\n" +
-                    "order by date, time");
+                    "order by date, time";
+            System.out.println(sql);
+            ResultSet rs = st.executeQuery(sql);
             while(rs.next()){
                 AppointmentHistory appt = new AppointmentHistory();
                 list.add(appt);

@@ -850,8 +850,8 @@ public class Appointment {
         try{
             dbm = new DBManager();
 
-//            PreparedStatement pst1 = dbm.getPreparedStatement("drop table if exists temp;");
-//            int i = pst1.executeUpdate();
+            PreparedStatement pst1 = dbm.getPreparedStatement("drop table if exists temp;");
+            int i = pst1.executeUpdate();
 
             PreparedStatement pst2 = dbm.getPreparedStatement("CREATE TEMPORARY TABLE temp (id int(4) default 0 not null) Engine=MEMORY;");
             int i1 = pst2.executeUpdate();
