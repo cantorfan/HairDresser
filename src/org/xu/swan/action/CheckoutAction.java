@@ -84,79 +84,89 @@ public class CheckoutAction extends org.apache.struts.action.Action {
 //        if (StringUtils.isEmpty(prod)) prod = "0";
 
         if (action.equalsIgnoreCase(ActionUtil.ACT_ADD)) {
-            if (user_ses.getPermission() != Role.R_SHD_CHK && allow_edit) {
-//            BigDecimal dec = new BigDecimal(Float.parseFloat(price));
-            BigDecimal s_total = new BigDecimal(Float.parseFloat(s_total_));
-            BigDecimal taxe = new BigDecimal(Float.parseFloat(taxe_));
-            BigDecimal total = new BigDecimal(Float.parseFloat(total_));
-            BigDecimal ch = new BigDecimal(Float.parseFloat(change));
-            BigDecimal am = new BigDecimal(Float.parseFloat(amex));
-            BigDecimal vi = new BigDecimal(Float.parseFloat(visa));
-            BigDecimal ma = new BigDecimal(Float.parseFloat(mastercard));
-            BigDecimal chq = new BigDecimal(Float.parseFloat(cheque));
-            BigDecimal ca = new BigDecimal(Float.parseFloat(cashe));
-            BigDecimal gc = new BigDecimal(Float.parseFloat(giftcard));
-//            logger.info("Start Add Transaction. User="+user_ses.getFname() + " " + user_ses.getLname());
-            Reconciliation trans = Reconciliation.insertTransaction((u != null ? u.getId() : 0), Integer.parseInt(loc), code, Integer.parseInt(cust),
-                    s_total, taxe, total, paym, Integer.parseInt(status), DateUtil.parseSqlDate(dt), am, vi, ma, chq, ca, gc, ch, giftcard_pay);
-                if (status.equals("0")){
-                    ArrayList aa = null;
-                    aa = Ticket.findTicketByLocCodeTrans(1,trans.getCode_transaction());
-                    if (aa!=null){
-                        for (int i=0; i<aa.size(); i++){
-                            Ticket tt = (Ticket)aa.get(i);
-                            ArrayList ap = Appointment.findAllByTicketId(tt.getId());
-                            if (ap!=null){
-                                for (int j = 0; j<ap.size(); j++){
-                                    Appointment app = (Appointment)ap.get(j);
-                                    if (app!=null){
-                                        Appointment.updateAppointmentByIdState(app.getId(),3);
-                                        Inbox inb = Inbox.findByAppId(app.getId());
-                                        if (inb!=null){
-                                            Inbox.updateStatus(inb.getId(), 5);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            if (status.equals("4")){
-                String[] t = ticket_id.split(" ");
-                for(int i = 0; i < t.length; i++){
-                    if(!t[i].trim().equals("")){
-                        int id_t = Integer.parseInt(t[i].trim());
-                    Ticket.updateTicketStatusRefund(id_t,4,trans.getId());
-                    }
-                }
-                //refund to giftcard
-                ArrayList allTrans =Reconciliation.findTransByCode(code);
-                if(allTrans != null)
-                {
-                	for(int i = 0; i < allTrans.size(); i++)
-                	{
-                		Reconciliation ttt = (Reconciliation)allTrans.get(i);
-                		if(ttt.getStatus() == 0)
-                		{
-                			//find the pay trans
-                			String giftcardNumber = ttt.getGiftcard_pay();
-                			Giftcard usingCard = Giftcard.findByCode(giftcardNumber);
-                			Giftcard.updateGiftcard(giftcardNumber, usingCard.getAmount().add(ttt.getGiftcard()));
-                		}
-                	}
-                }
+        	try
+        	{
+        		if (user_ses.getPermission() != Role.R_SHD_CHK && allow_edit) {
+//                  BigDecimal dec = new BigDecimal(Float.parseFloat(price));
+                  BigDecimal s_total = new BigDecimal(Float.parseFloat(s_total_));
+                  BigDecimal taxe = new BigDecimal(Float.parseFloat(taxe_));
+                  BigDecimal total = new BigDecimal(Float.parseFloat(total_));
+                  BigDecimal ch = new BigDecimal(Float.parseFloat(change));
+                  BigDecimal am = new BigDecimal(Float.parseFloat(amex));
+                  BigDecimal vi = new BigDecimal(Float.parseFloat(visa));
+                  BigDecimal ma = new BigDecimal(Float.parseFloat(mastercard));
+                  BigDecimal chq = new BigDecimal(Float.parseFloat(cheque));
+                  BigDecimal ca = new BigDecimal(Float.parseFloat(cashe));
+                  BigDecimal gc = new BigDecimal(Float.parseFloat(giftcard));
+//                  logger.info("Start Add Transaction. User="+user_ses.getFname() + " " + user_ses.getLname());
+                  Reconciliation trans = Reconciliation.insertTransaction((u != null ? u.getId() : 0), Integer.parseInt(loc), code, Integer.parseInt(cust),
+                          s_total, taxe, total, paym, Integer.parseInt(status), DateUtil.parseSqlDate(dt), am, vi, ma, chq, ca, gc, ch, giftcard_pay);
+                      if (status.equals("0")){
+                          ArrayList aa = null;
+                          aa = Ticket.findTicketByLocCodeTrans(1,trans.getCode_transaction());
+                          if (aa!=null){
+                              for (int i=0; i<aa.size(); i++){
+                                  Ticket tt = (Ticket)aa.get(i);
+                                  ArrayList ap = Appointment.findAllByTicketId(tt.getId());
+                                  if (ap!=null){
+                                      for (int j = 0; j<ap.size(); j++){
+                                          Appointment app = (Appointment)ap.get(j);
+                                          if (app!=null){
+                                              Appointment.updateAppointmentByIdState(app.getId(),3);
+                                              Inbox inb = Inbox.findByAppId(app.getId());
+                                              if (inb!=null){
+                                                  Inbox.updateStatus(inb.getId(), 5);
+                                              }
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  if (status.equals("4")){
+                      String[] t = ticket_id.split(" ");
+                      for(int i = 0; i < t.length; i++){
+                          if(!t[i].trim().equals("")){
+                              int id_t = Integer.parseInt(t[i].trim());
+                          Ticket.updateTicketStatusRefund(id_t,4,trans.getId());
+                          }
+                      }
+                      //refund to giftcard
+                      ArrayList allTrans =Reconciliation.findTransByCode(code);
+                      if(allTrans != null)
+                      {
+                      	for(int i = 0; i < allTrans.size(); i++)
+                      	{
+                      		Reconciliation ttt = (Reconciliation)allTrans.get(i);
+                      		if(ttt.getStatus() == 0 && ttt.getGiftcard_pay() != null && ttt.getGiftcard_pay().trim().length() > 0)
+                      		{
+                      			//find the pay trans
+                      			String giftcardNumber = ttt.getGiftcard_pay();
+                      			System.out.println(giftcardNumber);
+                      			Giftcard usingCard = Giftcard.findByCode(giftcardNumber);
+                      			System.out.println(usingCard);
+                      			
+                      			Giftcard.updateGiftcard(giftcardNumber, usingCard.getAmount().add(ttt.getGiftcard()));
+                      		}
+                      	}
+                      }
 
-                	
+                      	
 
+                  }
+//                  logger.info("End Add Transaction. User="+user_ses.getFname() + " " + user_ses.getLname());
+                  request.setAttribute("MESSAGE", trans != null ? "transaction.added" : "transaction.fail");
+                  request.setAttribute("OBJECT", trans);
+                  if (trans != null)
+                      return mapping.findForward("edit");
+                  else
+                      return mapping.findForward("add");
+              }
+        	}
+            catch(Exception e)
+            {
+            	e.printStackTrace();
             }
-//            logger.info("End Add Transaction. User="+user_ses.getFname() + " " + user_ses.getLname());
-            request.setAttribute("MESSAGE", trans != null ? "transaction.added" : "transaction.fail");
-            request.setAttribute("OBJECT", trans);
-            if (trans != null)
-                return mapping.findForward("edit");
-            else
-                return mapping.findForward("add");
-        }
         } else if (action.equalsIgnoreCase(ActionUtil.ACT_EDIT)) {
             if (user_ses.getPermission() != Role.R_SHD_CHK && allow_edit){
             BigDecimal s_total = new BigDecimal(Float.parseFloat(s_total_));

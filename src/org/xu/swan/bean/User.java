@@ -27,6 +27,7 @@ public class User {
     public static final String EMAIL = "email";
     public static final String PERM = "permission";
     public static final String Send_EMAIL = "send_email";
+    public static final String IPS="ips";
 
     private int id;
     private String fname;
@@ -34,6 +35,7 @@ public class User {
     private String user;
     private String pwd;
     private String email;
+    private String ips;
     private int permission;
     private int send_email;
 
@@ -101,7 +103,15 @@ public class User {
         this.send_email = send_email;
     }
 
-    public static User insertUser(String fname,String lname, String user, String pwd, String email, int perm, int send_email){
+    public String getIps() {
+		return ips;
+	}
+
+	public void setIps(String ips) {
+		this.ips = ips;
+	}
+
+	public static User insertUser(String fname,String lname, String user, String pwd, String email, int perm, int send_email){
         User u = null;
         DBManager dbm = null;
         try{
@@ -140,13 +150,56 @@ public class User {
         return u;
     }
 
+    public static User updateUser(int id, String fname,String lname, String user, String pwd, String email, int perm, int send_email, String ips){
+        User u = null;
+        DBManager dbm = null;
+        try{
+            dbm = new DBManager();
+            String sql ="UPDATE login SET " + FNAME + "=?, " + LNAME +"=?, " + USER + "=?, "
+                    + PWD + "=?, " + EMAIL + "=?,"  + PERM + "=?,"  + Send_EMAIL + "=?,"+IPS+"=? WHERE " + ID + "=?";
+            
+            PreparedStatement pst = dbm.getPreparedStatement(sql);
+            pst.setString(1,fname);
+            pst.setString(2,lname);
+            pst.setString(3,user);
+            pst.setString(4,pwd);
+            pst.setString(5,email);
+            pst.setInt(6, perm);
+            pst.setInt(7, send_email);
+            pst.setString(8, ips);
+            pst.setInt(9,id);
+            int rows = pst.executeUpdate();
+            if(rows>=0){
+                u = new User();
+                u.setId(id);
+                u.setFname(fname);
+                u.setLname(lname);
+                u.setUser(user);
+                u.setPwd(pwd);
+                u.setEmail(email);
+                u.setPermission(perm);
+                u.setSend_email(send_email);
+                u.setIps(ips);
+            }
+            pst.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            if(dbm!=null)
+                dbm.close();
+        }
+        return u;
+    }
+
     public static User updateUser(int id, String fname,String lname, String user, String pwd, String email, int perm, int send_email){
         User u = null;
         DBManager dbm = null;
         try{
             dbm = new DBManager();
-            PreparedStatement pst = dbm.getPreparedStatement("UPDATE login SET " + FNAME + "=?, " + LNAME +"=?, " + USER + "=?, "
-                    + PWD + "=?, " + EMAIL + "=?,"  + PERM + "=?,"  + Send_EMAIL + "=? WHERE " + ID + "=?");
+            String sql ="UPDATE login SET " + FNAME + "=?, " + LNAME +"=?, " + USER + "=?, "
+                    + PWD + "=?, " + EMAIL + "=?,"  + PERM + "=?,"  + Send_EMAIL + "=? WHERE " + ID + "=?";
+            
+            PreparedStatement pst = dbm.getPreparedStatement(sql);
             pst.setString(1,fname);
             pst.setString(2,lname);
             pst.setString(3,user);
@@ -176,7 +229,7 @@ public class User {
         }
         return u;
     }
-
+    
     public static User deleteUser(int id){
         User u = null;
         DBManager dbm = null;
@@ -205,7 +258,7 @@ public class User {
         try{
             dbm = new DBManager();
             PreparedStatement pst = dbm.getPreparedStatement("SELECT " + ID + "," + FNAME + ", " + LNAME + ", " + USER + ", " + PWD + ", " + EMAIL
-                    + ", "  + PERM + "," + Send_EMAIL + " FROM login WHERE " + ID + "=?");
+                    + ", "  + PERM + "," + Send_EMAIL + ", "+IPS+ " FROM login WHERE " + ID + "=?");
             pst.setInt(1,id);
             ResultSet rs = pst.executeQuery();
             if(rs.next()){
@@ -218,6 +271,7 @@ public class User {
                 u.setEmail(rs.getString(6));
                 u.setPermission(rs.getInt(7));
                 u.setSend_email(rs.getInt(8));
+                u.setIps(rs.getString(9));
             }
             rs.close();
             pst.close();
@@ -236,7 +290,7 @@ public class User {
         try{
             dbm = new DBManager();
             PreparedStatement pst = dbm.getPreparedStatement("SELECT " + ID + "," + FNAME + ", " + LNAME + ", " + USER + ", " + PWD + ", " + EMAIL
-                    + ", "  + PERM + "," + Send_EMAIL +  " FROM login WHERE " + USER + "=? AND " + PWD + "=?");
+                    + ", "  + PERM + "," + Send_EMAIL + ", "+IPS+ " FROM login WHERE " + USER + "=? AND " + PWD + "=?");
             pst.setString(1,u);
             pst.setString(2,p);
             ResultSet rs = pst.executeQuery();
@@ -250,6 +304,7 @@ public class User {
                 user.setEmail(rs.getString(6));
                 user.setPermission(rs.getInt(7));
                 user.setSend_email(rs.getInt(8));
+                user.setIps(rs.getString(9));
             }
             rs.close();
             pst.close();
@@ -269,7 +324,7 @@ public class User {
             dbm = new DBManager();
             Statement st = dbm.getStatement();
             ResultSet rs = st.executeQuery("SELECT " + ID + "," + FNAME + ", " + LNAME + ", " + USER + ", " + PWD + ", " + EMAIL
-                    + ", "  + PERM + "," + Send_EMAIL +  " FROM login");
+                    + ", "  + PERM + "," + Send_EMAIL+ ", " + IPS +  " FROM login");
             while(rs.next()){
                 User u = new User();
                 list.add(u);
@@ -281,6 +336,7 @@ public class User {
                 u.setEmail(rs.getString(6));
                 u.setPermission(rs.getInt(7));
                 u.setSend_email(rs.getInt(8));
+                u.setIps(rs.getString(9));
             }
             rs.close();
             st.close();

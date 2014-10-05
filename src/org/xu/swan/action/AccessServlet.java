@@ -48,6 +48,7 @@ public class AccessServlet  extends HttpServlet {
             if(query.equalsIgnoreCase("login")){
                 String u = StringUtils.defaultString(request.getParameter("user"), "");
                 String p = StringUtils.defaultString(request.getParameter("pwd"), "");
+                String ip = request.getRemoteAddr();
                 User user = User.findUser(u,p);
                 Location loc = Location.findById(1);
                 if(user==null) {
@@ -55,6 +56,26 @@ public class AccessServlet  extends HttpServlet {
                     response.sendRedirect("index.jsp");
                     return;
                 }
+                
+                String ips = user.getIps();
+                boolean isExistIP=false;// 
+                if(StringUtils.isEmpty(ips)){
+                	isExistIP = true;
+                }else{
+                	
+                	if(ips.indexOf("*")!=-1){
+                		isExistIP = true;
+                	}else if(ips.indexOf(ip)!=-1){
+                		isExistIP = true;
+                	}
+                	
+                }
+                if(!isExistIP){
+                	 logger.info("Error login. IP nonexistence: "+UserIP);
+                     response.sendRedirect("index.jsp");
+                     return;
+                }
+                
                 if(loc==null) {
                     logger.info("Error login. Location Not Found IP: "+UserIP);
                     response.sendRedirect("index.jsp");
