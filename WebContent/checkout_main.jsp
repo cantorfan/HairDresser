@@ -1316,7 +1316,7 @@ var edit_REFUND = false;
                                         }
                                     }
 
-                                    if ((tran.getStatus() != 3)&&(tran.getStatus() != 5)&&(tran.getGiftcard().compareTo(new BigDecimal(0))==0)){
+                                    if ((tran.getStatus() != 3)&&(tran.getStatus() != 5)){
                                         if (tran.getStatus() == 4){
                                             total_total = total_total.subtract(total);
                                             total_sub_total = total_sub_total.subtract(s_total);

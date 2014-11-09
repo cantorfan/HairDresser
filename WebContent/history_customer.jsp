@@ -115,7 +115,7 @@
                             <%
                                 String oncl = "";
                                 if (rp.equals("shd")){
-                                    oncl = "window.location.href='./schedule.do?dt="+dt+"';";
+                                    oncl = "window.location.href='./schedule.do?dt="+dt+"" + "&idc=" + id + "';";
                                 }else if (rp.equals("chk")){
 //                                    oncl = "window.location.href='./checkout_main.jsp?dt="+dt+"';";
                                     oncl = "window.history.back();";
