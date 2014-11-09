@@ -55,461 +55,463 @@ public class ScheduleManager extends HttpServlet {
 //        response.getWriter().write("<script language='javascript'>alert('kjhghjkl;');</script>");
 //        request.setAttribute("MESSAGE","asdsadsadsad");
 
-        if (user_ses != null){
-//            if (user_ses.getPermission() == Role.R_ADMIN){
-//            }else{
+       
+        try
+        {
+        	if (user_ses != null){
+//              if (user_ses.getPermission() == Role.R_ADMIN){
+//              }else{
 
-        if (request.getParameter("optype") != null) {
-            String operation = request.getParameter("optype");
-            int idLocation = -1;
-            int idAppointment = -1;
-            int idNewEmployee = -1;
-            int idCustomer = -1;
-            int idService = -1;
-            int state = -1;
-            int pageNum = -1;
-            String underEND = "0";
-            String comment = "";
-            String reason = "";
-            boolean edit = false;
-            boolean added = false;
-            boolean delete = false;
-            boolean delcust = false;
-            //int idEditCustomer = -1;
-            BigDecimal servicePrice = new BigDecimal(-1);
-            int idCategory = -1;
-            java.util.Date currentDate = null;
-            java.util.Date startDate = null;
-            java.util.Date endDate = null;
-            Time st = null;
-            Time et = null;
-            Time st_old = null;
-            Time et_old = null;
-            int emp_old = 0;
-            int employee_id = 0;
-            int customer_id = 0;
-            int app_new_id = 0;
-            try {
-                idLocation = Integer.parseInt(request.getParameter("idlocation"));
-            } catch (Exception ex) {
-            }
-            try {
-                browser = request.getParameter("browser");
-            } catch (Exception ex) {
-            }
-            try {
-                currentDate = (new SimpleDateFormat("yyyy/MM/dd")).parse(request.getParameter("dateutc"));
-            } catch (Exception ex) {
-            }
-            try {
-                pageNum = Integer.parseInt(request.getParameter("pageNum"));
-            } catch (Exception ex) {
-            }
-            try {
-                underEND = String.valueOf(request.getParameter("underEND"));
-            } catch (Exception ex) {
-            }
-            try {
-                startDate = (new SimpleDateFormat("yyyy/MM/dd HH:mm")).parse(request.getParameter("start"));
-            } catch (Exception ex) {
-            }
-            try {
-                endDate = (new SimpleDateFormat("yyyy/MM/dd HH:mm")).parse(request.getParameter("end"));
-            } catch (Exception ex) {
-            }
-            try {
-                idNewEmployee = Integer.parseInt(request.getParameter("idnewemployee"));
-            } catch (Exception ex) {
-            }
-            try {
-                idCustomer = Integer.parseInt(request.getParameter("idcustomer"));
-            } catch (Exception ex) {
-            }
-            try {
-                idService = Integer.parseInt(request.getParameter("idservice"));
-            } catch (Exception ex) {
-            }
-            comment = request.getParameter("comment");
-            reason = request.getParameter("delParam");
-            //idEditCustomer = Integer.parseInt(request.getParameter("cust_id"));
-//				servicePrice = new BigDecimal(Integer.parseInt(request.getParameter("serviceprice")));
-//				idCategory = Integer.parseInt(request.getParameter("idcategory"));
-            try {
-                idAppointment = Integer.parseInt(request.getParameter("idappointment").replace("appoint_", ""));
-            } catch (Exception ex) {
-            }
-            try {
-                state = Integer.parseInt(request.getParameter("state"));
-            } catch (Exception ex) {
-            }
+          if (request.getParameter("optype") != null) {
+              String operation = request.getParameter("optype");
+              int idLocation = -1;
+              int idAppointment = -1;
+              int idNewEmployee = -1;
+              int idCustomer = -1;
+              int idService = -1;
+              int state = -1;
+              int pageNum = -1;
+              String underEND = "0";
+              String comment = "";
+              String reason = "";
+              boolean edit = false;
+              boolean added = false;
+              boolean delete = false;
+              boolean delcust = false;
+              //int idEditCustomer = -1;
+              BigDecimal servicePrice = new BigDecimal(-1);
+              int idCategory = -1;
+              java.util.Date currentDate = null;
+              java.util.Date startDate = null;
+              java.util.Date endDate = null;
+              Time st = null;
+              Time et = null;
+              Time st_old = null;
+              Time et_old = null;
+              int emp_old = 0;
+              int employee_id = 0;
+              int customer_id = 0;
+              int app_new_id = 0;
 
-            if (operation.equals("REZ") && startDate != null && endDate != null && idAppointment != -1) {
-                if (user_ses.getPermission() != Role.R_VIEW && user_ses.getPermission() != Role.R_SHD_CHK){
-                Appointment ap = Appointment.findById(idAppointment);
-                    if (ap != null){
-                Time tmp_t = DateUtil.toSqlTime(startDate);
-                Time t_old = ap.getSt_time();
-                Time t_new = new Time(DateUtil.getHour(tmp_t),DateUtil.getMinute(tmp_t),DateUtil.getSecond(tmp_t));
-                boolean bb = t_new.before(t_old);
-                if (bb){
-                    st = t_new;
-                    Calendar cal3 = Calendar.getInstance();
-                    cal3.setTime(endDate);
-                    cal3.add(Calendar.MINUTE,-360);
-                    java.util.Date maxTime1 = cal3.getTime();
-                    if (DateUtil.toSqlDate(startDate).before(maxTime1)){
-                        startDate = maxTime1;
-                    }
-
-                }else {
-                    st = t_old;
-                }
-                tmp_t = DateUtil.toSqlTime(endDate);
-                t_old = ap.getEt_time();
-                t_new = new Time(DateUtil.getHour(tmp_t),DateUtil.getMinute(tmp_t),DateUtil.getSecond(tmp_t));
-                bb = t_new.before(t_old);
-                if (bb){
-                    et = t_old;
-                }else {
-                    et = t_new;
-                    Calendar cal2 = Calendar.getInstance();
-                    cal2.setTime(startDate);
-                    cal2.add(Calendar.MINUTE,360);
-                    java.util.Date maxTime = cal2.getTime();
-                    if (DateUtil.toSqlDate(endDate).after(maxTime)){
-                        endDate = maxTime;
-                    }
-                }
-                ap.setSt_time(DateUtil.toSqlTime(startDate));
-                    if (startDate.equals(endDate)){
-                       Calendar cal = Calendar.getInstance();
-                       cal.setTime(endDate);
-                       cal.add(Calendar.MINUTE,15);
-                       java.util.Date newDate = cal.getTime();
-
-                       ap.setEt_time(DateUtil.toSqlTime(newDate));
-                    }else {
-                        ap.setEt_time(DateUtil.toSqlTime(endDate));
-                    }
-                    if (ap!= null && ap.getState()!=3){
-                        Ticket t = Ticket.findTicketById(ap.getTicket_id());
-                        if(t != null){
-                            ArrayList arr = Reconciliation.findTransByCode(t.getCode_transaction());
-                            if(arr != null && arr.size() > 0){
-                                Reconciliation r = (Reconciliation)arr.get(0);
-                                if(r != null && r.getStatus() != 0){
-                                    Appointment.updateAppointment(ap.getId(), ap.getEmployee_id(), ap.getPrice(),
-                                            ap.getApp_dt(), ap.getSt_time(), ap.getEt_time(), ap.getComment());
-                                }
-                            }else {
-                                Appointment.updateAppointment(ap.getId(), ap.getEmployee_id(), ap.getPrice(),
-                                        ap.getApp_dt(), ap.getSt_time(), ap.getEt_time(), ap.getComment());
-                            }
-                        }else {
-                            Appointment.updateAppointment(ap.getId(), ap.getEmployee_id(), ap.getPrice(),
-                                    ap.getApp_dt(), ap.getSt_time(), ap.getEt_time(), ap.getComment());
-                        }
-                    }
-
-//                    st = ap.getSt_time();
-//                    et = ap.getEt_time();
-                    employee_id = ap.getEmployee_id();
-                    edit = true;
-                } else {
-                        operation = "REFRESHALL";
-                    }
-                }
-            }
-
-            if (operation.equals("DEL") && idAppointment != -1) {
-                if (user_ses.getPermission() != Role.R_VIEW  && user_ses.getPermission() != Role.R_SHD_CHK){
-                int newState = 0;
-                Appointment ap = Appointment.findById(idAppointment);
-                    if (ap != null){
-                    st = ap.getSt_time();
-                    et = ap.getEt_time();
-                    employee_id = ap.getEmployee_id();
-                if (reason.equals("delok")) {
-//                    if (ap!= null && ap.getTicket_id() != 0)
-//                        Ticket.deleteTicket(user_ses.getId(), ap.getTicket_id());
-                    if (ap != null){
-                            Ticket tt = Ticket.findTicketById(ap.getTicket_id());
-                            if (tt != null){
-                            response.setContentType("text/html");
-                            response.setCharacterEncoding("UTF-8");
-                            response.getWriter().write("SAYALERT:Operation is not allowed. Please delete the saved Transaction for this Appointment");
-                            return;
-                        }else {
-                            Appointment.deleteAppointment(ap.getId());
-                            delete = true;
-                        }
-                    }
-                } else if (reason.equals("delcust") || reason.equals("delcancel")) {
-                    Appointment app = Appointment.findById(idAppointment);
-                    if(app!= null){
-                        Ticket tt = Ticket.findTicketById(app.getTicket_id());
-                        if (tt!=null){
-                            response.setContentType("text/html");
-                            response.setCharacterEncoding("UTF-8");
-                            response.getWriter().write("SAYALERT:Operation is not allowed. Please delete the saved Transaction for this Appointment");
-                            return;
-                        }else {
-                            if (reason.equals("delcust")) newState = 2;
-                            else newState = 4;
-                            Appointment.updateAppointmentByIdState(idAppointment, newState);
-                            Appointment.updateAddTicketID(idAppointment, 0);
-                            delcust = true;
-                            if (ap!= null && ap.getTicket_id() != 0)
-                                Ticket.deleteTicket(user_ses.getId(), ap.getTicket_id());
-                        }
-                    }
-                }
-                } else {
-                        operation = "REFRESHALL";
-                    }
-                }
-            }
-
-            if (operation.equals("FLAG") && idAppointment != -1 && state != -1) {
-                if (user_ses.getPermission() != Role.R_VIEW && user_ses.getPermission() != Role.R_SHD_CHK){
-                int newState = Integer.parseInt(request.getParameter("state"));
-                Appointment ap = Appointment.findById(idAppointment);
-                Customer customer = Customer.findById(ap.getCustomer_id());
-                if (customer.getFname().equalsIgnoreCase(Customer.WALKIN)){
-                    Appointment.updateAppointmentByIdState(idAppointment, newState);
-                    customer_id = 0;
-                    employee_id = ap.getEmployee_id();
-                }
-                else{
-                    Appointment.updateAppointmentByCustDate(customer.getId(), DateUtil.toSqlDate(currentDate), newState);
-                    customer_id = ap.getCustomer_id();
-                }
-                st = ap.getSt_time();
-                et = ap.getEt_time();
-
-                edit = true;
-            }
-            }
-
-            if (operation.equals("MOV") && startDate != null && endDate != null && idNewEmployee != -1) {
-                if (user_ses.getPermission() != Role.R_VIEW && user_ses.getPermission() != Role.R_SHD_CHK){
-                if (idNewEmployee > 0) {
-                    Appointment ap = Appointment.findById(idAppointment);
-                    if (ap != null){
-                    st_old = ap.getSt_time();
-                    et_old = ap.getEt_time();
-                    emp_old = ap.getEmployee_id();
-                    ap.setSt_time(DateUtil.toSqlTime(startDate));
-                    ap.setEt_time(DateUtil.toSqlTime(endDate));
-                    ap.setEmployee_id(idNewEmployee);
-                    if (ap!=null && ap.getTicket_id()!=0)
-                        Ticket.updateTicketSetEmpId(ap.getTicket_id(),idNewEmployee);
-                    if (ap!= null && ap.getState()!=3){
-                        Ticket t = Ticket.findTicketById(ap.getTicket_id());
-                        if(t != null){
-                            ArrayList arr = Reconciliation.findTransByCode(t.getCode_transaction());
-                            if(arr != null && arr.size() > 0){
-                                Reconciliation r = (Reconciliation)arr.get(0);
-                                if(r != null && r.getStatus() != 0){
-                                    Appointment.updateAppointment(ap.getId(), ap.getEmployee_id(), ap.getPrice(),
-                                            ap.getApp_dt(), ap.getSt_time(), ap.getEt_time(), ap.getComment());
-                                }
-                            }else{
-                                Appointment.updateAppointment(ap.getId(), ap.getEmployee_id(), ap.getPrice(),
-                                        ap.getApp_dt(), ap.getSt_time(), ap.getEt_time(), ap.getComment());
-                            }
-                        }else {
-                            Appointment.updateAppointment(ap.getId(), ap.getEmployee_id(), ap.getPrice(),
-                                    ap.getApp_dt(), ap.getSt_time(), ap.getEt_time(), ap.getComment());
-                        }
-                    }
-
-                    st = ap.getSt_time();
-                    et = ap.getEt_time();
-                    employee_id = ap.getEmployee_id();
-                    edit = true;
-                    }else{
-                        operation = "REFRESHALL";
-                    }
-                }
-                }
-            }
-
-            /*   if(operation.equals("SHOW") && idEditCustomer != -1 && idService != -1)
-                        {
-                            Appointment ap = new Appointment();
-                            ap.setSt_time(DateUtil.toSqlTime(startDate));
-                            ap.setEmployee_id(idNewEmployee);
-
-                            EmpServ servLink = null;
-                            try {
-                                servLink = EmpServ.findByEmployeeIdAndServiceID(idNewEmployee, idService);
-
-                            }
-                            catch(Exception ex){
-                            }
-
-                            Service serv = null;
-                            try {
-                                serv = Service.findById(idService);
-                                GregorianCalendar calendar = new GregorianCalendar();
-                                calendar.setTime(startDate);
-                                calendar.add(GregorianCalendar.MINUTE, servLink.getDuration());
-                                endDate = calendar.getTime();
-                            }
-                            catch(Exception ex){
-                            }
-
-                            //!!!every employee mast have a price for every service defined in service table!!!
-                            if(servLink != null && serv != null) {
-                                ap.setEt_time(DateUtil.toSqlTime(endDate));
-                                Appointment.insertAppointment(idLocation, idCustomer, idNewEmployee, idService, serv.getCategory_id(), servLink.getPrice(),DateUtil.toSqlDate(currentDate), ap.getSt_time(), ap.getEt_time(),0, comment);
-                            }
-
-                        }
-            */
-            if (operation.equals("NEW") && startDate != null && endDate != null && idNewEmployee != -1 && idService != -1)
-            {
-                if (user_ses.getPermission() != Role.R_VIEW && user_ses.getPermission() != Role.R_SHD_CHK){
-                try {
-                    idCustomer = Integer.parseInt(request.getParameter("idcustomer"));
-                } catch (Exception ex) {
-                }
-
-                Appointment ap = new Appointment();
-                ap.setSt_time(DateUtil.toSqlTime(startDate));
-                ap.setEmployee_id(idNewEmployee);
-
-//                EmpServ servLink = null;
-                BigDecimal price = BigDecimal.ZERO;
-                int duration = 15;
-                Boolean find = false;
-                try {
-                    EmpServ servLink = EmpServ.findByEmployeeIdAndServiceID(idNewEmployee, idService);
-                    if (servLink == null)
-                    {
-                        Service servLinks = Service.findById(idService);
-                        if (servLinks != null){
-                            duration = servLinks.getDuration();
-                            if (duration > 360) duration = 360;
-                            price = servLinks.getPrice();
-                            find = true;
-                        }
-                    }else {
-                        duration = servLink.getDuration();
-                        if (duration > 360) duration = 360;
-                        price = servLink.getPrice();
-                        find = true;
-                    }
-                }
-                catch (Exception ex) {
-                }
-                if (duration < 15) duration = 15;
-                Service serv = null;
-                try {
-                    serv = Service.findById(idService);
-                    GregorianCalendar calendar = new GregorianCalendar();
-                    calendar.setTime(startDate);
-                    if (underEND.equals("1")){
-                        calendar.add(GregorianCalendar.MINUTE, 15);
-                    } else if (underEND.equals("0")){
-//                        calendar.add(GregorianCalendar.MINUTE, 30); //always create appoinmetn with duration 30min
-                        calendar.add(GregorianCalendar.MINUTE, duration); //create appointment with some duration
-                    }
-                    endDate = calendar.getTime();
-                    ap.setEt_time(DateUtil.toSqlTime(endDate));
-                }
-                catch (Exception ex) {
-                }
-                //!!!every employee mast have a price for every service defined in service table!!!
-                Boolean req = false;
-                if (find && serv != null) {
-//                    System.out.println("appointment 1");
-                String rq = request.getParameter("req");
-                String reshedule = request.getParameter("reshedule");
-                String id_booking = request.getParameter("idb");
-                if ((rq != null)&&(rq.equals("true")))
-                    req = true;
-//                System.out.println("appointment 1 " + req);
-                Appointment ap_new = Appointment.insertAppointment(idLocation, idCustomer, idNewEmployee, idService, serv.getCategory_id(), price, DateUtil.toSqlDate(currentDate), ap.getSt_time(), ap.getEt_time(), 0, comment, req);
-                    Inbox ii = Inbox.findById(Integer.parseInt(id_booking));
-                    if (ap_new!= null && reshedule.equals("1") && ii!=null && ii.getCustomer_id()==idCustomer){
-                        InboxPublicBean ipb_old = InboxPublicBean.getBookingById(Integer.parseInt(id_booking));
-                        Inbox i = Inbox.updateAfterReschedule(Integer.parseInt(id_booking), ap_new.getApp_dt(), ap_new.getSt_time(), ap_new.getService_id(), ap_new.getEmployee_id(),ap_new.getId());
-                        if (i!= null){
-                            InboxPublicBean ipb_new = InboxPublicBean.getBookingById(i.getId());
-                            boolean send = sendEmail(ipb_old, ipb_new, 3);
-                        }
-                    }
-                    st = ap_new.getSt_time();
-                    et = ap_new.getEt_time();
-                    employee_id = ap_new.getEmployee_id();
-                    app_new_id = ap_new.getId();
-                    added = true;
-                }
-                }
-            }
+              if(request.getParameter("idlocation") != null)
+                  idLocation = Integer.parseInt(request.getParameter("idlocation"));
 
 
+                  browser = request.getParameter("browser");
+    
 
-            scheduleArrayLeftOcuppied.clear();
-            employeeListOrder.clear();
-            maxWidthPerCell.clear();
-            scheduleArray.clear();
-            scheduleArrayRemainingOnSameCell.clear();
-            employeeListOrder.clear();
+                  if(request.getParameter("dateutc") != null)
+                  currentDate = (new SimpleDateFormat("yyyy/MM/dd")).parse(request.getParameter("dateutc"));
 
-            try {
-                initScheduleArray(idLocation, DateUtil.toSqlDate(currentDate), pageNum);
-            }
-            catch (Exception ex) {
-                System.out.println("error4");
-            }
+                  if(request.getParameter("pageNum") != null)
+                  pageNum = Integer.parseInt(request.getParameter("pageNum"));
 
 
-            try {
-                initEmployeeListForDay(idLocation, DateUtil.toSqlDate(currentDate), pageNum);
-            }
-            catch (Exception ex) {
-                System.out.println("error5 initEmployeeListForDay");
-            }
-            response.setContentType("text/html");
-            response.setCharacterEncoding("UTF-8");
+                  if(request.getParameter("underEND") != null)
+                  underEND = String.valueOf(request.getParameter("underEND"));
+             
 
-            if (operation.equals("MOV") || operation.equals("REZ")){
-                response.getWriter().write(generateAroundEventsArray(idLocation, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, st_old, et_old, emp_old));
-            }
-            else if (operation.equals("NEW")){
-                if (added)
-                response.getWriter().write(generateAroundEventsArray(idLocation, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, st_old, et_old, emp_old));
-            }
-            else if (operation.equals("FLAG")){
-                if (customer_id == 0){
-                    response.getWriter().write(generateAroundEventsArray(idLocation, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, st_old, et_old, emp_old));
-                }
-                else {
-                    response.getWriter().write(generateAroundEventsArrayFlag(idLocation, DateUtil.toSqlDate(currentDate), pageNum, st, et, customer_id));
-                }
-            }
-            else if (operation.equals("DEL")){
-                if (delete)
-                        response.getWriter().write("DELETEAPP^appoint_"+idAppointment+"^"+generateAroundEventsArray(idLocation, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, st_old, et_old, emp_old));
-//                    response.getWriter().write("DELETEAPP:appoint_"+idAppointment);
-                if (delcust)
-                    response.getWriter().write(generateAroundEventsArray(idLocation, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, st_old, et_old, emp_old));
-//                    response.getWriter().write(generateEventByIdApp(idLocation, DateUtil.toSqlDate(currentDate), pageNum, idAppointment));
-            }  else if (operation.equals("REFRESHALL")){
-                response.getWriter().write("REFRESHALL");
-            }  else {
-                response.getWriter().write(generateEventsArray(idLocation, DateUtil.toSqlDate(currentDate), pageNum));
-            }
+                  if(request.getParameter("start") != null && !request.getParameter("start").contains("NaN"))
+                  startDate = (new SimpleDateFormat("yyyy/MM/dd HH:mm")).parse(request.getParameter("start"));
+
+
+                  if(request.getParameter("end") != null && !request.getParameter("start").contains("NaN"))
+                  endDate = (new SimpleDateFormat("yyyy/MM/dd HH:mm")).parse(request.getParameter("end"));
+
+
+                  if(request.getParameter("idnewemployee") != null)
+                  idNewEmployee = Integer.parseInt(request.getParameter("idnewemployee"));
+
+
+                  if(request.getParameter("idcustomer") != null)
+                  idCustomer = Integer.parseInt(request.getParameter("idcustomer"));
+
+
+                  if(request.getParameter("idservice") != null)
+                  idService = Integer.parseInt(request.getParameter("idservice"));
+
+              comment = request.getParameter("comment");
+              reason = request.getParameter("delParam");
+              //idEditCustomer = Integer.parseInt(request.getParameter("cust_id"));
+//  				servicePrice = new BigDecimal(Integer.parseInt(request.getParameter("serviceprice")));
+//  				idCategory = Integer.parseInt(request.getParameter("idcategory"));
+
+              if(request.getParameter("idappointment") != null)
+                  idAppointment = Integer.parseInt(request.getParameter("idappointment").replace("appoint_", ""));
+
+              if(request.getParameter("state") != null)
+                  state = Integer.parseInt(request.getParameter("state"));
+
+
+              if (operation.equals("REZ") && startDate != null && endDate != null && idAppointment != -1) {
+                  if (user_ses.getPermission() != Role.R_VIEW && user_ses.getPermission() != Role.R_SHD_CHK){
+                  Appointment ap = Appointment.findById(idAppointment);
+                      if (ap != null){
+                  Time tmp_t = DateUtil.toSqlTime(startDate);
+                  Time t_old = ap.getSt_time();
+                  Time t_new = new Time(DateUtil.getHour(tmp_t),DateUtil.getMinute(tmp_t),DateUtil.getSecond(tmp_t));
+                  boolean bb = t_new.before(t_old);
+                  if (bb){
+                      st = t_new;
+                      Calendar cal3 = Calendar.getInstance();
+                      cal3.setTime(endDate);
+                      cal3.add(Calendar.MINUTE,-360);
+                      java.util.Date maxTime1 = cal3.getTime();
+                      if (DateUtil.toSqlDate(startDate).before(maxTime1)){
+                          startDate = maxTime1;
+                      }
+
+                  }else {
+                      st = t_old;
+                  }
+                  tmp_t = DateUtil.toSqlTime(endDate);
+                  t_old = ap.getEt_time();
+                  t_new = new Time(DateUtil.getHour(tmp_t),DateUtil.getMinute(tmp_t),DateUtil.getSecond(tmp_t));
+                  bb = t_new.before(t_old);
+                  if (bb){
+                      et = t_old;
+                  }else {
+                      et = t_new;
+                      Calendar cal2 = Calendar.getInstance();
+                      cal2.setTime(startDate);
+                      cal2.add(Calendar.MINUTE,360);
+                      java.util.Date maxTime = cal2.getTime();
+                      if (DateUtil.toSqlDate(endDate).after(maxTime)){
+                          endDate = maxTime;
+                      }
+                  }
+                  ap.setSt_time(DateUtil.toSqlTime(startDate));
+                      if (startDate.equals(endDate)){
+                         Calendar cal = Calendar.getInstance();
+                         cal.setTime(endDate);
+                         cal.add(Calendar.MINUTE,15);
+                         java.util.Date newDate = cal.getTime();
+
+                         ap.setEt_time(DateUtil.toSqlTime(newDate));
+                      }else {
+                          ap.setEt_time(DateUtil.toSqlTime(endDate));
+                      }
+                      if (ap!= null && ap.getState()!=3){
+                          Ticket t = Ticket.findTicketById(ap.getTicket_id());
+                          if(t != null){
+                              ArrayList arr = Reconciliation.findTransByCode(t.getCode_transaction());
+                              if(arr != null && arr.size() > 0){
+                                  Reconciliation r = (Reconciliation)arr.get(0);
+                                  if(r != null && r.getStatus() != 0){
+                                      Appointment.updateAppointment(ap.getId(), ap.getEmployee_id(), ap.getPrice(),
+                                              ap.getApp_dt(), ap.getSt_time(), ap.getEt_time(), ap.getComment());
+                                  }
+                              }else {
+                                  Appointment.updateAppointment(ap.getId(), ap.getEmployee_id(), ap.getPrice(),
+                                          ap.getApp_dt(), ap.getSt_time(), ap.getEt_time(), ap.getComment());
+                              }
+                          }else {
+                              Appointment.updateAppointment(ap.getId(), ap.getEmployee_id(), ap.getPrice(),
+                                      ap.getApp_dt(), ap.getSt_time(), ap.getEt_time(), ap.getComment());
+                          }
+                      }
+
+//                      st = ap.getSt_time();
+//                      et = ap.getEt_time();
+                      employee_id = ap.getEmployee_id();
+                      edit = true;
+                  } else {
+                          operation = "REFRESHALL";
+                      }
+                  }
+              }
+
+              if (operation.equals("DEL") && idAppointment != -1) {
+                  if (user_ses.getPermission() != Role.R_VIEW  && user_ses.getPermission() != Role.R_SHD_CHK){
+                  int newState = 0;
+                  Appointment ap = Appointment.findById(idAppointment);
+                      if (ap != null){
+                      st = ap.getSt_time();
+                      et = ap.getEt_time();
+                      employee_id = ap.getEmployee_id();
+                  if (reason.equals("delok")) {
+//                      if (ap!= null && ap.getTicket_id() != 0)
+//                          Ticket.deleteTicket(user_ses.getId(), ap.getTicket_id());
+                      if (ap != null){
+                              Ticket tt = Ticket.findTicketById(ap.getTicket_id());
+                              if (tt != null){
+                              response.setContentType("text/html");
+                              response.setCharacterEncoding("UTF-8");
+                              response.getWriter().write("SAYALERT:Operation is not allowed. Please delete the saved Transaction for this Appointment");
+                              return;
+                          }else {
+                              Appointment.deleteAppointment(ap.getId());
+                              delete = true;
+                          }
+                      }
+                  } else if (reason.equals("delcust") || reason.equals("delcancel")) {
+                      Appointment app = Appointment.findById(idAppointment);
+                      if(app!= null){
+                          Ticket tt = Ticket.findTicketById(app.getTicket_id());
+                          if (tt!=null){
+                              response.setContentType("text/html");
+                              response.setCharacterEncoding("UTF-8");
+                              response.getWriter().write("SAYALERT:Operation is not allowed. Please delete the saved Transaction for this Appointment");
+                              return;
+                          }else {
+                              if (reason.equals("delcust")) newState = 2;
+                              else newState = 4;
+                              Appointment.updateAppointmentByIdState(idAppointment, newState);
+                              Appointment.updateAddTicketID(idAppointment, 0);
+                              delcust = true;
+                              if (ap!= null && ap.getTicket_id() != 0)
+                                  Ticket.deleteTicket(user_ses.getId(), ap.getTicket_id());
+                          }
+                      }
+                  }
+                  } else {
+                          operation = "REFRESHALL";
+                      }
+                  }
+              }
+
+              if (operation.equals("FLAG") && idAppointment != -1 && state != -1) {
+                  if (user_ses.getPermission() != Role.R_VIEW && user_ses.getPermission() != Role.R_SHD_CHK){
+                  int newState = Integer.parseInt(request.getParameter("state"));
+                  System.out.println("idAppointment in  FLAG:" + idAppointment);
+                  Appointment ap = Appointment.findById(idAppointment);
+                  Customer customer = Customer.findById(ap.getCustomer_id());
+                  if (customer.getFname().equalsIgnoreCase(Customer.WALKIN)){
+                      Appointment.updateAppointmentByIdState(idAppointment, newState);
+                      customer_id = 0;
+                      employee_id = ap.getEmployee_id();
+                  }
+                  else{
+                      Appointment.updateAppointmentByCustDate(customer.getId(), DateUtil.toSqlDate(currentDate), newState);
+                      customer_id = ap.getCustomer_id();
+                  }
+                  st = ap.getSt_time();
+                  et = ap.getEt_time();
+
+                  edit = true;
+              }
+              }
+
+              if (operation.equals("MOV") && startDate != null && endDate != null && idNewEmployee != -1) {
+                  if (user_ses.getPermission() != Role.R_VIEW && user_ses.getPermission() != Role.R_SHD_CHK){
+                  if (idNewEmployee > 0) {
+                      Appointment ap = Appointment.findById(idAppointment);
+                      
+                      if (ap != null){
+                      if(ap.getState() == 3)
+                    	  return;
+                      st_old = ap.getSt_time();
+                      et_old = ap.getEt_time();
+                      emp_old = ap.getEmployee_id();
+                      ap.setSt_time(DateUtil.toSqlTime(startDate));
+                      ap.setEt_time(DateUtil.toSqlTime(endDate));
+                      ap.setEmployee_id(idNewEmployee);
+                      if (ap!=null && ap.getTicket_id()!=0)
+                          Ticket.updateTicketSetEmpId(ap.getTicket_id(),idNewEmployee);
+                      if (ap!= null && ap.getState()!=3){
+                          Ticket t = Ticket.findTicketById(ap.getTicket_id());
+                          if(t != null){
+                              ArrayList arr = Reconciliation.findTransByCode(t.getCode_transaction());
+                              if(arr != null && arr.size() > 0){
+                                  Reconciliation r = (Reconciliation)arr.get(0);
+                                  if(r != null && r.getStatus() != 0){
+                                      Appointment.updateAppointment(ap.getId(), ap.getEmployee_id(), ap.getPrice(),
+                                              ap.getApp_dt(), ap.getSt_time(), ap.getEt_time(), ap.getComment());
+                                  }
+                              }else{
+                                  Appointment.updateAppointment(ap.getId(), ap.getEmployee_id(), ap.getPrice(),
+                                          ap.getApp_dt(), ap.getSt_time(), ap.getEt_time(), ap.getComment());
+                              }
+                          }else {
+                              Appointment.updateAppointment(ap.getId(), ap.getEmployee_id(), ap.getPrice(),
+                                      ap.getApp_dt(), ap.getSt_time(), ap.getEt_time(), ap.getComment());
+                          }
+                      }
+
+                      st = ap.getSt_time();
+                      et = ap.getEt_time();
+                      employee_id = ap.getEmployee_id();
+                      edit = true;
+                      }else{
+                          operation = "REFRESHALL";
+                      }
+                  }
+                  }
+              }
+
+              /*   if(operation.equals("SHOW") && idEditCustomer != -1 && idService != -1)
+                          {
+                              Appointment ap = new Appointment();
+                              ap.setSt_time(DateUtil.toSqlTime(startDate));
+                              ap.setEmployee_id(idNewEmployee);
+
+                              EmpServ servLink = null;
+                              try {
+                                  servLink = EmpServ.findByEmployeeIdAndServiceID(idNewEmployee, idService);
+
+                              }
+                              catch(Exception ex){
+                              }
+
+                              Service serv = null;
+                              try {
+                                  serv = Service.findById(idService);
+                                  GregorianCalendar calendar = new GregorianCalendar();
+                                  calendar.setTime(startDate);
+                                  calendar.add(GregorianCalendar.MINUTE, servLink.getDuration());
+                                  endDate = calendar.getTime();
+                              }
+                              catch(Exception ex){
+                              }
+
+                              //!!!every employee mast have a price for every service defined in service table!!!
+                              if(servLink != null && serv != null) {
+                                  ap.setEt_time(DateUtil.toSqlTime(endDate));
+                                  Appointment.insertAppointment(idLocation, idCustomer, idNewEmployee, idService, serv.getCategory_id(), servLink.getPrice(),DateUtil.toSqlDate(currentDate), ap.getSt_time(), ap.getEt_time(),0, comment);
+                              }
+
+                          }
+              */
+              if (operation.equals("NEW") && startDate != null && endDate != null && idNewEmployee != -1 && idService != -1)
+              {
+                  if (user_ses.getPermission() != Role.R_VIEW && user_ses.getPermission() != Role.R_SHD_CHK){
+                  try {
+                      idCustomer = Integer.parseInt(request.getParameter("idcustomer"));
+                  } catch (Exception ex) {
+                  }
+
+                  Appointment ap = new Appointment();
+                  ap.setSt_time(DateUtil.toSqlTime(startDate));
+                  ap.setEmployee_id(idNewEmployee);
+
+//                  EmpServ servLink = null;
+                  BigDecimal price = BigDecimal.ZERO;
+                  int duration = 15;
+                  Boolean find = false;
+
+                      EmpServ servLink = EmpServ.findByEmployeeIdAndServiceID(idNewEmployee, idService);
+                      if (servLink == null)
+                      {
+                          Service servLinks = Service.findById(idService);
+                          if (servLinks != null){
+                              duration = servLinks.getDuration();
+                              if (duration > 360) duration = 360;
+                              price = servLinks.getPrice();
+                              find = true;
+                          }
+                      }else {
+                          duration = servLink.getDuration();
+                          if (duration > 360) duration = 360;
+                          price = servLink.getPrice();
+                          find = true;
+                      }
+
+                  if (duration < 15) duration = 15;
+                  Service serv = null;
+
+                      serv = Service.findById(idService);
+                      GregorianCalendar calendar = new GregorianCalendar();
+                      calendar.setTime(startDate);
+                      if (underEND.equals("1")){
+                          calendar.add(GregorianCalendar.MINUTE, 15);
+                      } else if (underEND.equals("0")){
+//                          calendar.add(GregorianCalendar.MINUTE, 30); //always create appoinmetn with duration 30min
+                          calendar.add(GregorianCalendar.MINUTE, duration); //create appointment with some duration
+                      }
+                      endDate = calendar.getTime();
+                      ap.setEt_time(DateUtil.toSqlTime(endDate));
+
+                  //!!!every employee mast have a price for every service defined in service table!!!
+                  Boolean req = false;
+                  if (find && serv != null) {
+//                      System.out.println("appointment 1");
+                  String rq = request.getParameter("req");
+                  String reshedule = request.getParameter("reshedule");
+                  String id_booking = request.getParameter("idb");
+                  if ((rq != null)&&(rq.equals("true")))
+                      req = true;
+//                  System.out.println("appointment 1 " + req);
+                  Appointment ap_new = Appointment.insertAppointment(idLocation, idCustomer, idNewEmployee, idService, serv.getCategory_id(), price, DateUtil.toSqlDate(currentDate), ap.getSt_time(), ap.getEt_time(), 0, comment, req);
+                      Inbox ii = Inbox.findById(Integer.parseInt(id_booking));
+                      if (ap_new!= null && reshedule.equals("1") && ii!=null && ii.getCustomer_id()==idCustomer){
+                          InboxPublicBean ipb_old = InboxPublicBean.getBookingById(Integer.parseInt(id_booking));
+                          Inbox i = Inbox.updateAfterReschedule(Integer.parseInt(id_booking), ap_new.getApp_dt(), ap_new.getSt_time(), ap_new.getService_id(), ap_new.getEmployee_id(),ap_new.getId());
+                          if (i!= null){
+                              InboxPublicBean ipb_new = InboxPublicBean.getBookingById(i.getId());
+                              boolean send = sendEmail(ipb_old, ipb_new, 3);
+                          }
+                      }
+                      st = ap_new.getSt_time();
+                      et = ap_new.getEt_time();
+                      employee_id = ap_new.getEmployee_id();
+                      app_new_id = ap_new.getId();
+                      added = true;
+                  }
+                  }
+              }
+
+
+
+              scheduleArrayLeftOcuppied.clear();
+              employeeListOrder.clear();
+              maxWidthPerCell.clear();
+              scheduleArray.clear();
+              scheduleArrayRemainingOnSameCell.clear();
+              employeeListOrder.clear();
+
+
+                  initScheduleArray(idLocation, DateUtil.toSqlDate(currentDate), pageNum);
+
+
+              try {
+                  initEmployeeListForDay(idLocation, DateUtil.toSqlDate(currentDate), pageNum);
+              }
+              catch (Exception ex) {
+                  System.out.println("error5 initEmployeeListForDay");
+              }
+              response.setContentType("text/html");
+              response.setCharacterEncoding("UTF-8");
+
+              if (operation.equals("MOV") || operation.equals("REZ")){
+                  response.getWriter().write(generateAroundEventsArray(idLocation, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, st_old, et_old, emp_old));
+              }
+              else if (operation.equals("NEW")){
+                  if (added)
+                  response.getWriter().write(generateAroundEventsArray(idLocation, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, st_old, et_old, emp_old));
+              }
+              else if (operation.equals("FLAG")){
+                  if (customer_id == 0){
+                      response.getWriter().write(generateAroundEventsArray(idLocation, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, st_old, et_old, emp_old));
+                  }
+                  else {
+                      response.getWriter().write(generateAroundEventsArrayFlag(idLocation, DateUtil.toSqlDate(currentDate), pageNum, st, et, customer_id));
+                  }
+              }
+              else if (operation.equals("DEL")){
+                  if (delete)
+                          response.getWriter().write("DELETEAPP^appoint_"+idAppointment+"^"+generateAroundEventsArray(idLocation, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, st_old, et_old, emp_old));
+//                      response.getWriter().write("DELETEAPP:appoint_"+idAppointment);
+                  if (delcust)
+                      response.getWriter().write(generateAroundEventsArray(idLocation, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, st_old, et_old, emp_old));
+//                      response.getWriter().write(generateEventByIdApp(idLocation, DateUtil.toSqlDate(currentDate), pageNum, idAppointment));
+              }  else if (operation.equals("REFRESHALL")){
+                  response.getWriter().write("REFRESHALL");
+              }  else {
+                  response.getWriter().write(generateEventsArray(idLocation, DateUtil.toSqlDate(currentDate), pageNum));
+              }
+          }
+//          }
+          } else {
+              response.setContentType("text/html");
+              response.setCharacterEncoding("UTF-8");
+              response.getWriter().write("REDIRECT:error.jsp?ec=1");
+          }
         }
-//        }
-        } else {
-            response.setContentType("text/html");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write("REDIRECT:error.jsp?ec=1");
+        catch(Exception e)
+        {
+        	e.printStackTrace();
         }
+        
     }
 
         private boolean sendEmail(InboxPublicBean ipb_old, InboxPublicBean ipb_new, int type)

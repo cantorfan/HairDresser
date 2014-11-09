@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NewClosingDetailsReport_DailyRevenuTop" pageWidth="555" pageHeight="300" whenNoDataType="AllSectionsNoDetail" columnWidth="535" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<subDataset name="pie1">
 		<parameter name="CUR_DATE_PIE" class="java.lang.String"/>
 		<queryString>
@@ -303,49 +306,49 @@ select
 				<textElement textAlignment="Right">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{amex}.add( $F{visa}.add( $F{mastercard} ))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{amex}.add( $F{visa}.add( $F{mastercard} ))]]></textFieldExpression>
 			</textField>
 			<textField pattern="$#,##0.00" isBlankWhenNull="true">
 				<reportElement x="155" y="37" width="78" height="20"/>
 				<textElement textAlignment="Right">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{cashe}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{cashe}]]></textFieldExpression>
 			</textField>
 			<textField pattern="$#,##0.00" isBlankWhenNull="true">
 				<reportElement x="155" y="65" width="78" height="20"/>
 				<textElement textAlignment="Right">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{cheque}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{cheque}]]></textFieldExpression>
 			</textField>
 			<textField pattern="$#,##0.00" isBlankWhenNull="true">
 				<reportElement x="155" y="93" width="78" height="20"/>
 				<textElement textAlignment="Right">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{giftcard}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{giftcard}]]></textFieldExpression>
 			</textField>
 			<textField pattern="$#,##0.00">
 				<reportElement x="155" y="121" width="78" height="20"/>
 				<textElement textAlignment="Right">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{refund}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{refund}]]></textFieldExpression>
 			</textField>
 			<textField pattern="$#,##0.00">
 				<reportElement x="155" y="149" width="78" height="20"/>
 				<textElement textAlignment="Right">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{pay_in}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{pay_in}]]></textFieldExpression>
 			</textField>
 			<textField pattern="$#,##0.00">
 				<reportElement x="155" y="177" width="78" height="20"/>
 				<textElement textAlignment="Right">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{pay_out}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{pay_out}]]></textFieldExpression>
 			</textField>
 			<pieChart>
 				<chart isShowLegend="false" theme="default">
@@ -373,7 +376,11 @@ select
 					</pieSeries>
 				</pieDataset>
 				<piePlot labelFormat="{2}" legendLabelFormat="{0} ({2})">
-					<plot/>
+					<plot>
+						<seriesColor seriesOrder="0" color="#5555FF"/>
+						<seriesColor seriesOrder="1" color="#FF5555"/>
+					</plot>
+					<itemLabel/>
 				</piePlot>
 			</pieChart>
 			<line>

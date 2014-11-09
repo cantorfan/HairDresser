@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NewClosingDetailsReport_page5_service_analysis_pie" pageWidth="550" pageHeight="300" whenNoDataType="AllSectionsNoDetail" columnWidth="550" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="CUR_DATE" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[select
@@ -24,7 +27,7 @@ left join `reconciliation` rec on rec.`code_transaction` = tic.`code_transaction
 left join `inventory` inv on inv.`id` = tic.`product_id`
 left join service ser on ser.id = tic.service_id
 where
-     rec.`status` not in (2,6) and
+     rec.`status` not in (1,2,6) and
      tic.`service_id` = 0 and
      tic.`product_id` != 0 and
      DATE(rec.`created_dt`) = DATE($P{CUR_DATE})
@@ -81,7 +84,11 @@ order by product]]>
 					<valueExpression><![CDATA[$F{amount}]]></valueExpression>
 				</pieDataset>
 				<piePlot isCircular="true" labelFormat="{0}" legendLabelFormat="{0} ({2})">
-					<plot/>
+					<plot>
+						<seriesColor seriesOrder="0" color="#5555FF"/>
+						<seriesColor seriesOrder="1" color="#FF5555"/>
+					</plot>
+					<itemLabel/>
 				</piePlot>
 			</pieChart>
 		</band>
