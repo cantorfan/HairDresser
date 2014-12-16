@@ -54,15 +54,21 @@
     else{
         String loc_stmt = p_loc.equals("alllocation") ? "" : (Customer.LOC + " = '" +  p_loc + "' AND ");
         String req_stmt = p_req.equals("allreq") ? "" : (Customer.REQ + "='" + (p_req.equals("chkreq") ? "1" : "0") + "' AND ");
-
+		
+        String anyPhone = "";
+        if(!p_phone.equals(""))
+        	anyPhone = p_phone;
+        else
+        if(!p_cellphone.equals(""))
+        	anyPhone = p_cellphone;
         String filter =
                   loc_stmt +
                   req_stmt +
                   Customer.FNAME + " LIKE '%" + p_fname + "%' AND " +
                   Customer.LNAME + " LIKE '%" + p_lname + "%' AND " +
-                  Customer.EMAIL + " LIKE '%" + p_email + "%' AND " +
-                  Customer.PHONE + " LIKE '%" + p_phone + "%' AND " +
-                  Customer.CELL + " LIKE '%" + p_cellphone + "%' AND " +
+                  Customer.EMAIL + " LIKE '%" + p_email + "%' AND (" +
+                  Customer.PHONE + " LIKE '%" + anyPhone + "%' OR " +
+                  Customer.CELL + " LIKE '%" + anyPhone + "%') AND " +
                   Customer.WORK_PHONE_EXT  + " LIKE '%" + p_work_phone_ext + "%'";
         list = Customer.findByFilter(filter + " LIMIT " + offset + "," + ActionUtil.PAGE_ITEMS);
         count = Customer.countByFilter(filter);

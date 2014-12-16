@@ -133,6 +133,12 @@
             <forward name="edit"  redirect="false"  path="/admin/list_employee.jsp"/>
             <forward name="list"  redirect="false"  path="/admin/list_employee.jsp"/>
         </action>
+		<action path="/admin/loginConfig"
+                type="org.xu.swan.action.LoginConfigAction"
+                input="/admin/login_config.jsp">
+            <forward name="init"  redirect="false"  path="/admin/login_config.jsp"/>
+            
+        </action>
 
         <action path="/admin/ShowPhoto" type="org.xu.swan.action.ShowPhotoAction"></action>
         <action path="/admin/ShowPhotoCustomer" type="org.xu.swan.action.ShowPhotoActionForCustomer"></action>
@@ -185,7 +191,7 @@
         <!--END SET PROPERTIES-->
         
             <!--esalonsoft/test-->
-        <set-property property="db_url" value="jdbc:mysql://localhost:3306/salonjoe"></set-property>
+        <set-property property="db_url" value="jdbc:mysql://localhost:3306/manhattan10?autoReconnect=true"></set-property>
         <set-property property="db_user" value="root"></set-property>
         <set-property property="db_password" value="12345"></set-property>
 
