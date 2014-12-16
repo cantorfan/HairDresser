@@ -80,6 +80,7 @@
                         _taxe = taxe.multiply(new BigDecimal(qty)).add(_taxe);
                         total = price.multiply(new BigDecimal(qty)).multiply(new BigDecimal(1.0 - disc/100.0f))/*.add(taxe.multiply(new BigDecimal(qty)))*/;
                         _total = _total.add(total);
+                        _total = _total.add(_taxe);
                     }
                 }
              } else if (!loc.equals("") && !id_trans.equals("") && edit){
