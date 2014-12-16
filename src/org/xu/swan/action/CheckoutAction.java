@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.sql.Date;
 
 public class CheckoutAction extends org.apache.struts.action.Action {
     protected Logger logger = LogManager.getLogger(getClass());
@@ -26,7 +27,7 @@ public class CheckoutAction extends org.apache.struts.action.Action {
         User u = ActionUtil.getUser(request);
         HttpSession session = request.getSession(true);
         User user_ses = (User) session.getAttribute("user");
-
+        System.out.println("here 0");
         String action = StringUtils.defaultString(request.getParameter(ActionUtil.ACTION), "");
 
         String id = StringUtils.defaultString(request.getParameter(Reconciliation.ID), "");
@@ -56,6 +57,14 @@ public class CheckoutAction extends org.apache.struts.action.Action {
         if (cd_open!=null && cd_close == null){
             allow_edit = true;
         }
+        
+        Date today = new Date(System.currentTimeMillis());
+        boolean allow_edit_today = false;
+        CashDrawing cd_todayopen = CashDrawing.findByDateStatus(Integer.parseInt(loc), today, 0);
+        CashDrawing cd_todayclose = CashDrawing.findByDateStatus(Integer.parseInt(loc), today, 2);
+        if (cd_todayopen!=null && cd_todayclose == null){
+        	allow_edit_today = true;
+        }
 
 
 //
@@ -82,11 +91,11 @@ public class CheckoutAction extends org.apache.struts.action.Action {
 //        if (StringUtils.isEmpty(cust)) cust = "0";
 //        if (StringUtils.isEmpty(svc)) svc = "0";
 //        if (StringUtils.isEmpty(prod)) prod = "0";
-
+        System.out.println("here 0.5:" + action);
         if (action.equalsIgnoreCase(ActionUtil.ACT_ADD)) {
         	try
         	{
-        		if (user_ses.getPermission() != Role.R_SHD_CHK && allow_edit) {
+        		if (user_ses.getPermission() != Role.R_SHD_CHK && (allow_edit || (allow_edit_today && status.equals("4")))) {
 //                  BigDecimal dec = new BigDecimal(Float.parseFloat(price));
                   BigDecimal s_total = new BigDecimal(Float.parseFloat(s_total_));
                   BigDecimal taxe = new BigDecimal(Float.parseFloat(taxe_));
@@ -98,13 +107,21 @@ public class CheckoutAction extends org.apache.struts.action.Action {
                   BigDecimal chq = new BigDecimal(Float.parseFloat(cheque));
                   BigDecimal ca = new BigDecimal(Float.parseFloat(cashe));
                   BigDecimal gc = new BigDecimal(Float.parseFloat(giftcard));
+                  System.out.println("here 1");
 //                  logger.info("Start Add Transaction. User="+user_ses.getFname() + " " + user_ses.getLname());
-                  Reconciliation trans = Reconciliation.insertTransaction((u != null ? u.getId() : 0), Integer.parseInt(loc), code, Integer.parseInt(cust),
+                  Reconciliation trans  = null;
+                  if(allow_edit)
+                	  trans = Reconciliation.insertTransaction((u != null ? u.getId() : 0), Integer.parseInt(loc), code, Integer.parseInt(cust),
                           s_total, taxe, total, paym, Integer.parseInt(status), DateUtil.parseSqlDate(dt), am, vi, ma, chq, ca, gc, ch, giftcard_pay);
+                  else
+                	  trans = Reconciliation.insertTransaction((u != null ? u.getId() : 0), Integer.parseInt(loc), code, Integer.parseInt(cust),
+                              s_total, taxe, total, paym, Integer.parseInt(status), today, am, vi, ma, chq, ca, gc, ch, giftcard_pay);
                       if (status.equals("0")){
+                    	  System.out.println("here 2");
                           ArrayList aa = null;
                           aa = Ticket.findTicketByLocCodeTrans(1,trans.getCode_transaction());
                           if (aa!=null){
+                        	  System.out.println("here 3");
                               for (int i=0; i<aa.size(); i++){
                                   Ticket tt = (Ticket)aa.get(i);
                                   ArrayList ap = Appointment.findAllByTicketId(tt.getId());
@@ -124,6 +141,7 @@ public class CheckoutAction extends org.apache.struts.action.Action {
                           }
                       }
                   if (status.equals("4")){
+                	  System.out.println("here 4");
                       String[] t = ticket_id.split(" ");
                       for(int i = 0; i < t.length; i++){
                           if(!t[i].trim().equals("")){
@@ -135,6 +153,7 @@ public class CheckoutAction extends org.apache.struts.action.Action {
                       ArrayList allTrans =Reconciliation.findTransByCode(code);
                       if(allTrans != null)
                       {
+                    	  System.out.println("here 5");
                       	for(int i = 0; i < allTrans.size(); i++)
                       	{
                       		Reconciliation ttt = (Reconciliation)allTrans.get(i);
