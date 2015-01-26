@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.ResultSet;
@@ -28,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
 import org.apache.commons.lang.StringUtils;
 
 
@@ -346,6 +348,15 @@ public class CustomerData extends HttpServlet {
             responseXML = "<?xml version=\"1.0\"?><root><customer ID=\"" + customerId + "\"/></root>";
         }
         }
+        if (request.getParameter("getCustomer") != null) {
+        	Customer customer = Customer.findById(Integer.parseInt(request.getParameter("getCustomer")));
+        	String json = "{\"id\": \""+customer.getId()+"\", \"email\": \""+customer.getEmail()+"\"}";
+        	 PrintWriter out = response.getWriter();
+             out.write(json);
+             out.close();
+             return;
+        }
+        
         if (responseXML.length() == 0) {
             // System.out.println("lalala4");
             responseXML = "<?xml version=\"1.0\"?><root/>";

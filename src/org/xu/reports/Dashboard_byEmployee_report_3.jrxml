@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Dashboard_byEmployee_report_3" pageWidth="555" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="535" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="START_DATE" class="java.lang.String"/>
 	<parameter name="END_DATE" class="java.lang.String"/>
 	<parameter name="EMP_ID" class="java.lang.String"/>
@@ -161,35 +164,35 @@ where DATE(rec1.`created_dt`) between DATE($P{START_DATE}) and DATE($P{END_DATE}
 				<textElement>
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[($F{product_tax_total} == null || $F{service_tax_total} == null)? new BigDecimal(0):$F{product_tax_total}.add($F{service_tax_total})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{product_tax_total} == null || $F{service_tax_total} == null)? new BigDecimal(0):$F{product_tax_total}.add($F{service_tax_total})]]></textFieldExpression>
 			</textField>
 			<textField pattern="$#,##0.00">
 				<reportElement x="143" y="31" width="81" height="20"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{service_total} == null? new BigDecimal(0):$F{service_total}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{service_total} == null? new BigDecimal(0):$F{service_total}]]></textFieldExpression>
 			</textField>
 			<textField pattern="$#,##0.00">
 				<reportElement x="143" y="7" width="81" height="20"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{product_total} == null? new BigDecimal(0):$F{product_total}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{product_total} == null? new BigDecimal(0):$F{product_total}]]></textFieldExpression>
 			</textField>
 			<textField pattern="$#,##0.00">
 				<reportElement x="143" y="55" width="81" height="20"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[($F{product_total} == null || $F{service_total} == null)? new BigDecimal(0):$F{product_total}.add($F{service_total})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{product_total} == null || $F{service_total} == null)? new BigDecimal(0):$F{product_total}.add($F{service_total})]]></textFieldExpression>
 			</textField>
 			<textField pattern="$#,##0.00">
 				<reportElement x="143" y="118" width="81" height="20"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[($F{product_total} == null || $F{service_total} == null || $F{product_tax_total} == null || $F{service_tax_total} == null)? new BigDecimal(0):$F{product_total}.add($F{service_total}).add($F{product_tax_total}).add($F{service_tax_total})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{product_total} == null || $F{service_total} == null || $F{product_tax_total} == null || $F{service_tax_total} == null)? new BigDecimal(0):$F{product_total}.add($F{service_total}).add($F{product_tax_total}).add($F{service_tax_total})]]></textFieldExpression>
 			</textField>
 			<rectangle>
 				<reportElement x="18" y="10" width="15" height="15" forecolor="#FFFFFF" backcolor="#5555FF"/>
@@ -256,7 +259,11 @@ where DATE(rec1.`created_dt`) between DATE($P{START_DATE}) and DATE($P{END_DATE}
 					</pieSeries>
 				</pieDataset>
 				<piePlot labelFormat="{2}" legendLabelFormat="{0} ({2})">
-					<plot/>
+					<plot>
+						<seriesColor seriesOrder="0" color="#5555FF"/>
+						<seriesColor seriesOrder="1" color="#FF5555"/>
+					</plot>
+					<itemLabel/>
 				</piePlot>
 			</pieChart>
 		</band>
@@ -280,21 +287,21 @@ where DATE(rec1.`created_dt`) between DATE($P{START_DATE}) and DATE($P{END_DATE}
 				<textElement textAlignment="Center">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{service_commission} == null ? new BigDecimal(0):$F{service_commission}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{service_commission} == null ? new BigDecimal(0):$F{service_commission}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00">
 				<reportElement x="320" y="43" width="100" height="20"/>
 				<textElement textAlignment="Center">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{product_commission} == null ? new BigDecimal(0):$F{product_commission}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{product_commission} == null ? new BigDecimal(0):$F{product_commission}]]></textFieldExpression>
 			</textField>
 			<textField pattern="$#,##0.00">
 				<reportElement x="445" y="43" width="100" height="20"/>
 				<textElement textAlignment="Center">
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression class="java.math.BigDecimal"><![CDATA[($F{product_commission} == null || $F{service_commission}==null) ? new BigDecimal(0):$F{product_commission}.add($F{service_commission})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{product_commission} == null || $F{service_commission}==null) ? new BigDecimal(0):$F{product_commission}.add($F{service_commission})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="18" y="21" width="527" height="20"/>

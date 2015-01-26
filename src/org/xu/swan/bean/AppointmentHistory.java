@@ -339,7 +339,7 @@ public class AppointmentHistory {
             ResultSet rs = st.executeQuery(sql);
             while(rs.next()){
                 AppointmentHistory appt = new AppointmentHistory();
-                list.add(appt);
+                
                 appt.setId(rs.getInt(1));
                 appt.setApp_dt(rs.getDate(2));
                 appt.setEmployee(rs.getString(3));
@@ -352,6 +352,17 @@ public class AppointmentHistory {
                 appt.setState(rs.getInt(10));
                 appt.setRequest(rs.getBoolean(11));
                 appt.setTicket_id(rs.getInt(12));
+                
+                Ticket t = Ticket.findTicketById(appt.getTicket_id());
+                if(t != null)
+                {
+                	
+                    if(t.getRefundtrans_id() == 0 && appt.getState() == 4)
+                    	continue;
+                }
+                
+                
+                list.add(appt);
             }
             rs.close();
             st.close();

@@ -1,5 +1,6 @@
 package org.xu.swan.bean;
 
+import org.apache.log4j.Logger;
 import org.xu.swan.db.DBManager;
 import org.xu.swan.dashboard.*;
 
@@ -9,6 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Appointment {
+	private static final Logger log = Logger.getLogger(Appointment.class);
+	
     public static final String ID = "id";
     public static final String CUST = "customer_id";
     public static final String EMP = "employee_id";
@@ -504,10 +507,11 @@ public class Appointment {
         try{
             dbm = new DBManager();
             Statement st = dbm.getStatement();
-            ResultSet rs = st.executeQuery("SELECT " + ID + ","  + LOC + ","  + CUST + ","  + EMP + "," + SVC + ","
-                + CATE + ","  + PRICE + ","  + APPDT + ","  + ST + ","  + ET + ","+ STATE + ","+ COMMENT + ","+ TICKET +" FROM appointment "
-             + filter );
-
+            String sql = "SELECT " + ID + ","  + LOC + ","  + CUST + ","  + EMP + "," + SVC + ","
+                    + CATE + ","  + PRICE + ","  + APPDT + ","  + ST + ","  + ET + ","+ STATE + ","+ COMMENT + ","+ TICKET +" FROM appointment "
+                    + filter;
+            log.debug(sql);
+            ResultSet rs = st.executeQuery(sql );
             while(rs.next()){
                 Appointment appt = new Appointment();
                 list.add(appt);

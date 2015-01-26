@@ -39,7 +39,14 @@ public class User {
     private int permission;
     private int send_email;
 
-    public int getId() {
+    
+    @Override
+	public String toString() {
+		return "User [id=" + id + ", user=" + user + ", pwd=" + pwd + ", ips="
+				+ ips + "]";
+	}
+
+	public int getId() {
         return id;
     }
 

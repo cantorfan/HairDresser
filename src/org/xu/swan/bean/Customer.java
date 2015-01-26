@@ -500,7 +500,9 @@ public class Customer {
         Customer cust = null;
         DBManager dbm = null;
         String fname_s = fname.substring(0,1).toUpperCase()+fname.substring(1,fname.length());
-        String lname_s = lname.substring(0,1).toUpperCase()+lname.substring(1,lname.length());
+        String lname_s = "";
+        if(lname!=null && lname.trim().length()>0)
+        	lname_s= lname.substring(0,1).toUpperCase()+lname.substring(1,lname.length());
         try {
             dbm = new DBManager();
             PreparedStatement pst = dbm.getPreparedStatement("UPDATE customer SET " + FNAME + "=?, " + LNAME + "=?, " + EMAIL + "=?, " + PHONE + "=?, "

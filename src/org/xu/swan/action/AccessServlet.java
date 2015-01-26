@@ -19,7 +19,7 @@ import org.apache.log4j.LogManager;
 public class AccessServlet  extends HttpServlet {
     protected Logger logger = LogManager.getLogger(getClass());
     public void init() {
-        System.out.println("AccessServlet initialized.");
+        logger.info("AccessServlet initialized.");
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -43,7 +43,9 @@ public class AccessServlet  extends HttpServlet {
         {
             UserIP = request.getRemoteAddr();
         }
-
+        
+        logger.debug("fIP:"+fIP+", UserIP:"+UserIP);
+        
         try{
             if(query.equalsIgnoreCase("login")){
                 String u = StringUtils.defaultString(request.getParameter("user"), "");
@@ -51,8 +53,13 @@ public class AccessServlet  extends HttpServlet {
                 String ip = request.getRemoteAddr();
                 User user = User.findUser(u,p);
                 Location loc = Location.findById(1);
+                
+                logger.debug("u:"+u+", p:"+p+", ip:"+ip+", user: "+user);
+                
                 if(user==null) {
-                    logger.info("Error login. login/pass not foung. login/pass='"+u+"/"+p+"' IP: "+UserIP);                    
+                	logger.debug("111111");
+                    logger.info("Error login. login/pass not foung. login/pass='"+u+"/"+p+"' IP: "+UserIP); 
+                    session.setAttribute("loginErrorMessage", "Error login. login/pass not foung. ");
                     response.sendRedirect("index.jsp");
                     return;
                 }
@@ -60,24 +67,32 @@ public class AccessServlet  extends HttpServlet {
                 String ips = user.getIps();
                 boolean isExistIP=false;// 
                 if(StringUtils.isEmpty(ips)){
+                	logger.debug("222222");
                 	isExistIP = true;
                 }else{
-                	
                 	if(ips.indexOf("*")!=-1){
+                		logger.debug("3333333");
                 		isExistIP = true;
                 	}else if(ips.indexOf(ip)!=-1){
+                		logger.debug("444444");
                 		isExistIP = true;
                 	}
                 	
                 }
                 if(!isExistIP){
-                	 logger.info("Error login. IP nonexistence: "+UserIP);
+                	logger.debug("555555");
+                	 String eror = "Error login. IP nonexistence: "+UserIP;
+                     logger.info(eror); 
+                     session.setAttribute("loginErrorMessage", eror);
                      response.sendRedirect("index.jsp");
                      return;
                 }
                 
                 if(loc==null) {
-                    logger.info("Error login. Location Not Found IP: "+UserIP);
+                	logger.debug("666666");
+                    String eror = "Error login. Location Not Found IP: "+UserIP;
+                    logger.info(eror); 
+                    session.setAttribute("loginErrorMessage", eror);
                     response.sendRedirect("index.jsp");
                     return;
                 }

@@ -1,33 +1,59 @@
 package org.xu.dyve.action.schedule;
 
-import org.xu.swan.bean.*;
-import org.xu.swan.util.DateUtil;
-import org.xu.swan.util.Html2Text;
-import org.xu.swan.util.ResourcesManager;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.Message;
-import javax.mail.Multipart;
-import javax.mail.Transport;
-import javax.mail.MessagingException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.apache.poi.util.StringUtil;
+import org.xu.swan.bean.Appointment;
+import org.xu.swan.bean.Customer;
+import org.xu.swan.bean.EmailTemplate;
+import org.xu.swan.bean.EmpServ;
+import org.xu.swan.bean.Employee;
+import org.xu.swan.bean.Inbox;
+import org.xu.swan.bean.InboxPublicBean;
+import org.xu.swan.bean.Location;
+import org.xu.swan.bean.Reconciliation;
+import org.xu.swan.bean.Role;
+import org.xu.swan.bean.Service;
+import org.xu.swan.bean.Ticket;
+import org.xu.swan.bean.User;
+import org.xu.swan.bean.WorkingtimeLoc;
+import org.xu.swan.util.DateUtil;
+import org.xu.swan.util.Html2Text;
+import org.xu.swan.util.ResourcesManager;
+import org.xu.swan.util.SendMailHelper;
 
 public class ScheduleManager extends HttpServlet {
 
+	private static Logger log = Logger.getLogger(ScheduleManager.class);
     public static HashMap<String, int[]> scheduleArray = new HashMap<String, int[]>();
     public static HashMap<String, int[]> scheduleArrayRemainingOnSameCell = new HashMap<String, int[]>();
     public static HashMap<String, String[]> scheduleArrayLeftOcuppied = new HashMap<String, String[]>();
@@ -221,33 +247,118 @@ public class ScheduleManager extends HttpServlet {
                   }
               }
 
+              if(operation.equals("send_email_comfirmation")){ //.x.m.
+            	  
+            	  //Init email content
+            	  int employeeId = Integer.parseInt(request.getParameter("employeeId"));
+            	  int customerId = Integer.parseInt(request.getParameter("customerId"));
+            	  String email = request.getParameter("email");
+            	  Employee employee = Employee.findById(employeeId);
+            	  Customer customer = Customer.findById(customerId);
+            	  List<Appointment> appointments = Appointment.findByCustId(customerId);
+            	  Appointment appointment = appointments.get(appointments.size()-1);
+            	  User user = (User) session.getAttribute("user");
+            	  if(customer==null || email.trim().length()==0 ){
+            		  response.getWriter().write("failure : email is null!");
+            		  return ;
+            	  }
+            	  
+            	  try {
+	            	  
+	            	  Service service = Service.findById(appointment.getService_id());
+	            	  
+	            	  EmailTemplate emailTemplate = EmailTemplate.findByType(2);  // type:2 --> Appointment Confirmation Email
+	            	  String text = emailTemplate.getText();
+	            	  
+	            	  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	            	  SimpleDateFormat timeSdf = new SimpleDateFormat("HH:mm:ss");
+	            	  
+	            	  text = text.replace("{customer}", customer.getLname());
+	            	  text = text.replace("{operator}", user.getUser());
+	            	  text = text.replace("{service}", service.getName());
+	            	  text = text.replace("{date}", sdf.format(appointment.getApp_dt()));
+	            	  text = text.replace("{time}", timeSdf.format(appointment.getSt_time()));
+	            	  text = text.replace("Shopping: {product}", "");
+	            	  
+	            	  //send email
+	            	  Boolean result = SendMailHelper.send(text, "Appointment Confirmation Email", email);
+	            	  
+	            	  Customer.updateCustomer(customer.getId(), customer.getFname(), customer.getLname(), email, 
+	            			  customer.getPhone(), customer.getCell_phone(), customer.getType(), customer.getLocation_id(), customer.getReq(), customer.getRem(), 
+	            			  customer.getRemdays(), customer.getComment(), customer.getEmployee_id(), customer.getWork_phone_ext(), 
+	            			  customer.getMale_female(), customer.getAddress(), customer.getCity(), customer.getState(), customer.getZip_code(), 
+	            			  customer.getPicture(), customer.getDate_of_birth(), customer.getCountry()
+	            	  );
+
+	            	  response.getWriter().write(result.toString());
+            	  } catch (Exception e) {
+            		  response.getWriter().write(e.getMessage());
+            	  }
+            	  return ;
+              }
+              if(operation.equals("canceled_send_email")){
+            	  try {  ////.x.m.
+	            	  log.debug("canceled_send_email:111111");
+	            	  String appId = request.getParameter("appointmentID");
+	            	  Appointment ap = Appointment.findById(Integer.parseInt(appId.replace("appoint_", "")));
+	            	  if(ap!=null){
+	            		  log.debug("canceled_send_email:222222");
+	            		  Customer customer = Customer.findById(ap.getCustomer_id());
+	                      if(customer!=null){ //send cancel mail
+	                    	  log.debug("canceled_send_email:333333");
+	                          SimpleDateFormat dateSdf = new SimpleDateFormat("yyyy-MM-dd");
+	                          SimpleDateFormat timeSdf = new SimpleDateFormat(" HH:mm:ss");
+	                          String date = dateSdf.format(ap.getApp_dt());
+	                          String time = timeSdf.format(ap.getSt_time());
+	                          String dateTime = date+time;
+	                          
+	                          EmailTemplate cancelMailTemplate = EmailTemplate.findByType(101);
+	                          
+	                		  //String text = "Dear {customer}, The Appointment at: {2015-09-09} {11:11:11} has been canceled!";
+	                          String text = cancelMailTemplate.getText().replace("{customerName}", customer.getLname());
+	                          text = text.replace("{dataTime}", dateTime);
+	                          
+	                          log.debug("canceled_send_email to :"+customer.getEmail()+", content"+text);
+	                    	  SendMailHelper.send(text, "Appointment Canceled", customer.getEmail());
+	                      }
+	                      log.debug("canceled_send_email:444444");
+	                	  response.getWriter().write("send mail successed!");
+	            	  }else{
+	            		  log.debug("canceled_send_email:55555");
+	            		  response.getWriter().write("send mail failure, appointment not found!");
+	            	  }
+            	  } catch (Exception e) {
+            		  log.debug("canceled_send_email:66666");
+            		  response.getWriter().write("send mail failure: "+e.getMessage());
+            		  e.printStackTrace();
+            	  }
+            	  return ;
+              }
               if (operation.equals("DEL") && idAppointment != -1) {
                   if (user_ses.getPermission() != Role.R_VIEW  && user_ses.getPermission() != Role.R_SHD_CHK){
                   int newState = 0;
                   Appointment ap = Appointment.findById(idAppointment);
-                      if (ap != null){
+                  if (ap != null){
                       st = ap.getSt_time();
                       et = ap.getEt_time();
                       employee_id = ap.getEmployee_id();
-                  if (reason.equals("delok")) {
+                      if (reason.equals("delok")) {
 //                      if (ap!= null && ap.getTicket_id() != 0)
 //                          Ticket.deleteTicket(user_ses.getId(), ap.getTicket_id());
-                      if (ap != null){
-                              Ticket tt = Ticket.findTicketById(ap.getTicket_id());
-                              if (tt != null){
-                              response.setContentType("text/html");
-                              response.setCharacterEncoding("UTF-8");
-                              response.getWriter().write("SAYALERT:Operation is not allowed. Please delete the saved Transaction for this Appointment");
-                              return;
-                          }else {
-                              Appointment.deleteAppointment(ap.getId());
-                              delete = true;
-                          }
-                      }
-                  } else if (reason.equals("delcust") || reason.equals("delcancel")) {
-                      Appointment app = Appointment.findById(idAppointment);
-                      if(app!= null){
-                          Ticket tt = Ticket.findTicketById(app.getTicket_id());
+	                      if (ap != null){
+	                              Ticket tt = Ticket.findTicketById(ap.getTicket_id());
+	                              if (tt != null){
+	                              response.setContentType("text/html");
+	                              response.setCharacterEncoding("UTF-8");
+	                              response.getWriter().write("SAYALERT:Operation is not allowed. Please delete the saved Transaction for this Appointment");
+	                              return;
+	                          }else {
+	                              Appointment.deleteAppointment(ap.getId());
+	                              delete = true;
+	                          }
+	                      }
+	                  } else if (reason.equals("delcust") || reason.equals("delcancel")) {
+                          Ticket tt = Ticket.findTicketById(ap.getTicket_id());
                           if (tt!=null){
                               response.setContentType("text/html");
                               response.setCharacterEncoding("UTF-8");
@@ -262,8 +373,7 @@ public class ScheduleManager extends HttpServlet {
                               if (ap!= null && ap.getTicket_id() != 0)
                                   Ticket.deleteTicket(user_ses.getId(), ap.getTicket_id());
                           }
-                      }
-                  }
+	                  } 
                   } else {
                           operation = "REFRESHALL";
                       }
