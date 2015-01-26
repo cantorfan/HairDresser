@@ -1,0 +1,173 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title></title>
+<!--<link rel="stylesheet" type="text/css" href="popup.css"/>
+-->
+<script type="text/javascript" src="jquery-1.8.3.js"></script>
+<script type="text/javascript" src="popup.1.1.js"></script>
+</head>
+<body style="width:100%; margin:0px auto;">
+
+	<div style="width:300px; margin: 0px auto; margin-top:50px;">
+		<input type="button" value="带有一个确定按钮的弹窗" onClick="javascript:enter();"/>
+		<br/>
+		<br/>
+		<input type="button" value="带一个确定按钮的弹窗并有回调函数" onClick="javascript:enterAndCallback();"/>
+		<br/>
+		<br/>
+		<input type="button" value="带有两个按钮的弹窗" onClick="javascript:closeAndenter();"/>
+		<br/>
+		<br/>
+		<input type="button" value="带有两个按钮和回调函数的弹窗" onClick="javascript:closeAndenterAndCallback();"/>
+		<br/>
+		<br/>
+		<input type="button" value="加载中..." onClick="javascript:loading();"/>
+		<br/>
+		<br/>
+		<input type="button" value="带有回调函数的加载中..." onClick="javascript:loadingAndCallback();"/>
+		<br/>
+		<br/>
+		<input type="button" value="提示" onClick="javascript:tip();"/>
+		<br/>
+		<br/>
+		<input type="button" value="表单弹窗" onClick="javascript:form1();"/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+		<br/>
+	</div>
+</body>
+
+<script type="text/javascript">
+	
+	var pop = new popup();
+	
+	function enter(){
+		/**
+		 *只带一个确定按钮的弹窗
+		 **/
+		
+		var options = {
+			"message": "这个是提示的信息", 						//提示信息
+			"type" : "warning", 								//信息类型：分为三种：success/error/warning
+			//"callback" : function(){alert("show enter");},	//(点击确定时，需要做一些其它事的函数),如果传：null或者没有传
+			"visiable" : true								//是不是显示遮罩层
+		};
+		pop.enter(options);
+		
+	}
+	
+	function enterAndCallback(){
+		/**
+		 *带一个确定按钮的弹窗并有回调函数
+		 **/
+		
+		var options = {
+			"message": "这个是提示的信息", 						//提示信息
+			"type" : "warning", 								//信息类型：分为三种：success/error/warning
+			"callback" : function(){alert("show enter");},	//(点击确定时，需要做一些其它事的函数),如果传：null或者没有传
+			"visiable" : true								//是不是显示遮罩层
+		};
+		pop.enter(options);
+		
+	}
+	
+	function closeAndenter(){
+		/**
+		 * 带有确定和关闭按钮的弹窗
+		 **/
+		
+		 var options1 = {
+			"message": "这个是提示的信息", 							//提示信息
+			"type" : "warning", 									//信息类型：分为三种：success/error/warning
+			//"callback" : function(){alert("show enter");},		//(点击确定时，需要做一些其它事的函数),如果传：null或者没有传
+			//"closeCallback" : function(){alert("show close");},	//(点击确定时，需要做一些其它事的函数),如果传：null或者没有传
+			"visiable" : true										//是不是显示遮罩层
+		};
+		
+		pop.enterAndclose(options1);
+		
+	}
+	
+	function closeAndenterAndCallback(){
+		 var options1 = {
+			"message": "这个是提示的信息", 							//提示信息
+			"type" : "warning", 									//信息类型：分为三种：success/error/warning
+			"callback" : function(){alert("show enter");},		//(点击确定时，需要做一些其它事的函数),如果传：null或者没有传
+			"closeCallback" : function(){alert("show close");},	//(点击确定时，需要做一些其它事的函数),如果传：null或者没有传
+			"visiable" : true										//是不是显示遮罩层
+		};
+		
+		pop.enterAndclose(options1);
+	}
+	
+	function loading(){
+		/**
+		 * 加载中.....
+		 **/
+		 pop.loading(null);
+	}
+
+	function loadingAndCallback(){
+		
+		function callback(){
+			alert("xxxxx");
+		};
+		pop.loading(callback);
+		
+	}
+
+	//tip
+//	var options2 = {
+//			"message" : "提交失败",
+//			"type" : "error"
+//		};
+	function tip(){
+		var options2 = {
+			"message" : "提交失败",
+			"type" : "error",
+			"showLocation" : "bottom",
+			"showTime" : 2000,
+			"visiable" : false
+		};
+		pop.tip(options2);
+	}
+
+	function form1(){
+		options = {
+			title: "Login",
+			tip: "please! use your use and password!",
+			btn1: {text:"login", callback : function(){
+				pop.enter({message:"this tip message!","visiable" : true});
+			}},
+			btn2: {text:"cancel"},
+			form:[
+				{type:"text", label:"username", placeholder:"phone/e-mail/username"},
+				{type:"password", label:"password", placeholder:"your password!"}
+			],
+			visiable: true
+		}
+		var myform = pop.form(options);
+		
+	}
+	
+</script>
+
+</html> 

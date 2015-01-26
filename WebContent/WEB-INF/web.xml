@@ -238,4 +238,7 @@
     <listener>
         <listener-class>org.xu.Log4j.Log4jInit</listener-class>
     </listener>
+    <listener>
+    	<listener-class>org.xu.swan.action.AppointmentReminderListener</listener-class>
+    </listener>
 </web-app>

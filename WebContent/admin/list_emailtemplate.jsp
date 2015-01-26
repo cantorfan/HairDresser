@@ -161,6 +161,8 @@
                                         case 3: type = "Reschedule Confirmation Email"; break;
                                         case 4: type = "Forgot Username and Password Email"; break;
                                         case 5: type = "Delete Booking"; break;
+                                        case 100: type ="Appointment Reminder Email"; break;
+                                        case 101: type ="Appointment Canceled"; break;
                                     }
                                 %>
                                 <%=type%>

@@ -39,10 +39,7 @@
 //        session.removeAttribute("user");
     }
 %>
-<%
-    if(bVisiblePage)
-    {
-%>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -52,8 +49,12 @@
 
     </style>
     <link href="css/index.css" rel="stylesheet" type="text/css"/>
+    
+    <script type="text/javascript" src="./plugins/jQuery v1.7.2.js"></script>
+    <link rel='stylesheet' type='text/css' href='./plugins/popup/popup.css' />
+    <script type="text/javascript" src="./plugins/popup/popup.js"></script>
+    
     <script type="text/javascript">
-
 
     function focusChangedUserInput() {
         var str = document.getElementById("IdUserInput").value;
@@ -103,6 +104,10 @@
 </head>
 
 <body>
+	<%
+    if(bVisiblePage)
+    {
+	%>
     <div class="horizon">
         <div class="text_img content">
             <div class="loginPwdPlace">
@@ -127,8 +132,29 @@
             </div>
         </div>
     </div>
+    <%
+    }
+	%>
+	
+	<%
+	
+	session = request.getSession(true);
+	String loginErrorMessage = (String)session.getAttribute("loginErrorMessage");
+	if(loginErrorMessage!=null && loginErrorMessage.trim().length()>0){
+	
+	%>
+		<script type="text/javascript">
+			var pop = new popup();
+			var options = {"message": "<%=loginErrorMessage%>", "type" : "error", "visiable" : true};
+			pop.enter(options);
+		
+		</script>
+	<%
+		session.removeAttribute("loginErrorMessage");
+	}
+
+	%>
+	
 </body>
 </html>
-<%
-    }
-%>
+

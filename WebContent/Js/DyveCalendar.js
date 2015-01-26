@@ -170,8 +170,12 @@ DayPilotCalendar.saveAppointment = function (start, end, column, event) {
 //                            addNewEvents(xmlRequestAppointment.responseText);
 //                            drawEvents(xmlRequestAppointment.responseText);
                             drawAroundEvents(xmlRequestAppointment.responseText);
+                          //TODO: .x.m. send comfirm Email
+                            sendcomfrimEmail(idEmployee, idCustomer);
                         }
                     };
+                   
+                    
                     xmlRequestAppointment.open("POST", "ScheduleManager?optype=NEW&start=" + newStartUTC + "&end=" + newEndUTC + "&idnewemployee=" + idEmployee + "&idcustomer=" + idCustomer + "&idservice=" + idService + "&idlocation=" + idLocation + "&dateutc=" + newCurrentDate + "&pageNum=" + pageNum + "&comment=" + comment+ "&req=" + req + "&browser=" + browser_name + "&underEND=" + underEND + "&reshedule=" + reshedule + "&idb=" + id_booking);
                     xmlRequestAppointment.setRequestHeader("Accept-Encoding", "text/html; charset=utf-8");
                     xmlRequestAppointment.send('');

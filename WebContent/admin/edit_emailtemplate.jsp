@@ -202,6 +202,10 @@
                         "\n" +
                         "{salonname}";
                         break;
+                    case "100": example += "Dear {customerName}, \n\nThis is a reminder of the appointment at {appointmentTime}, Please enjoy time!";
+                    	break;
+                    case "101": example += "Dear {customerName}, The Appointment at: {dataTime} has been canceled!";
+                		break;
                 }
                 document.getElementById("example").value=example;
             }
@@ -249,6 +253,8 @@
                                     <option value="3" <%=(etp!=null && etp.getType()==3?"selected":"")%>>Reschedule Confirmation Email</option>
                                     <option value="4" <%=(etp!=null && etp.getType()==4?"selected":"")%>>Forgot Username and Password Email</option>
                                     <option value="5" <%=(etp!=null && etp.getType()==5?"selected":"")%>>Delete Booking</option>
+                                    <option value="100" <%=(etp!=null && etp.getType()==100?"selected":"")%>>Appointment Reminder Email</option>
+                                    <option value="101" <%=(etp!=null && etp.getType()==101?"selected":"")%>>Appointment Canceled</option>
                                 </select>
                                 <%--<input style = "color:black" disabled id="description" name="description" type="text" value="">--%>
                             </div>

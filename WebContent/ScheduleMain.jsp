@@ -4,7 +4,6 @@
 <%@ page import="org.xu.swan.bean.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
-<%@ page import="org.xu.swan.util.TimeZoneUtils" %>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <%
@@ -45,9 +44,8 @@
     if(!dt.equals(""))
         cal.setTime(new Date(dt));        
     else{
-//        cal.setTime(new Date());
+        cal.setTime(new Date());
         //dt = (new Date()).toString();
-        cal.setTime(Calendar.getInstance().getTime());
     }
     int week_day = 0;    
     if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY)
@@ -107,6 +105,10 @@
                       }
                   }
               %>
+    <script type="text/javascript" src="./plugins/jQuery v1.7.2.js"></script>
+    <link rel='stylesheet' type='text/css' href='./plugins/popup/popup.css' />
+    <script type="text/javascript" src="./plugins/popup/popup.js"></script>
+    <script language="javascript" type="text/javascript" src="Js/sendAppointmentEmail.js"></script>
     <script type="text/javascript" src="./Js/selectworker.js"></script>
     <script type="text/javascript" src="./script/schedule.js"></script>
 	<script type="text/javascript" src="./jscalendar/calendar.js"></script>
@@ -868,10 +870,11 @@
             <tr/>
             <tr>
                 <td align="left" style="font-family: Tahoma; font-size: 8pt;">
+                    <!-- .x.m. <input type="radio" name="delete" id="win2.noshow" value="6" class="styled" checked><img src="img/win_customer_no_show_bak.png" alt="" /><br/><br/> -->
                     <input type="radio" name="delete" id="win2.noshow" value="6" class="styled" checked><img src="img/win_customer_no_show.png" alt="" /><br/><br/>
                     <input type="radio" name="delete" id="win2.canceled" value="6" class="styled"><img src="img/win_canceled_by_customer.png" alt="" /><br/><br/>
                     <input type="radio" name="delete" id="win2.delete" value="7" class="styled"><img src="img/win_deleted.png" alt="" /><br/><br/>
-                    <input type="hidden" name="event" id="event"value="">
+                    <input type="hidden" name="event" id="event" value="">
                 </td>
             </tr>
             <tr/>
@@ -1056,6 +1059,7 @@
                             var start = new Date(document.getElementById("dr_start").value);
                             var end = new Date(document.getElementById("dr_end").value);
                             var column = parseInt(document.getElementById("dr_column").value);
+                           
                             addApp(start, end, column, req);
                         }}
                     }
@@ -1170,6 +1174,7 @@
                                 var start = new Date(document.getElementById("dr_start").value);
                                 var end = new Date(document.getElementById("dr_end").value);
                                 var column = parseInt(document.getElementById("dr_column").value);
+                               
                                 addApp(start, end, column, req);
                             }}
                         }
@@ -1195,7 +1200,7 @@
         }
 
         function addApp(start, end, column, req) {
-            var _req = req;
+        	var _req = req;
             var idEmployee = column;
             var idCustomer = document.getElementById("cust_id").value;
             var idLocation = document.getElementById("locationId").value;
@@ -1224,7 +1229,7 @@
                         }
                     }
                     xmlRequestAppointment.onreadystatechange = function() {
-                        if (xmlRequestAppointment.readyState == 4) {
+                    	if (xmlRequestAppointment.readyState == 4) {
                             /*eval('mainCalendar.events = [' + xmlRequestAppointment.responseText + ']');
                              mainCalendar.drawEvents();*/
                             var req2 = xmlRequestAppointment.responseText;
@@ -1235,10 +1240,14 @@
                             } else {
 //                                drawNewEvents(xmlRequestAppointment.responseText);
                                 drawAroundEvents(xmlRequestAppointment.responseText);
+                                
 //                                drawEvents(xmlRequestAppointment.responseText);
+			                  	//TODO: .x.m. send comfirm Email
+			                    sendcomfrimEmail(idEmployee, idCustomer);
                             }
                         }
                     };
+                    
                     xmlRequestAppointment.open("POST", "ScheduleManager?optype=NEW&start=" + newStartUTC + "&end=" + newEndUTC + "&idnewemployee=" + idEmployee + "&idcustomer=" + idCustomer + "&idservice=" + idService + "&idlocation=" + idLocation + "&dateutc=" + newCurrentDate + "&pageNum=" + pageNum + "&comment=" + comment +"&req=" + _req + "&browser=" + browser_name + "&underEND=" + underEND + "&reshedule=" + reshedule + "&idb=" + id_booking);
                     xmlRequestAppointment.setRequestHeader("Accept-Encoding", "text/html; charset=utf-8");
                     xmlRequestAppointment.send('');
@@ -1248,7 +1257,9 @@
             } catch (e) {
             }
         }
+        
 
+		
         function InitPageNum(){
             var elm = document.getElementById("mainCalendar_pagenum");
             /*var newDate = new Date(new Date().toDateString());
@@ -1451,12 +1462,15 @@
 			            xmlRequest = new ActiveXObject("Microsoft.XMLHTTP");
 			        } catch(e) { }				        
 			    }
-					
+				
+			    var app_id = document.getElementById("app_id").value;
 				xmlRequest.onreadystatechange = function() {
 					if (xmlRequest.readyState ==4 ) {					
 						/*eval('c.events = [' + xmlRequest.responseText + ']');
 						c.drawEvents();*/
+						
                         var req2 = xmlRequest.responseText;
+						
                         if (req2!=null){
                             if (req2.indexOf("REDIRECT") != -1){
                                 var arr = req2.split(":");
@@ -1472,13 +1486,21 @@
 								//alert(arr[1].toString());
                                 document.getElementById(arr[1].toString()).innerHTML = "";
                                 drawAroundEvents(arr[2]);
-                            } else
+                            } else{
+                            	
                                 drawAroundEvents(req2);
-//                                drawEvents(req2);
+                                //.x.m.
+								var pop = new popup();
+                                jQuery.get("ScheduleManager", {"optype": "canceled_send_email", "appointmentID" : app_id, "timestamp" : new Date().getTime()}, 
+    								function(data, textStatus, response){
+   										pop.tip({message:response.responseText, "visiable" : false, "type": "warning", "showLocation" : "buttom"});
+     								});
+                                
+                            }
                         }
                     }
 				};
-                var app_id = document.getElementById("app_id").value;
+                
                 xmlRequest.open("POST", "ScheduleManager?optype=DEL&idappointment="+app_id+ "&idlocation="+c.LocationId+"&dateutc="+dateUtc + "&pageNum=" + c.pageNum + "&delParam=" + del + "&browser=" + browser_name);
                 xmlRequest.send('');
                 document.getElementById("app_id").value = null;
@@ -1536,7 +1558,9 @@
 			{
 				if (newColumn > 0){
                     var dateUtc = c.startDate.getUTCFullYear() + "/" + (c.startDate.getUTCMonth() + 1) + "/" + c.startDate.getUTCDate();
-				
+				    //.x.m.
+                    //alert(newStart);
+				    
 				    var start 	= new Date(newStart);
 				    var end 	= new Date(newEnd);
 
@@ -1544,7 +1568,7 @@
     				var newEndUTC 	= end.getUTCFullYear() + "/" + (end.getUTCMonth() + 1) + "/" + end.getUTCDate()+ " " + end.getUTCHours()+":"+end.getUTCMinutes();
 
 				    //alert(newStartUTC);
-				    //alert(newEndUTC);
+				   
 				    
     				var xmlRequest;
 
@@ -1929,11 +1953,8 @@
 		var serviceListControl 	= null;		
 		var customerControl 	= null;
 		var customerAddControl = null;
-        //var localOffset = new Date().getTimezoneOffset();
-        var offset = <%=TimeZoneUtils.GetOffsetInMinutes()%>;
-        //var totalOffset = localOffset + offset;
-        var ddt = new Date();
-        //ddt.setHours(ddt.getHours() + (totalOffset/60))
+        
+        
         var calendar_switcher = 0;
 		function changeDay(calendar) 
 		{		          
@@ -1943,14 +1964,10 @@
       	};
 			               
 		//mainCalendar = mainCalendar_Init(new Date(new Date().toUTCString()));
-//        var ddtUTCStr = ddt.toUTCString();
-//        var ddtUTC = new Date(Date.UTC(ddt.getUTCFullYear(), ddt.getUTCMonth(), ddt.getUTCDate(), ddt.getUTCHours(), ddt.getUTCMinutes(), ddt.getUTCSeconds(), ddt.getUTCMilliseconds()));
-//        var ddtUtcOffset = ddtUTC.setHours(ddtUTC.getHours()-4);
 		var newDate = new Date(/*new Date().toDateString()*/<%=dt.equals("")? "new Date().toDateString()" : "'"+dt+"'"%>);
         //alert("newDate = " + newDate);
-//		newDate.setMinutes(totalOffset);
-		newDate.setMinutes((newDate.getTimezoneOffset()*(-1))+(offset*60));
-
+		newDate.setMinutes(newDate.getTimezoneOffset()*(-1));
+		
 		var progressEnd = 7; // set to number of progress <span>'s.
 		var progressColor = 'blue'; // set to progress bar color
 		var progressInterval = 1000; // set to time between updates (milli-seconds)
@@ -2063,7 +2080,6 @@
                     //_to = 20.0;
                     var newDate = new Date(calendar.date.toDateString());
                     newDate.setMinutes(newDate.getTimezoneOffset()*(-1));
-                    //newDate.setMinutes(totalOffset);
                     //alert("reinitScheduler.date = " + newDate);
                     obj = document.getElementById("win3");
                     obj.style.top =screen.height/2 + "px";

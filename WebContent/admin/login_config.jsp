@@ -109,7 +109,7 @@
 	#add_new_record{margin-top:20px; margin-left:100px;}
 	.save_box{width:960px; height:40px; text-align:center;margin-top:20px;}
 </style>
-<script src="../script/jQuery v1.7.2.js" type="text/javascript"></script>
+<script src="../plugins/jQuery v1.7.2.js" type="text/javascript"></script>
 <script type="text/javascript">
 
 	$(document).ready(function(){
@@ -121,31 +121,39 @@
 				type: "GET",
 				url: "/HairdresserSvn/admin/loginConfig.do",
 
-				data: {'action': "load", 'id':myid, date:new Date()},
+				data: {'action': "load_all", 'id':myid, date:new Date()},
 				dataType: "text",
 				success: function(data){
 					var htmlstr="<input id='selected_ip' type='hidden' value='' />"
-					if(data!=null && data!=""){
+					var jsonData = $.parseJSON(data);
+					
+					if(jsonData.checked.length == 0 && jsonData.unchecked.length==0){
+						htmlstr+="<input class='ip_checkbox_option' type='checkbox' name='IPOption1' value='*'/>*  (unlimited ip if selected)<br/>";
+					}else{
 						
-						var datas= data.split(",");
-						
-						var isAnything=false;
-						if(datas.length>0){
-							if(datas[0]=="*"){   
-								htmlstr+="<input class='ip_checkbox_option' type='checkbox' checked='checked' name='IPOption1' value='*'/>*<br/>";
-								isAnything=true;
+						if(jsonData.checked.length>0){
+							if(jsonData.checked[0]=="*"){
+								htmlstr+="<input class='ip_checkbox_option' type='checkbox' checked='checked' name='IPOption1' value='*'/>*  (unlimited ip if selected)<br/>";
 							}else
-								htmlstr+="<input class='ip_checkbox_option' type='checkbox' name='IPOption1' value='*'/>*<br/>";
+								htmlstr+="<input class='ip_checkbox_option' type='checkbox' name='IPOption1' value='*'/>*  (unlimited ip if selected)<br/>";
+							for(var i=0; i<jsonData.checked.length; i++){
+								if(jsonData.checked[i] == "*")
+									continue;
+								htmlstr+="<input class='ip_checkbox_option' type='checkbox' checked='checked' name='IPOption1' value='"+jsonData.checked[i]+"'/>"+jsonData.checked[i]+"<br/>";
+							}
+						}else{
+							htmlstr+="<input class='ip_checkbox_option' type='checkbox' name='IPOption1' value='*'/>*  (unlimited ip if selected)<br/>";
 						}
 						
-						for(var i=0; i<datas.length; i++){
-							var data = datas[i];
-							if(isAnything)
-								continue;
-							htmlstr+="<input class='ip_checkbox_option' type='checkbox' checked='checked' name='IPOption1' value='"+data+"'/>"+data+"<br/>"
-						}
-					}else
-						htmlstr+="<input class='ip_checkbox_option' type='checkbox' name='IPOption1' value='*'/>*<br/>";
+						if(jsonData.unchecked.length>0){
+							for(var i=0; i<jsonData.unchecked.length; i++){
+								if(jsonData.unchecked[i] == "*")
+									continue;
+								htmlstr+="<input class='ip_checkbox_option' type='checkbox' name='IPOption1' value='"+jsonData.unchecked[i]+"'/>"+jsonData.unchecked[i]+"<br/>";
+							}
+						}	
+					}
+					
 					$("#user_history_ip").html(htmlstr); 
 				}
 			});	
@@ -190,7 +198,16 @@
 			
 			//get value and submit
 			var userId = $("#select_usr").val()+"";
-			var ips = selectIPHidden.val()+","+ newIPHidden.val();
+			
+			var  ips = "";
+			if(selectIPHidden.val().length == 0 &&　newIPHidden.val().length　==　0)
+				ips = "";
+			if(selectIPHidden.val().length > 0 &&　newIPHidden.val().length　>　0)
+				ips = selectIPHidden.val()+","+ newIPHidden.val();
+			else if(selectIPHidden.val().length > 0)
+				ips = selectIPHidden.val();
+			else if(newIPHidden.val().length　>　0)
+				ips = newIPHidden.val();
 			
 			$.ajax({
 				type: "GET",
@@ -200,11 +217,6 @@
 				success: function(data){
 					alert(data);
 					window.location="/HairdresserSvn/admin/loginConfig.do";
-					//$("#new_ip_hidden").val("");
-					//var iptextfields=$(".add_new_ip");
-					//for(var i=0; i<iptextfields.length; i++){
-					//	iptextfields[i].value="";
-					//}
 				}
 			});	
 		});
