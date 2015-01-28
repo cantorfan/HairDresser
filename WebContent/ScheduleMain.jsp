@@ -108,7 +108,7 @@
     <script type="text/javascript" src="./plugins/jQuery v1.7.2.js"></script>
     <link rel='stylesheet' type='text/css' href='./plugins/popup/popup.css' />
     <script type="text/javascript" src="./plugins/popup/popup.js"></script>
-    <script language="javascript" type="text/javascript" src="Js/sendAppointmentEmail.js"></script>
+    <script language="javascript" type="text/javascript" src="Js/sendEmail.js"></script>
     <script type="text/javascript" src="./Js/selectworker.js"></script>
     <script type="text/javascript" src="./script/schedule.js"></script>
 	<script type="text/javascript" src="./jscalendar/calendar.js"></script>

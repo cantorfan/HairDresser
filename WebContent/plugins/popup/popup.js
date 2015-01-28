@@ -330,7 +330,13 @@ popup.prototype.form = function(options){
 	});
 	
 	jQuery("."+boxClassName).delegate(".pop-close-btn", "click", function(){
-		_this.close(boxClassName);
+		if(options.btn2.callback && typeof(options.btn2.callback)=="function"){
+			options.btn2.callback(function(){
+				_this.close(boxClassName);
+			});			
+		}else{
+			_this.close(boxClassName);
+		}
 	});
 }
 

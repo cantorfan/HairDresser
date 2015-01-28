@@ -206,6 +206,8 @@
                     	break;
                     case "101": example += "Dear {customerName}, The Appointment at: {dataTime} has been canceled!";
                 		break;
+                    case "102": example += "Dear {customerName} \n------------------------\nThank you for using iSalon: \nservice:{service}\nproduct:{product}\ngiftcard:{giftcard}\n--------------------------\nat: {dateTime}";
+            			break;
                 }
                 document.getElementById("example").value=example;
             }
@@ -254,7 +256,8 @@
                                     <option value="4" <%=(etp!=null && etp.getType()==4?"selected":"")%>>Forgot Username and Password Email</option>
                                     <option value="5" <%=(etp!=null && etp.getType()==5?"selected":"")%>>Delete Booking</option>
                                     <option value="100" <%=(etp!=null && etp.getType()==100?"selected":"")%>>Appointment Reminder Email</option>
-                                    <option value="101" <%=(etp!=null && etp.getType()==101?"selected":"")%>>Appointment Canceled</option>
+                                    <option value="101" <%=(etp!=null && etp.getType()==101?"selected":"")%>>Appointment Canceled Notification</option>
+                                    <option value="102" <%=(etp!=null && etp.getType()==102?"selected":"")%>>Check Out Notification</option>
                                 </select>
                                 <%--<input style = "color:black" disabled id="description" name="description" type="text" value="">--%>
                             </div>

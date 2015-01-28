@@ -14,7 +14,7 @@ public class Log4jInit implements ServletContextListener {
 
         UUID i = UUID.randomUUID();
         Properties prp = new Properties();
-        prp.put("log4j.rootLogger", "ERROR, logfile, console");
+        prp.put("log4j.rootLogger", "DEBUG, logfile, console");
         
         prp.put("log4j.appender.logfile", "org.apache.log4j.RollingFileAppender");
         prp.put("log4j.appender.logfile.File", "${catalina.home}/MaHairLog/MaHairLog_"+i.toString()+".log");
@@ -28,6 +28,7 @@ public class Log4jInit implements ServletContextListener {
         prp.put("log4j.appender.console.layout.ConversionPattern", "%d %p [%c] - <%m>%n");
 
         prp.put("log4j.logger.com.mchange.v2.resourcepool", "ERROR");
+        prp.put("log4j.logger.com.mchange.v2", "INFO");
         prp.put("log4j.logger.com.mchange.v2.async", "ERROR");
         prp.put("log4j.logger.com.mchange.v2.c3p0.impl", "ERROR");
         prp.put("log4j.logger.com.mchange.v2.log", "ERROR");

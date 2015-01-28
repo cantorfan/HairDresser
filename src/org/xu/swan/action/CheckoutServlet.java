@@ -3,8 +3,10 @@ package org.xu.swan.action;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.LogManager;
+import org.jfree.util.Log;
 import org.xu.swan.bean.*;
 import org.xu.swan.util.DateUtil;
+import org.xu.swan.util.SendMailHelper;
 import org.xu.swan.util.SwanGuid;
 import org.xu.swan.util.ActionUtil;
 import org.xu.swan.db.DBManager;
@@ -14,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.ServletException;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
@@ -581,7 +584,67 @@ public class CheckoutServlet extends HttpServlet {
                     }
 //                    logger.info("End removeTicket. User="+user_ses.getFname() + " " + user_ses.getLname());
                 }
-            }else {
+            }else if(action.equals("send_checkout_email")){
+            	logger.debug("send_checkout_email");
+            	try {
+	            	String customerId = request.getParameter("customerId");
+	            	String email = request.getParameter("email");
+	            	String transactionCode = request.getParameter("transactionCode");
+	            	String locationId = request.getParameter("location");
+	            	
+	            	if(customerId==null||customerId.trim().length()==0){
+	            		response.getWriter().write("semd mail failure : customer id is null!");
+	            		return ;
+	            	}
+	            	
+	            	Customer customer = Customer.findById(Integer.parseInt(customerId));
+	            	if(customer == null){
+	            		response.getWriter().write("semd mail failure : customer not found!");
+	            		return ;
+	            	}
+	            	
+	            	List<Ticket> tickets = Ticket.findTicketByLocCodeTrans(Integer.parseInt(locationId), transactionCode);
+	            	Integer serviceId = null;
+	            	Integer productId = null;
+	            	String giftcard = "-1";
+	            	for(int i=0; i<tickets.size(); i++){
+	            		Ticket ticket = tickets.get(i);
+	            		if(ticket.getService_id()!=0)
+	            			serviceId = ticket.getService_id();
+	            		if(ticket.getProduct_id()!=0)
+	            			productId = ticket.getProduct_id();
+	            		if("-1".equals(ticket.getGiftcard())==false)
+	            			giftcard = ticket.getGiftcard();
+	            	}
+	            	
+	            	Service service = null;
+	            	Inventory inventory = null;
+	            	if(serviceId!=null)
+	            		service = Service.findById(serviceId);
+	            	if(productId!=null)
+	            		inventory = Inventory.findById(productId);
+	            	
+	            	EmailTemplate emailtemplate = EmailTemplate.findByType(102);
+	            	
+	            	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	            	String text = emailtemplate.getText();
+	            	text = text.replace("{customerName}", customer.getLname());
+	            	text = text.replace("{service}", service!=null?service.getName():"None");
+	            	text = text.replace("{product}", inventory!=null?inventory.getName():"None");
+	            	text = text.replace("{giftcard}", "-1".equals(giftcard)?"None":giftcard);
+	            	text = text.replace("{dateTime}", sdf.format(new Date()));
+	            	
+	            	SendMailHelper.send(text, "Check Out Notification", email);
+	            	
+	            	response.getWriter().write("send mail successed!");
+	            	
+            	} catch (Exception e) {
+            		response.getWriter().write(e.getMessage());
+					Log.error(e.getMessage(),e);
+				}
+            	return ;
+            }
+            else {
                 if (user_ses.getPermission() != Role.R_SHD_CHK) {
 
                 String query = StringUtils.defaultString(request.getParameter("query"), "");

@@ -7,5 +7,6 @@
 
 
 INSERT INTO `emailstemplate` VALUES (6, 1, 100, 'Dear {customerName},\r\n This is a reminder of the appointment at {appointmentTime}, Please enjoy time!', '');
-INSERT INTO `emailstemplate` VALUES (7, 1, 101, 'Dear {customerName}, The Appointment at: {dataTime} has been canceled!', '');
+INSERT INTO `emailstemplate` VALUES (7, 1, 101, 'Dear {customerName},\r\n The Appointment at: {dataTime} has been canceled!', '');
+INSERT INTO `emailstemplate` VALUES (8, 1, 102, 'Dear {customerName} \r\n------------------------\r\nThank you for using iSalon: \r\nservice:{service}\r\nproduct:{product}\r\ngiftcard:{giftcard}\r\n--------------------------\r\nat: {dateTime}', '');
 

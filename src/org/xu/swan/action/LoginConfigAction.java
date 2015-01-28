@@ -149,7 +149,7 @@ public class LoginConfigAction extends org.apache.struts.action.Action{
 			} catch (IOException e) { 
 				e.printStackTrace();
 			}
-			
+			return null;
 			
 		}
 		

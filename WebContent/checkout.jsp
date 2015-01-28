@@ -334,6 +334,12 @@
     <link rel="stylesheet" type="text/css" href="./fonts/fonts-min.css"/>
     <link rel="stylesheet" type="text/css" href="./button/button.css"/>
     <link rel="stylesheet" type="text/css" href="./container/container.css"/>
+    
+    <script type="text/javascript" src="./plugins/jQuery v1.7.2.js"></script>
+    <link rel='stylesheet' type='text/css' href='./plugins/popup/popup.css' />
+    <script type="text/javascript" src="./plugins/popup/popup.js"></script>
+    <script language="javascript" type="text/javascript" src="./Js/sendEmail.js"></script>
+    
     <script type="text/javascript" src="./utilities/utilities.js"></script>
     <script type="text/javascript" src="./button/button-min.js"></script>
     <script type="text/javascript" src="./container/container-min.js"></script>
@@ -521,7 +527,7 @@ BODY {height: 100%;}
 
 <body class="yui-skin-sam" topmargin="0"
       onload="MM_preloadImages('../HAIR 233/images/home red.gif','../HAIR 233/images/schedule red.gif')">
-<div style="z-index: 123456; width:100%; height: 150%; position: absolute; top: 0; left: 0; background-color: #FFFFFF; opacity: 0.5; filter: alpha(opacity=50); text-align: center; color:red; display: none; font-size: 14pt" id="overlay">
+<div style="z-index: 1111; width:100%; height: 150%; position: absolute; top: 0; left: 0; background-color: #FFFFFF; opacity: 0.5; filter: alpha(opacity=50); text-align: center; color:red; display: none; font-size: 14pt" id="overlay">
 <br />
 <br />
 Please wait...
@@ -744,34 +750,40 @@ Please wait...
                     },
                     onSuccess: function(transport) {
                         var response = new String(transport.responseText);
-                            if (giftcard != 0){
-                                var gnum = document.getElementById("gift_paym").value;
-                                new Ajax.Request( './chkqry?rnd=' + Math.random() * 99999, { method: 'get',
-                                parameters: {
-                                    query: "giftcard",
-                                    code: gnum,
-                                    created: "123",
-                                    id_customer: "<%=id_cust%>",
-                                    amount: totalGC
-                                },
-                                onSuccess: function(transport) {
-                                    var response = new String(transport.responseText);
+                           //.x.m.
+                            var idCustomer = "<%=id_cust%>";
+                            var location = <%=loc%>;
+                            var transactionCode = "<%=code_trans%>";
+                            sendCheckoutEmail(idCustomer,location, transactionCode, function(){
+                            	if (giftcard != 0){
+                                    var gnum = document.getElementById("gift_paym").value;
+                                    new Ajax.Request( './chkqry?rnd=' + Math.random() * 99999, { method: 'get',
+                                    parameters: {
+                                        query: "giftcard",
+                                        code: gnum,
+                                        created: "123",
+                                        id_customer: "<%=id_cust%>",
+                                        amount: totalGC
+                                    },
+                                    onSuccess: function(transport) {
+                                        var response = new String(transport.responseText);
 
-                                    if(st == 2 || tp != 2){
-                                        updateTransactionValues(redirect,recAction);
-                                    } else if(redirect){
-                                        document.location.href = "./checkout.do?dt=<%=dt%>&rnd=" + Math.random();
+                                        if(st == 2 || tp != 2){
+                                            updateTransactionValues(redirect,recAction);
+                                        } else if(redirect){
+                                            document.location.href = "./checkout.do?dt=<%=dt%>&rnd=" + Math.random();
+                                        }
+                                    }.bind(this),
+                                    onException: function(instance, exception){
+                                        alert('Error update gift: ' + exception);
                                     }
-                                }.bind(this),
-                                onException: function(instance, exception){
-                                    alert('Error update gift: ' + exception);
+                                    });
+                                } else if (st == 2 || tp != 2){
+                                    updateTransactionValues(redirect,recAction);
+                                } else if(redirect){
+                                    document.location.href = "./checkout.do?dt=<%=dt%>&rnd=" + Math.random();
                                 }
-                                });
-                            } else if (st == 2 || tp != 2){
-                                updateTransactionValues(redirect,recAction);
-                            } else if(redirect){
-                                document.location.href = "./checkout.do?dt=<%=dt%>&rnd=" + Math.random();
-                            }
+                            });
                     }.bind(this),
                     onException: function(instance, exception){
                         alert('Error add reconcil: ' + exception);

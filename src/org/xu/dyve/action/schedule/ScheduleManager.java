@@ -296,7 +296,8 @@ public class ScheduleManager extends HttpServlet {
             	  }
             	  return ;
               }
-              if(operation.equals("canceled_send_email")){
+              
+        	  if(operation.equals("canceled_send_email")){
             	  try {  ////.x.m.
 	            	  log.debug("canceled_send_email:111111");
 	            	  String appId = request.getParameter("appointmentID");
@@ -334,6 +335,7 @@ public class ScheduleManager extends HttpServlet {
             	  }
             	  return ;
               }
+        	  
               if (operation.equals("DEL") && idAppointment != -1) {
                   if (user_ses.getPermission() != Role.R_VIEW  && user_ses.getPermission() != Role.R_SHD_CHK){
                   int newState = 0;

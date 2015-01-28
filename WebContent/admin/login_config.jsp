@@ -69,9 +69,6 @@
 					<div id="add_new_ip_box">
 						<input type="hidden" id="new_ip_hidden" name="new_ips" value=""/>
 						IP:<input class="add_new_ip" type='text' name='newIP' size="30" maxlength="15"/><br/>
-						IP:<input class="add_new_ip" type='text' name='newIP' size="30" maxlength="15"/><br/>
-						IP:<input class="add_new_ip" type='text' name='newIP' size="30" maxlength="15"/><br/>
-						IP:<input class="add_new_ip" type='text' name='newIP' size="30" maxlength="15"/><br/>
 					</div>
 					<input class="add_btn" type="button" id="add_new_record" value="Add New Record"/>
 				</div><!-- end left box -->
@@ -128,28 +125,28 @@
 					var jsonData = $.parseJSON(data);
 					
 					if(jsonData.checked.length == 0 && jsonData.unchecked.length==0){
-						htmlstr+="<input class='ip_checkbox_option' type='checkbox' name='IPOption1' value='*'/>*  (unlimited ip if selected)<br/>";
+						htmlstr+="<p class='unlimited'><input class='ip_checkbox_option' type='checkbox' name='IPOption1' value='*'/>*  (unlimited ip if selected)</p>";
 					}else{
 						
 						if(jsonData.checked.length>0){
 							if(jsonData.checked[0]=="*"){
-								htmlstr+="<input class='ip_checkbox_option' type='checkbox' checked='checked' name='IPOption1' value='*'/>*  (unlimited ip if selected)<br/>";
+								htmlstr+="<p class='unlimited'><input class='ip_checkbox_option' type='checkbox' checked='checked' name='IPOption1' value='*'/>*  (unlimited ip if selected)</p>";
 							}else
-								htmlstr+="<input class='ip_checkbox_option' type='checkbox' name='IPOption1' value='*'/>*  (unlimited ip if selected)<br/>";
+								htmlstr+="<p class='unlimited'><input class='ip_checkbox_option' type='checkbox' name='IPOption1' value='*'/>*  (unlimited ip if selected)</p>";
 							for(var i=0; i<jsonData.checked.length; i++){
 								if(jsonData.checked[i] == "*")
 									continue;
-								htmlstr+="<input class='ip_checkbox_option' type='checkbox' checked='checked' name='IPOption1' value='"+jsonData.checked[i]+"'/>"+jsonData.checked[i]+"<br/>";
+								htmlstr+="<p><input class='ip_checkbox_option' type='checkbox' checked='checked' name='IPOption1' value='"+jsonData.checked[i]+"'/>"+jsonData.checked[i]+"</p>";
 							}
 						}else{
-							htmlstr+="<input class='ip_checkbox_option' type='checkbox' name='IPOption1' value='*'/>*  (unlimited ip if selected)<br/>";
+							htmlstr+="<p class='unlimited'><input class='ip_checkbox_option' type='checkbox' name='IPOption1' value='*'/>*  (unlimited ip if selected)</p>";
 						}
 						
 						if(jsonData.unchecked.length>0){
 							for(var i=0; i<jsonData.unchecked.length; i++){
 								if(jsonData.unchecked[i] == "*")
 									continue;
-								htmlstr+="<input class='ip_checkbox_option' type='checkbox' name='IPOption1' value='"+jsonData.unchecked[i]+"'/>"+jsonData.unchecked[i]+"<br/>";
+								htmlstr+="<p><input class='ip_checkbox_option' type='checkbox' name='IPOption1' value='"+jsonData.unchecked[i]+"'/>"+jsonData.unchecked[i]+"</p>";
 							}
 						}	
 					}
@@ -161,23 +158,16 @@
 		});		
 		
 		$("#add_new_record").click(function(){
-			$("#add_new_ip_box").append("IP:<input class='add_new_ip' type='text' name='newIP1' size='30' maxlength='15'/><br/>");
+			var value = $(".add_new_ip").val();
+			if(value){
+				$(".unlimited").after("<p><input class='ip_checkbox_option' type='checkbox' checked='checked' name='IPOption1' value='"+value+"'/>"+value+"</p>");
+				$(".add_new_ip").val("");
+			}
 		});
 		
 		$("#save_btn").click(function(){
 			
-			var newIPHidden = $("#new_ip_hidden");
 			var selectIPHidden = $("#selected_ip");
-			
-			//set new ips in hidden value
-			var new_ip = "";
-			var ips=$(".add_new_ip");
-			for(var i=0; i<ips.length; i++){
-				var value = ips[i].value;
-				new_ip+=value+",";
-			}
-			new_ip = new_ip.replace(/\,+$/, "")
-			newIPHidden.val(new_ip);
 			
 			//set selected IPs in hidden value
 			var selected = "";
@@ -185,7 +175,6 @@
 			for(var i=0; i<selectedIPs.length; i++){
 				if(selectedIPs[i].checked){
 					var value = selectedIPs[i].value;
-					
 					
 					if((i+1)<selectedIPs.length){
 						selected+=value+",";
@@ -199,15 +188,11 @@
 			//get value and submit
 			var userId = $("#select_usr").val()+"";
 			
-			var  ips = "";
-			if(selectIPHidden.val().length == 0 &&　newIPHidden.val().length　==　0)
-				ips = "";
-			if(selectIPHidden.val().length > 0 &&　newIPHidden.val().length　>　0)
-				ips = selectIPHidden.val()+","+ newIPHidden.val();
-			else if(selectIPHidden.val().length > 0)
-				ips = selectIPHidden.val();
-			else if(newIPHidden.val().length　>　0)
-				ips = newIPHidden.val();
+			var  ips = selectIPHidden.val();
+			ips = $.trim(ips);
+			
+			if(ips && ips.charAt(ips.length-1)==',')
+				ips = ips.substring(0, ips.length-1);
 			
 			$.ajax({
 				type: "GET",
@@ -219,6 +204,9 @@
 					window.location="/HairdresserSvn/admin/loginConfig.do";
 				}
 			});	
+			
+			
+			
 		});
 		
 	});
