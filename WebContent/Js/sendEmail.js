@@ -1,6 +1,6 @@
 //.x.m.
-function sendcomfrimEmail(idEmployee, idCustomer){
-		console.log("Function:sendcomfrimEmail(idEmployee:"+idEmployee+", idCustomer:"+idCustomer+")");
+function sendcomfrimEmail(appointmentID, idEmployee, idCustomer){
+		console.log("Function:sendcomfrimEmail(idEmployee:"+idEmployee+", idCustomer:"+idCustomer+", appointmentID:"+appointmentID+")");
 		
 		jQuery.get("customerData", {"getCustomer": idCustomer, "timestamp" : new Date().getTime()}, 
 			function(data, textStatus, response){
@@ -14,7 +14,7 @@ function sendcomfrimEmail(idEmployee, idCustomer){
 					email = customer.email;
 				}
 				
-				var pop = new popup;
+				var pop = new popup();
 				options = {
 					title: "Send Email Confirmation",
 					tip: "please check the e-mail address!",
@@ -46,6 +46,18 @@ function sendcomfrimEmail(idEmployee, idCustomer){
 						}
 					}},
 					btn2: {text:"Cancel"},
+					btn3: {text:"More", callback: function(form, close){
+						jQuery.get("ScheduleManager",{"optype": "do_later_send_mail", "appointment_id":appointmentID, "timestamp" : new Date().getTime()},
+							function(data, status, response){
+								if(response.responseText =='true'){
+									pop.tip({message:"success","visiable" : false, "type": "success", "showLocation" : "center"});
+								}else{
+									pop.tip({message:response.responseText,"visiable" : false, "type": "error", "showLocation" : "center"});
+								}
+								close();
+							}
+						);
+					}},
 					visiable: true
 				}
 				pop.form(options);

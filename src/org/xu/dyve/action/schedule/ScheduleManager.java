@@ -246,17 +246,40 @@ public class ScheduleManager extends HttpServlet {
                       }
                   }
               }
-
+              if(operation.equals("do_later_send_mail")){//.x.m.
+            	  log.debug("do_later_send_mail");
+            	  
+            	  String appointmentIdStr = request.getParameter("appointment_id");
+            	  appointmentIdStr = appointmentIdStr.replace("appoint_", "");
+            	  int appointmentId = Integer.parseInt(appointmentIdStr);
+            	  
+            	  Appointment appointment = Appointment.findById(appointmentId);
+            	  if(appointment==null){
+            		  response.getWriter().write("appointment not found!");
+            		  return ;
+            	  }
+            	  
+            	  try {
+            		  Appointment.updateChangeSendMailStatus(appointmentId, 1, false);
+                	  //Appointment.updateChangeSendMailStatus(appointmentId, 2, false);
+                	  response.getWriter().write("true");
+            	  } catch (Exception e) {
+            		  	response.getWriter().write(e.getMessage());
+            		  	e.printStackTrace();
+						log.error(e.getMessage(), e);
+            	  }
+            	  return ;
+              }
               if(operation.equals("send_email_comfirmation")){ //.x.m.
             	  
             	  //Init email content
             	  int employeeId = Integer.parseInt(request.getParameter("employeeId"));
             	  int customerId = Integer.parseInt(request.getParameter("customerId"));
             	  String email = request.getParameter("email");
-            	  Employee employee = Employee.findById(employeeId);
+//            	  Employee employee = Employee.findById(employeeId);
             	  Customer customer = Customer.findById(customerId);
-            	  List<Appointment> appointments = Appointment.findByCustId(customerId);
-            	  Appointment appointment = appointments.get(appointments.size()-1);
+            	  List<Appointment> appointments = Appointment.findByCustIdAndMailStatus(customerId, false);
+            	  
             	  User user = (User) session.getAttribute("user");
             	  if(customer==null || email.trim().length()==0 ){
             		  response.getWriter().write("failure : email is null!");
@@ -264,31 +287,64 @@ public class ScheduleManager extends HttpServlet {
             	  }
             	  
             	  try {
-	            	  
-	            	  Service service = Service.findById(appointment.getService_id());
-	            	  
-	            	  EmailTemplate emailTemplate = EmailTemplate.findByType(2);  // type:2 --> Appointment Confirmation Email
-	            	  String text = emailTemplate.getText();
+            		  EmailTemplate emailTemplate = EmailTemplate.findByType(2);  // type:2 --> Appointment Confirmation Email
+	            	  String content = emailTemplate.getText();
+            		  
+	            	  String date = null;
+	            	  String time = null;
+	            	  String serviceItem = null;
 	            	  
 	            	  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	            	  SimpleDateFormat timeSdf = new SimpleDateFormat("HH:mm:ss");
+	            	  for(int i=0; i<appointments.size(); i++){
+
+	            		  Appointment appointment = appointments.get(i);
+	            		  
+		            	  Service service = Service.findById(appointment.getService_id());
+		            	  serviceItem += service.getName();
+
+		            	  if((i+1)<appointments.size())
+		            		  serviceItem +=", ";
+		            	  
+		            	  if(date==null){
+		            		  date = sdf.format(appointment.getApp_dt());
+		            	  }
+		            	  if(time==null){
+		            		  time = timeSdf.format(appointment.getSt_time());
+		            	  }
+	            	  }
 	            	  
-	            	  text = text.replace("{customer}", customer.getLname());
-	            	  text = text.replace("{operator}", user.getUser());
-	            	  text = text.replace("{service}", service.getName());
-	            	  text = text.replace("{date}", sdf.format(appointment.getApp_dt()));
-	            	  text = text.replace("{time}", timeSdf.format(appointment.getSt_time()));
-	            	  text = text.replace("Shopping: {product}", "");
+	            	  content = content.replace("{customer}", customer.getLname());
+	            	  content = content.replace("{operator}", user.getUser());
+	            	  content = content.replace("{service}", serviceItem);
+	            	  content = content.replace("{date}", date);
+	            	  content = content.replace("{time}", time);
+	            	  content = content.replace("Shopping: {product}", "").replace("{product}", "");
+	            	 
+	            	  log.debug("appointment confirmation email to:"+email+", content:"+content);
 	            	  
 	            	  //send email
-	            	  Boolean result = SendMailHelper.send(text, "Appointment Confirmation Email", email);
+	            	  Boolean result = SendMailHelper.send(content, "Appointment Confirmation Email", email);
 	            	  
-	            	  Customer.updateCustomer(customer.getId(), customer.getFname(), customer.getLname(), email, 
-	            			  customer.getPhone(), customer.getCell_phone(), customer.getType(), customer.getLocation_id(), customer.getReq(), customer.getRem(), 
-	            			  customer.getRemdays(), customer.getComment(), customer.getEmployee_id(), customer.getWork_phone_ext(), 
-	            			  customer.getMale_female(), customer.getAddress(), customer.getCity(), customer.getState(), customer.getZip_code(), 
-	            			  customer.getPicture(), customer.getDate_of_birth(), customer.getCountry()
-	            	  );
+	            	  for(int i=0; i<appointments.size()&&result; i++){
+	            		  Appointment appointment = appointments.get(i);
+		            	  try {
+		            		  Appointment.updateChangeSendMailStatus(appointment.getId(), 1, true);
+		                	  response.getWriter().write("true");
+		            	  } catch (Exception e) {
+		            		  	response.getWriter().write(e.getMessage());
+		            		  	e.printStackTrace();
+								log.error(e.getMessage(), e);
+		            	  }
+	            	  }
+	            	  
+//	            	  //update email
+//	            	  Customer.updateCustomer(customer.getId(), customer.getFname(), customer.getLname(), email, 
+//	            			  customer.getPhone(), customer.getCell_phone(), customer.getType(), customer.getLocation_id(), customer.getReq(), customer.getRem(), 
+//	            			  customer.getRemdays(), customer.getComment(), customer.getEmployee_id(), customer.getWork_phone_ext(), 
+//	            			  customer.getMale_female(), customer.getAddress(), customer.getCity(), customer.getState(), customer.getZip_code(), 
+//	            			  customer.getPicture(), customer.getDate_of_birth(), customer.getCountry()
+//	            	  );
 
 	            	  response.getWriter().write(result.toString());
             	  } catch (Exception e) {
@@ -298,7 +354,7 @@ public class ScheduleManager extends HttpServlet {
               }
               
         	  if(operation.equals("canceled_send_email")){
-            	  try {  ////.x.m.
+            	  try {  //.x.m.
 	            	  log.debug("canceled_send_email:111111");
 	            	  String appId = request.getParameter("appointmentID");
 	            	  Appointment ap = Appointment.findById(Integer.parseInt(appId.replace("appoint_", "")));

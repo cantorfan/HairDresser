@@ -193,7 +193,7 @@
             <!--esalonsoft/test-->
         <set-property property="db_url" value="jdbc:mysql://localhost:3306/manhattan10?autoReconnect=true"></set-property>
         <set-property property="db_user" value="root"></set-property>
-        <set-property property="db_password" value="12345"></set-property>
+        <set-property property="db_password" value="123456"></set-property>
 
             <!--esalonsoft/test-->
         <!--<set-property property="db_url" value="jdbc:mysql://localhost:3306/test"></set-property>-->

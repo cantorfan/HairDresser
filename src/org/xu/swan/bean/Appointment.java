@@ -26,6 +26,8 @@ public class Appointment {
     public static final String STATE = "state";
     public static final String COMMENT = "comment";
     public static final String REQUEST = "request";
+    public static final String IS_SEND_APPOINTMENT_MAIL="is_send_appointment_mail";
+    public static final String IS_SEND_REMINDER_MAIL="is_send_reminder_mail";
 
     private int id;
     private int customer_id;
@@ -40,6 +42,9 @@ public class Appointment {
     private Time et_time;
     private int state = 0;
     private String comment;
+    private boolean isSendAppointmentMail;
+    private boolean isSendReminderMail;
+    
     private Boolean request = false;
 
     public Boolean getRequest() {
@@ -154,15 +159,30 @@ public class Appointment {
     	this.comment = comment;
     }
 
+	public boolean isSendAppointmentMail() {
+		return isSendAppointmentMail;
+	}
 
+	public void setSendAppointmentMail(boolean isSendAppointmentMail) {
+		this.isSendAppointmentMail = isSendAppointmentMail;
+	}
 
-    public static Appointment insertAppointment(int loc,int cust,int emp,int svc,int cate, BigDecimal price, Date dt, Time st, Time et,int state, String comment, Boolean req){
+	public boolean isSendReminderMail() {
+		return isSendReminderMail;
+	}
+
+	public void setSendReminderMail(boolean isSendReminderMail) {
+		this.isSendReminderMail = isSendReminderMail;
+	}
+
+	public static Appointment insertAppointment(int loc,int cust,int emp,int svc,int cate, BigDecimal price, Date dt, Time st, Time et,int state, String comment, Boolean req){
         Appointment appt = null;
         DBManager dbm = null;
         try{
             dbm = new DBManager();
             PreparedStatement pst = dbm.getPreparedStatement("INSERT INTO appointment (" + LOC + ","  + CUST + ","  + EMP + "," + SVC + ","
-                + CATE + ","  + PRICE + ","  + APPDT + ","  + ST + ","  + ET + ","+ STATE + ","  + COMMENT  + "," + REQUEST + ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+                + CATE + ","  + PRICE + ","  + APPDT + ","  + ST + ","  + ET + ","+ STATE + ","  + COMMENT  + "," + REQUEST+","
+        		+IS_SEND_APPOINTMENT_MAIL+","+IS_SEND_REMINDER_MAIL + ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
             pst.setInt(1,loc);
             pst.setInt(2,cust);
             pst.setInt(3,emp);
@@ -175,6 +195,8 @@ public class Appointment {
             pst.setInt(10,state);
             pst.setString(11,comment);
             pst.setBoolean(12,req);
+            pst.setBoolean(13,false);
+            pst.setBoolean(14,false);
 
             int rows = pst.executeUpdate();
             if(rows>=0){
@@ -191,7 +213,9 @@ public class Appointment {
                 appt.setState(state);
                 appt.setComment(comment);
                 appt.setRequest(req);
-
+                appt.setSendAppointmentMail(false);
+                appt.setSendReminderMail(false);
+                
                 ResultSet rs = pst.getGeneratedKeys();
                 if(rs.next())
                     appt.setId(rs.getInt(1));
@@ -290,6 +314,35 @@ public class Appointment {
         }
     }
 
+    /**
+     * @param appointmentId
+     * @param type  1:is_send_appointment_mail,  2:is_send_reminder_mail
+     * @param status
+     */
+    public static void updateChangeSendMailStatus(int appointmentId, int type, boolean status){
+        DBManager dbm = null;
+        try{
+            dbm = new DBManager();
+            String sql = "";
+            if(type==1)
+            	sql = "UPDATE appointment SET " + IS_SEND_APPOINTMENT_MAIL + "=? WHERE " + ID + "=?";
+            else
+            	sql = "UPDATE appointment SET " + IS_SEND_REMINDER_MAIL + "=? WHERE " + ID + "=?";
+            
+            PreparedStatement pst = dbm.getPreparedStatement(sql);
+            pst.setBoolean(1, status);
+            pst.setInt(2, appointmentId);
+            int rows = pst.executeUpdate();
+            
+            pst.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            if(dbm!=null)
+                dbm.close();
+        }
+    }
+    
     public static Appointment updateAppointmentByCustDate(int cust,Date dt,int newState){
         Appointment appt = null;
         DBManager dbm = null;
@@ -666,7 +719,8 @@ public class Appointment {
         try{
             dbm = new DBManager();
             PreparedStatement pst = dbm.getPreparedStatement("SELECT " + ID + ","  + LOC + ","  + CUST + ","  + EMP + "," + SVC + ","
-                + CATE + ","  + PRICE + ","  + APPDT + ","  + ST + ","  + ET + ","+ STATE +  ","+ COMMENT + "," + REQUEST + "," + TICKET + " FROM appointment WHERE " + ID + "=?");
+                + CATE + ","  + PRICE + ","  + APPDT + ","  + ST + ","  + ET + ","+ STATE +  ","+ COMMENT + "," + REQUEST + "," + TICKET + "," 
+                + IS_SEND_APPOINTMENT_MAIL+","+IS_SEND_REMINDER_MAIL+" FROM appointment WHERE " + ID + "=?");
             pst.setInt(1,id);
             ResultSet rs = pst.executeQuery();
             if(rs.next()){
@@ -685,6 +739,8 @@ public class Appointment {
                 appt.setComment(rs.getString(12));
                 appt.setRequest(rs.getBoolean(13));
                 appt.setTicket_id(rs.getInt(14));
+                appt.setSendAppointmentMail(rs.getBoolean(15));
+                appt.setSendReminderMail(rs.getBoolean(16));
             }
             rs.close();
             pst.close();
@@ -732,7 +788,47 @@ public class Appointment {
         }
         return list;
     }
-
+    
+    public static ArrayList<Appointment> findByCustIdAndMailStatus(int cust_id, boolean status){
+        ArrayList<Appointment> list = new ArrayList<Appointment>();
+        DBManager dbm = null;
+        try{
+            dbm = new DBManager();
+            Statement st = dbm.getStatement();
+            ResultSet rs = st.executeQuery("SELECT " + ID + ","  + LOC + ","  + CUST + ","  + EMP + "," + SVC + ","
+                + CATE + ","  + PRICE + ","  + APPDT + ","  + ST + ","  + ET + ","+ STATE + ","+ COMMENT +","+REQUEST+","
+        		+ IS_SEND_APPOINTMENT_MAIL+","+IS_SEND_REMINDER_MAIL
+        		+" FROM appointment WHERE " + CUST + "=" + cust_id +" and "+IS_SEND_APPOINTMENT_MAIL+" ="+status+" ORDER BY " + CUST + " DESC"); //TODO FOUND_ROWS()
+            while(rs.next()){
+                Appointment appt = new Appointment();
+                list.add(appt);
+                appt.setId(rs.getInt(1));
+                appt.setLocation_id(rs.getInt(2));
+                appt.setCustomer_id(rs.getInt(3));
+                appt.setEmployee_id(rs.getInt(4));
+                appt.setService_id(rs.getInt(5));
+                appt.setCategory_id(rs.getInt(6));
+                appt.setPrice(rs.getBigDecimal(7));
+                appt.setApp_dt(rs.getDate(8));
+                appt.setSt_time(rs.getTime(9));
+                appt.setEt_time(rs.getTime(10));
+                appt.setState(rs.getInt(11));
+                appt.setComment(rs.getString(12));
+                appt.setRequest(rs.getBoolean(13));
+                appt.setSendAppointmentMail(rs.getBoolean(14));
+                appt.setSendReminderMail(rs.getBoolean(15));
+            }
+            rs.close();
+            st.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            if(dbm!=null)
+                dbm.close();
+        }
+        return list;
+    }
+    
     public static ArrayList findAllByEmployeeId(int emp){
         ArrayList list = new ArrayList();
         DBManager dbm = null;

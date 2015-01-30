@@ -310,12 +310,21 @@ popup.prototype.form = function(options){
 	html+="		</ul>\n";
 	html+="		<div class=\"pop-btn-area\">\n";
 	html+="			<a class=\"pop-enter-btn\" href=\"#this\">"+options.btn1.text+"</a>\n";
+	if(options.btn3){
+		html+="			<a class=\"pop-other-btn\" href=\"#this\">"+options.btn3.text+"</a>\n";
+	}
 	html+="			<a class=\"pop-close-btn\" href=\"#this\">"+options.btn2.text+"</a>\n";
 	html+="		</div>\n";
 	html+="	</div>\n";
 	html+="</div>\n";
 	
 	box.append(html);
+	
+	if(options.btn3){
+		jQuery("."+boxClassName+ " .pop-btn-area a").css("padding", "10px 15px");
+		jQuery("."+boxClassName+ " a.pop-other-btn").css("background", "#f7ce4f");
+		jQuery("."+boxClassName+ " a.pop-other-btn:hover").css("background", "#f8d465");
+	}
 	
 	var modelBox = jQuery("."+boxClassName + " > .pop-box");
 	this.setZindex(modelBox);
@@ -338,6 +347,15 @@ popup.prototype.form = function(options){
 			_this.close(boxClassName);
 		}
 	});
+	
+	jQuery("."+boxClassName).delegate(".pop-other-btn", "click", function(){
+		if(options.btn3.callback && typeof(options.btn3.callback)=="function"){
+			options.btn3.callback(inputClasses, function(){
+				_this.close(boxClassName);
+			});		
+		}
+	});
+	
 }
 
 popup.prototype.loading = function(callback){

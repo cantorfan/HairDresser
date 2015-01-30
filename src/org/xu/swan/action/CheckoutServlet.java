@@ -587,10 +587,13 @@ public class CheckoutServlet extends HttpServlet {
             }else if(action.equals("send_checkout_email")){
             	logger.debug("send_checkout_email");
             	try {
+            		
 	            	String customerId = request.getParameter("customerId");
 	            	String email = request.getParameter("email");
 	            	String transactionCode = request.getParameter("transactionCode");
 	            	String locationId = request.getParameter("location");
+	            	
+	            	Log.debug("send check out email parameters, customer:"+customerId+", email:"+email+", transactionCode:"+transactionCode+", locationId:"+locationId);
 	            	
 	            	if(customerId==null||customerId.trim().length()==0){
 	            		response.getWriter().write("semd mail failure : customer id is null!");
@@ -633,8 +636,11 @@ public class CheckoutServlet extends HttpServlet {
 	            	text = text.replace("{product}", inventory!=null?inventory.getName():"None");
 	            	text = text.replace("{giftcard}", "-1".equals(giftcard)?"None":giftcard);
 	            	text = text.replace("{dateTime}", sdf.format(new Date()));
+
+	            	Log.debug("send check out email to"+email+", content:"+text);
 	            	
 	            	SendMailHelper.send(text, "Check Out Notification", email);
+	            	
 	            	
 	            	response.getWriter().write("send mail successed!");
 	            	

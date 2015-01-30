@@ -31,9 +31,11 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 
 public class CustomerData extends HttpServlet {
+	private static Logger log = Logger.getLogger(CustomerData.class);
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession(true);
         User user_ses = (User) session.getAttribute("user");
@@ -437,16 +439,21 @@ public class CustomerData extends HttpServlet {
                 oper = " LIKE LOWER('%" + searchString + "%')";
                 break;
 
-            case 3:
-                searchColumn = "REPLACE(LOWER(phone),'-','')";
-                oper = " LIKE REPLACE(LOWER('%" + searchString + "%'),'-','')";
+            case 3: {
+//                searchColumn = "REPLACE(LOWER(phone),'-','')";
+//                oper = " LIKE REPLACE(LOWER('%" + searchString + "%'),'-','')";
+            	searchColumn = " REPLACE(LOWER(phone),'-','') LIKE REPLACE(LOWER('%" + searchString + "%'),'-','') ";
+            	oper = " or REPLACE(LOWER(cell_phone),'-','') LIKE REPLACE(LOWER('%" + searchString + "%'),'-','') ";
                 break;
-
+            }
             case 4:
-                searchColumn = "REPLACE(LOWER(cell_phone),'-','')";
-                oper = " LIKE REPLACE(LOWER('%" + searchString + "%'),'-','')";
+            {
+            	searchColumn = " REPLACE(LOWER(phone),'-','') LIKE REPLACE(LOWER('%" + searchString + "%'),'-','') ";
+            	oper = " or REPLACE(LOWER(cell_phone),'-','') LIKE REPLACE(LOWER('%" + searchString + "%'),'-','') ";
+//                searchColumn = "REPLACE(LOWER(cell_phone),'-','')";
+//                oper = " LIKE REPLACE(LOWER('%" + searchString + "%'),'-','')";
                 break;
-
+            }
             case 5:
                 searchColumn = "LOWER(email)";
                 oper = " LIKE LOWER('%" + searchString + "%')";
@@ -482,8 +489,10 @@ public class CustomerData extends HttpServlet {
         try {
             dbManager = new DBManager();
             Statement st = dbManager.getStatement();
-            ResultSet rs = st.executeQuery("SELECT id, fname, lname, phone, cell_phone, email, req, reminder, remdays, comment, employee_id FROM customer WHERE " +
-                    searchColumn + oper + " ORDER BY fname, lname");
+            String sql = "SELECT id, fname, lname, phone, cell_phone, email, req, reminder, remdays, comment, employee_id FROM customer WHERE " +
+                    searchColumn + oper + " ORDER BY fname, lname";
+            //log.debug(sql);
+            ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
                 Customer cust = new Customer();
 
