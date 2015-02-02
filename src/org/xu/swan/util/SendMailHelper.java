@@ -35,18 +35,18 @@ public class SendMailHelper {
 		
 		SenderInfo senderInfo=sendMailHelper.getSenderInfo();
 		
-		senderInfo.setMailServerHost("smtp.qq.com");	//"inmarsoft.com"
+		senderInfo.setMailServerHost("smtp.163.com");	//"inmarsoft.com"
 //		senderInfo.setMailServerPort("25");
 //		senderInfo.setMailServerHost("localhost");
-		senderInfo.setMailServerPort("587");
+//		senderInfo.setMailServerPort("587");
 //		
 		senderInfo.setValidate(true);
-		senderInfo.setUserName("350789317@qq.com");  
-		senderInfo.setPassword("tki8705");
+		senderInfo.setUserName("tuxmingg@163.com");  
+		senderInfo.setPassword("8705429316");
 //		senderInfo.setUserName("icloudsalon@gmail.com");  
 //		senderInfo.setPassword("daiby2004");
 //
-		senderInfo.setFromAdress("350789317@qq.com"); //noreply@isalon2you-soft.com
+		senderInfo.setFromAdress("tuxmingg@163.com"); //noreply@isalon2you-soft.com
 //		senderInfo.setFromAdress("icloudsalon@gmail.com");
 		
 		senderInfo.setToAdress(toAddress);

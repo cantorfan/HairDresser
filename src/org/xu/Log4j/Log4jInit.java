@@ -43,6 +43,7 @@ public class Log4jInit implements ServletContextListener {
         
         prp.put("log4j.logger.org.xu.swan.action.AccessServlet", "DEBUG");
         prp.put("log4j.logger.org.xu.dyve.action.schedule.ScheduleManager", "DEBUG");
+        prp.put("log4j.logger.org.xu.swan.action.AppointmentReminderListener", "DEBUG");
         
         PropertyConfigurator.configure(prp);
 

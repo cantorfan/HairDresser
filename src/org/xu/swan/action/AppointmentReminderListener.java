@@ -1,23 +1,15 @@
 package org.xu.swan.action;
 
-import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Transport;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -26,8 +18,6 @@ import org.xu.swan.bean.Appointment;
 import org.xu.swan.bean.Customer;
 import org.xu.swan.bean.EmailTemplate;
 import org.xu.swan.util.SendMailHelper;
-import org.xu.swan.util.SendMailHelper.SenderInfo;
-import org.xu.swan.util.SendMailHelper.SimpleMailSender;
 
 /**
  * Application Lifecycle Listener implementation class AppointmentReminderListener
@@ -62,58 +52,79 @@ public class AppointmentReminderListener implements ServletContextListener {
 		timer.schedule(new TimerTask(){
 			public void run() {
 				/*load db*/
-				//get curr date normal appointment
+				
 				Date date = new Date();
-				//get lt st_time record                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 				SimpleDateFormat timeSdf = new SimpleDateFormat("HH:mm:ss");
-				SimpleDateFormat fullTimeSdf = new SimpleDateFormat("HH:mm:ss SSS");
-				SimpleDateFormat fullSdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				
 				Calendar fromDate = Calendar.getInstance();
-				fromDate.add(Calendar.HOUR_OF_DAY, 2);
+				fromDate.add(Calendar.HOUR_OF_DAY, 3);
 				
-				Calendar toDate = (Calendar) fromDate.clone();
-				Long dura = step-1000;
-				toDate.add(Calendar.MILLISECOND, dura.intValue());
-				
-//				String fromTime = blank(fromDate.get(Calendar.HOUR_OF_DAY))+":"+blank(fromDate.get(Calendar.MINUTE))+":"+blank(fromDate.get(Calendar.SECOND))+" "+blank(fromDate.get(Calendar.MILLISECOND));
-//				String toTime = blank(toDate.get(Calendar.HOUR_OF_DAY))+":"+blank(toDate.get(Calendar.MINUTE))+":"+blank(toDate.get(Calendar.SECOND))+" "+blank(toDate.get(Calendar.MILLISECOND));
-				String fromTime = fullTimeSdf.format(fromDate.getTime());
-				String toTime = fullTimeSdf.format(toDate.getTime());
-				
-				
-				log.debug("Curr Date:"+sdf.format(fromDate.getTime())+", from time:"+fromTime+", end time:"+toTime);
-				
-				String filter = " where " + Appointment.APPDT + " = '"+sdf.format(fromDate.getTime())+"' and state=0 and " +Appointment.ST+" between '" + fromTime +"' and '"+toTime+"'";
+				String filter = " where "+Appointment.IS_SEND_REMINDER_MAIL+"=false and " + 
+						Appointment.APPDT + " = '"+sdf.format(fromDate.getTime())+"' and state=0 and " +
+						Appointment.ST+" < '" + timeSdf.format(fromDate.getTime())+"'";
 				List<Appointment> as = Appointment.findByFilter(filter);
 				
 				EmailTemplate emailTemplate = null;
 				if(as!=null&&as.size()>0){
 					emailTemplate = EmailTemplate.findByType(100);
-				
+					Map<Integer, ContentInfo> mailContents = new HashMap<Integer, ContentInfo>();
 					//send mail
 					for (Appointment appointment : as) {
 						
-						Customer customer = Customer.findById(appointment.getCustomer_id());
+						int customerID = appointment.getCustomer_id();
+						String content =  sdf.format(date)+" "+timeSdf.format(appointment.getSt_time());
 						
-						log.debug("send mail to:"+customer.getLname()+", email:"+customer.getEmail());
+						ContentInfo info = new ContentInfo();
+						info.appt = appointment;
+						info.mailContent = content;
 						
-						String content = emailTemplate.getText().replace("{customerName}", customer.getFname());
-						content = content.replace("{appointmentTime}", sdf.format(date)+" "+timeSdf.format(appointment.getSt_time()));
+						if(mailContents.get(customerID) == null){
+							mailContents.put(customerID, info);
+						}
 						
-						SendMailHelper.send(content, "Appointment Reminder", customer.getEmail());
+						mailContents.get(customerID).appIds.add(appointment.getId());
 						
+//						Service service = Service.findById(appointment.getService_id());
+						
+//						String content = "Service: "+service.getName()+"\n"+ "at ";
 					}
+					
+					for (Integer customerID : mailContents.keySet()) {
+						ContentInfo info = mailContents.get(customerID);
+						
+						Customer customer = Customer.findById(info.appt.getCustomer_id());
+						String content = emailTemplate.getText().replace("{customerName}", customer.getFname());
+						content = content.replace("{appointmentTime}", info.mailContent);
+						boolean result = SendMailHelper.send(content, "Appointment Reminder", customer.getEmail());
+						
+						log.debug(info);
+						log.debug("send reminder email to:"+customer.getEmail()+", content:"+ content);
+						if(result)
+							for (Integer apptId : info.appIds) {
+								Appointment.updateChangeSendMailStatus(apptId, 2, true);
+							}
+					}
+					
 				}
+				
 			}	
 		}, 10*1000, step);
     }
     
-    private String blank(int value){
-    	if(value>=0 && value<10)
-    		return "0"+value;
-    	return value+"";
+    /**
+     * @author Think
+     *
+     */
+    public class ContentInfo{
+    	public Appointment appt;
+    	public String mailContent;
+    	public List<Integer> appIds = new ArrayList<Integer>();
+		@Override
+		public String toString() {
+			return "Info [appt=" + appt + ", mailContent=" + mailContent
+					+ ", appIds=" + appIds + "]";
+		}
     }
     
 }

@@ -182,8 +182,14 @@ DayPilotCalendar.saveAppointment = function (start, end, column, event) {
 		                  	//"idappt":70272,"ide":75,"idc":11287,"ids":73,"dt":"2015/1/29","BackgroundColor":"#FFF57A",
 		                  	//"Top":374,"DayIndex":0}
 		                  	
-		                    var appointment = jQuery.parseJSON(xmlRequestAppointment.responseText);
-		                    sendcomfrimEmail(appointment.ServerId, idEmployee, idCustomer);
+                            if(xmlRequestAppointment.responseText){
+		                  		console.log(xmlRequestAppointment.responseText);
+		                  		
+		                  		var data = "["+xmlRequestAppointment.responseText+"]"
+			                  	
+			                    var appointments = jQuery.parseJSON(data);
+			                    sendcomfrimEmail(appointments[0].ServerId, idEmployee, idCustomer);
+		                  	}
                         }
                     };
                    

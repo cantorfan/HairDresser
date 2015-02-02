@@ -45,7 +45,18 @@ function sendcomfrimEmail(appointmentID, idEmployee, idCustomer){
 							}
 						}
 					}},
-					btn2: {text:"Cancel"},
+					btn2: {text:"Cancel", callback: function(close){
+						jQuery.get("ScheduleManager",{"optype": "can_not_send_mail", "appointment_id":appointmentID, "timestamp" : new Date().getTime()},
+								function(data, status, response){
+									if(response.responseText =='true'){
+										pop.tip({message:"success","visiable" : false, "type": "success", "showLocation" : "center"});
+									}else{
+										pop.tip({message:response.responseText,"visiable" : false, "type": "error", "showLocation" : "center"});
+									}
+									close();
+								}
+							);
+					}},
 					btn3: {text:"More", callback: function(form, close){
 						jQuery.get("ScheduleManager",{"optype": "do_later_send_mail", "appointment_id":appointmentID, "timestamp" : new Date().getTime()},
 							function(data, status, response){

@@ -270,6 +270,30 @@ public class ScheduleManager extends HttpServlet {
             	  }
             	  return ;
               }
+              if(operation.equals("can_not_send_mail")){//.x.m.
+            	  log.debug("can_not_send_mail");
+            	  
+            	  String appointmentIdStr = request.getParameter("appointment_id");
+            	  appointmentIdStr = appointmentIdStr.replace("appoint_", "");
+            	  int appointmentId = Integer.parseInt(appointmentIdStr);
+            	  
+            	  Appointment appointment = Appointment.findById(appointmentId);
+            	  if(appointment==null){
+            		  response.getWriter().write("appointment not found!");
+            		  return ;
+            	  }
+            	  
+            	  try {
+            		  Appointment.updateChangeSendMailStatus(appointmentId, 1, true);
+                	  //Appointment.updateChangeSendMailStatus(appointmentId, 2, false);
+                	  response.getWriter().write("true");
+            	  } catch (Exception e) {
+            		  	response.getWriter().write(e.getMessage());
+            		  	e.printStackTrace();
+						log.error(e.getMessage(), e);
+            	  }
+            	  return ;
+              }
               if(operation.equals("send_email_comfirmation")){ //.x.m.
             	  
             	  //Init email content
@@ -292,7 +316,7 @@ public class ScheduleManager extends HttpServlet {
             		  
 	            	  String date = null;
 	            	  String time = null;
-	            	  String serviceItem = null;
+	            	  String serviceItem = "";
 	            	  
 	            	  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	            	  SimpleDateFormat timeSdf = new SimpleDateFormat("HH:mm:ss");
@@ -330,11 +354,11 @@ public class ScheduleManager extends HttpServlet {
 	            		  Appointment appointment = appointments.get(i);
 		            	  try {
 		            		  Appointment.updateChangeSendMailStatus(appointment.getId(), 1, true);
-		                	  response.getWriter().write("true");
 		            	  } catch (Exception e) {
-		            		  	response.getWriter().write(e.getMessage());
+		            		  	response.getWriter().write(e.getMessage()+", appointment ID:"+appointment.getId());
 		            		  	e.printStackTrace();
 								log.error(e.getMessage(), e);
+								return;
 		            	  }
 	            	  }
 	            	  
