@@ -3,22 +3,30 @@ package org.xu.swan.util;
 import java.util.Date;
 import java.util.Properties;
 
+import javax.activation.DataHandler;
 import javax.mail.Address;
 import javax.mail.Authenticator;
+import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 import org.apache.log4j.Logger;
 
 public class SendMailHelper {
 	private Logger logger = Logger.getLogger(this.getClass());
-	
+	private static String username = "tuxmingg@163.com";
+	private static String password = "8705429316";
+	private static String servHost = "smtp.163.com";
+	private static String fromAddress = "tuxmingg@163.com";
 	
 	public SenderInfo getSenderInfo(){
 		return new SenderInfo();
@@ -35,18 +43,18 @@ public class SendMailHelper {
 		
 		SenderInfo senderInfo=sendMailHelper.getSenderInfo();
 		
-		senderInfo.setMailServerHost("smtp.163.com");	//"inmarsoft.com"
+		senderInfo.setMailServerHost(servHost);	//"inmarsoft.com"
 //		senderInfo.setMailServerPort("25");
 //		senderInfo.setMailServerHost("localhost");
 //		senderInfo.setMailServerPort("587");
 //		
 		senderInfo.setValidate(true);
-		senderInfo.setUserName("tuxmingg@163.com");  
-		senderInfo.setPassword("8705429316");
+		senderInfo.setUserName(username);  
+		senderInfo.setPassword(password);
 //		senderInfo.setUserName("icloudsalon@gmail.com");  
 //		senderInfo.setPassword("daiby2004");
 //
-		senderInfo.setFromAdress("tuxmingg@163.com"); //noreply@isalon2you-soft.com
+		senderInfo.setFromAdress(fromAddress); //noreply@isalon2you-soft.com
 //		senderInfo.setFromAdress("icloudsalon@gmail.com");
 		
 		senderInfo.setToAdress(toAddress);
@@ -59,6 +67,27 @@ public class SendMailHelper {
 		boolean result = sms.sendTxtMail(senderInfo);
 		return result;
 		
+	}
+	
+	public static boolean sendHTML(String text, String subject, String toAddress) {
+		SendMailHelper sendMailHelper=new SendMailHelper();
+		
+		SenderInfo senderInfo=sendMailHelper.getSenderInfo();
+		
+		senderInfo.setMailServerHost(servHost);
+		senderInfo.setValidate(true);
+		senderInfo.setUserName(username);
+		senderInfo.setPassword(password);
+		senderInfo.setFromAdress(fromAddress);
+		
+		senderInfo.setToAdress(toAddress);
+		
+		senderInfo.setSubject(subject);
+		senderInfo.setContent(text);
+		
+		SimpleMailSender sms=sendMailHelper.getSimpleMailSender();
+		boolean result = sms.sendHTMLMail(senderInfo);
+		return result;
 	}
 	
 	public class SimpleMailSender{
@@ -89,6 +118,40 @@ public class SendMailHelper {
 			}
 			return false;
 		}
+		
+		public boolean sendHTMLMail(SenderInfo mailInfo){
+			Properties p=mailInfo.getProperties();
+			MyAuthenticator authenticator=null;
+			if(mailInfo.validate){
+				authenticator=new MyAuthenticator(mailInfo.getUserName(),mailInfo.getPassword());
+			}
+			Session session=Session.getDefaultInstance(p,authenticator);
+			try {
+				Address from=new InternetAddress(mailInfo.getFromAdress());
+				Address to=new InternetAddress(mailInfo.getToAdress());
+				
+				Message message=new MimeMessage(session);
+				message.setFrom(from);
+				message.setRecipient(Message.RecipientType.TO, to);
+				message.setSentDate(new Date());
+				
+				message.setSubject(mailInfo.getSubject());
+				Multipart mp = new MimeMultipart("related");
+				BodyPart bodyPart = new MimeBodyPart();
+				bodyPart.setDataHandler(new DataHandler(mailInfo.getContent(), "text/html;charset=utf-8"));
+				mp.addBodyPart(bodyPart); 
+				message.setContent(mp);
+		        Transport.send(message);
+				return true;
+				
+			} catch (AddressException e) {
+				e.printStackTrace();
+			} catch (MessagingException e) {
+				e.printStackTrace();
+			}
+			return false;
+		}
+		
 	}
 	
 	private class MyAuthenticator extends Authenticator{
@@ -193,6 +256,5 @@ public class SendMailHelper {
 		}
 	}
 
-	
 }
 

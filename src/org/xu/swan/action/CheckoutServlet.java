@@ -1,29 +1,48 @@
 package org.xu.swan.action;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.log4j.LogManager;
-import org.jfree.util.Log;
-import org.xu.swan.bean.*;
-import org.xu.swan.util.DateUtil;
-import org.xu.swan.util.SendMailHelper;
-import org.xu.swan.util.SwanGuid;
-import org.xu.swan.util.ActionUtil;
-import org.xu.swan.db.DBManager;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.ServletException;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.*;
-import java.util.*;
-import java.util.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.jfree.util.Log;
+import org.xu.swan.bean.Appointment;
+import org.xu.swan.bean.CashDrawing;
+import org.xu.swan.bean.Customer;
+import org.xu.swan.bean.EmailTemplate;
+import org.xu.swan.bean.EmpServ;
+import org.xu.swan.bean.Employee;
+import org.xu.swan.bean.Giftcard;
+import org.xu.swan.bean.Inventory;
+import org.xu.swan.bean.Reconciliation;
+import org.xu.swan.bean.Role;
+import org.xu.swan.bean.Service;
+import org.xu.swan.bean.Ticket;
+import org.xu.swan.bean.Transaction;
+import org.xu.swan.bean.User;
+import org.xu.swan.db.DBManager;
+import org.xu.swan.util.ActionUtil;
+import org.xu.swan.util.DateUtil;
+import org.xu.swan.util.SendMailHelper;
+import org.xu.swan.util.SwanGuid;
 
 public class CheckoutServlet extends HttpServlet {
     protected Logger logger = LogManager.getLogger(getClass());
@@ -584,7 +603,7 @@ public class CheckoutServlet extends HttpServlet {
                     }
 //                    logger.info("End removeTicket. User="+user_ses.getFname() + " " + user_ses.getLname());
                 }
-            }else if(action.equals("send_checkout_email")){
+            }else if(action.equals("send_checkout_email")){ //.x.m.
             	logger.debug("send_checkout_email");
             	try {
             		
@@ -607,46 +626,95 @@ public class CheckoutServlet extends HttpServlet {
 	            	}
 	            	
 	            	List<Ticket> tickets = Ticket.findTicketByLocCodeTrans(Integer.parseInt(locationId), transactionCode);
-	            	Integer serviceId = null;
-	            	Integer productId = null;
-	            	String giftcard = "-1";
-	            	for(int i=0; i<tickets.size(); i++){
-	            		Ticket ticket = tickets.get(i);
-	            		if(ticket.getService_id()!=0)
-	            			serviceId = ticket.getService_id();
-	            		if(ticket.getProduct_id()!=0)
-	            			productId = ticket.getProduct_id();
-	            		if("-1".equals(ticket.getGiftcard())==false)
-	            			giftcard = ticket.getGiftcard();
-	            	}
-	            	
-	            	Service service = null;
-	            	Inventory inventory = null;
-	            	if(serviceId!=null)
-	            		service = Service.findById(serviceId);
-	            	if(productId!=null)
-	            		inventory = Inventory.findById(productId);
 	            	
 	            	EmailTemplate emailtemplate = EmailTemplate.findByType(102);
+
+	            	//text=
+//	            	<h3>{customerName}</h3>
+//	            	<h4>CLIENT TICKCT</h4>
+//	            	<table>
+//	            		<tr>
+//	            			<th>employee</th>
+//	            			<th>service/product	</th>
+//	            			<th>quantity</th>
+//	            			<th>discount</th>
+//	            			<th>price</th>
+//	            		</tr>
+//	            		<tr>
+//	            		${employee}{service}{quantity}{discount}{price}$
+//	            		</tr>
+//	            	</table>
+//	            	<p>sub-total: {subtotal}</p>
+//	            	<p>tax: {taxe}</p>
+//	            	<p>total: {total}</p>
+//	            	<p>at {dateTime}</p>
+
+	            	String text = emailtemplate.getText();
+	            	
+	            	String regex = "\\$.+\\$";
+//	        		Pattern pattern = Pattern.compile(regex);
+//	        		Matcher matcher = pattern.matcher(text);
+//	        		String lines =  null;
+//	        		while(matcher.find()){
+//	        			if(lines==null)
+//	        				lines = matcher.group();
+//	        		}
+	        		//${employee}[blank]{service}[blank]{quantity}[blank][blank]{discount}[blank][blank]{price}$
+	        		
+	            	BigDecimal  total = BigDecimal.ZERO;
+	            	BigDecimal subTotal = BigDecimal.ZERO;
+	            	BigDecimal taxe = BigDecimal.ZERO;
+	        		
+	            	String rows =  "";
+	            	for(int i=0; i<tickets.size(); i++){
+	            		
+	            		Ticket ticket = tickets.get(i);
+	            		
+	            		String product = "";
+	            		
+	            		if(ticket.getService_id()!=0){
+	            			Service service = Service.findById(ticket.getService_id());
+	            			product = service.getName().toUpperCase();
+	            		}
+	            		if(ticket.getProduct_id()!=0){
+	            			Inventory inventory = Inventory.findById(ticket.getProduct_id());
+	            			if("".equals(product))
+	            				product = inventory.getName().toUpperCase();
+	            			else
+	            				product +="/"+inventory.getName().toUpperCase();
+	            		}
+	            		
+	            		Employee employeeObj = Employee.findById(ticket.getEmployee_id());
+	            		String employee = employeeObj.getFname()+" "+employeeObj.getLname();
+	            		
+	            		rows+="<tr><td>"+employee+"</td><td>"+product+"</td><td>"+ticket.getQty()+"</td><td>"+ticket.getDiscount()+"</td><td>"+ticket.getPrice()+"</td></tr>";
+	            		
+	            		subTotal = subTotal.add(ticket.getPrice());
+	            		taxe = taxe.add(ticket.getTaxe());
+	            		
+	            	}
+	            	
+	            	DecimalFormat  df = new java.text.DecimalFormat("#.00");  
+	            	total = subTotal.add(taxe);
+	            	text = text.replace("{subtotal}", df.format(subTotal));
+	            	text = text.replace("{taxe}", df.format(taxe));
+	            	text = text.replace("{total}", df.format(total));
 	            	
 	            	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	            	String text = emailtemplate.getText();
 	            	text = text.replace("{customerName}", customer.getLname());
-	            	text = text.replace("{service}", service!=null?service.getName():"None");
-	            	text = text.replace("{product}", inventory!=null?inventory.getName():"None");
-	            	text = text.replace("{giftcard}", "-1".equals(giftcard)?"None":giftcard);
 	            	text = text.replace("{dateTime}", sdf.format(new Date()));
 
-	            	Log.debug("send check out email to"+email+", content:"+text);
+	            	text = text.replaceAll(regex, rows);
 	            	
-	            	SendMailHelper.send(text, "Check Out Notification", email);
+	            	logger.debug("send check out email to"+email+"\n content:\n"+text);
 	            	
+	            	SendMailHelper.sendHTML(text, "Check Out Notification", email);
 	            	
 	            	response.getWriter().write("send mail successed!");
 	            	
             	} catch (Exception e) {
             		response.getWriter().write(e.getMessage());
-					Log.error(e.getMessage(),e);
+            		logger.error(e.getMessage(),e);
 				}
             	return ;
             }
