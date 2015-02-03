@@ -77,8 +77,14 @@ function sendcomfrimEmail(appointmentID, idEmployee, idCustomer){
 	
 }
 
-function sendCheckoutEmail(custoumerId, location, transactionCode, doOther){
+function sendCheckoutEmail(custoumerId, location, transactionCode, isprint, doOther){
 	console.log("Function:sendCheckoutEmail(customer id:"+custoumerId+", transactionCode:"+transactionCode+", location:"+location+")");
+	
+	if(isprint){
+		if(doOther)
+			doOther();
+		return;
+	}
 	
 	jQuery.get("customerData", {"getCustomer": custoumerId, "timestamp" : new Date().getTime()}, 
 		function(data, textStatus, response){

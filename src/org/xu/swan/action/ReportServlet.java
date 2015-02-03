@@ -148,10 +148,10 @@ public class ReportServlet extends HttpServlet {
             }
             else if(query.equalsIgnoreCase("invoice"))
             {
-                if (user_ses.getPermission() != Role.R_SHD_CHK) {
+                //if (user_ses.getPermission() != Role.R_SHD_CHK) {
                     String NAME_TRAN = StringUtils.defaultString(request.getParameter("varNameTran"),"");
                     ReportGenerator.Generate(new InvoiceReport(NAME_TRAN),response,dbManager);
-                }
+               // }
                 if (dbManager != null) dbManager.close();
                 dbManager = null;
                 return;

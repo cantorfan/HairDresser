@@ -1,9 +1,13 @@
 package org.xu.swan.util;
 
+import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.BodyPart;
@@ -18,10 +22,12 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimeUtility;
 
 import org.apache.log4j.Logger;
 
 public class SendMailHelper {
+	private SenderInfo info;
 	private Logger logger = Logger.getLogger(this.getClass());
 	private static String username = "tuxmingg@163.com";
 	private static String password = "8705429316";
@@ -29,7 +35,9 @@ public class SendMailHelper {
 	private static String fromAddress = "tuxmingg@163.com";
 	
 	public SenderInfo getSenderInfo(){
-		return new SenderInfo();
+		if(info==null)
+			info = new SenderInfo();
+		return info;
 	}
 	
 	public SimpleMailSender getSimpleMailSender(){
@@ -37,57 +45,58 @@ public class SendMailHelper {
 	} 
 	
 	public static boolean send(String text, String subject, String toAddress){
-		//return true;
+		SendMailHelper helper = getInstance();
 		
-		SendMailHelper sendMailHelper=new SendMailHelper();
-		
-		SenderInfo senderInfo=sendMailHelper.getSenderInfo();
-		
-		senderInfo.setMailServerHost(servHost);	//"inmarsoft.com"
-//		senderInfo.setMailServerPort("25");
-//		senderInfo.setMailServerHost("localhost");
-//		senderInfo.setMailServerPort("587");
-//		
-		senderInfo.setValidate(true);
-		senderInfo.setUserName(username);  
-		senderInfo.setPassword(password);
-//		senderInfo.setUserName("icloudsalon@gmail.com");  
-//		senderInfo.setPassword("daiby2004");
-//
-		senderInfo.setFromAdress(fromAddress); //noreply@isalon2you-soft.com
-//		senderInfo.setFromAdress("icloudsalon@gmail.com");
-		
+		SenderInfo senderInfo=helper.getSenderInfo();
 		senderInfo.setToAdress(toAddress);
-//		senderInfo.setToAdress("cantorfan@yeah.net");
 		
 		senderInfo.setSubject(subject);
 		senderInfo.setContent(text);
 		
-		SimpleMailSender sms=sendMailHelper.getSimpleMailSender();
+		SimpleMailSender sms=helper.getSimpleMailSender();
 		boolean result = sms.sendTxtMail(senderInfo);
-		return result;
 		
+		return result;
 	}
 	
 	public static boolean sendHTML(String text, String subject, String toAddress) {
+		SendMailHelper helper = getInstance();
+		SenderInfo senderInfo=helper.getSenderInfo();
+		
+		senderInfo.setToAdress(toAddress);
+		senderInfo.setSubject(subject);
+		senderInfo.setContent(text);
+		
+		SimpleMailSender sms=helper.getSimpleMailSender();
+		boolean result = sms.sendHTMLMail(senderInfo);
+		return result;
+	}
+	
+	public static boolean sendAttatchment(String text, String subject, String toAddress, File file) {
+		SendMailHelper helper = getInstance();
+		SenderInfo senderInfo=helper.getSenderInfo();
+		
+		senderInfo.setToAdress(toAddress);
+		senderInfo.setSubject(subject);
+		senderInfo.setContent(text);
+		
+		SimpleMailSender sms=helper.getSimpleMailSender();
+		boolean result = sms.sendAttachmentMail(senderInfo, file);
+		return result;
+	}
+	
+	public static SendMailHelper getInstance(){
 		SendMailHelper sendMailHelper=new SendMailHelper();
 		
 		SenderInfo senderInfo=sendMailHelper.getSenderInfo();
 		
 		senderInfo.setMailServerHost(servHost);
 		senderInfo.setValidate(true);
-		senderInfo.setUserName(username);
+		senderInfo.setUserName(username);  
 		senderInfo.setPassword(password);
 		senderInfo.setFromAdress(fromAddress);
 		
-		senderInfo.setToAdress(toAddress);
-		
-		senderInfo.setSubject(subject);
-		senderInfo.setContent(text);
-		
-		SimpleMailSender sms=sendMailHelper.getSimpleMailSender();
-		boolean result = sms.sendHTMLMail(senderInfo);
-		return result;
+		return sendMailHelper;
 	}
 	
 	public class SimpleMailSender{
@@ -152,6 +161,64 @@ public class SendMailHelper {
 			return false;
 		}
 		
+		public boolean sendAttachmentMail(SenderInfo mailInfo, File attachment){
+			Properties p=mailInfo.getProperties();
+			MyAuthenticator authenticator=null;
+			if(mailInfo.validate){
+				authenticator=new MyAuthenticator(mailInfo.getUserName(),mailInfo.getPassword());
+			}
+			Session session=Session.getDefaultInstance(p,authenticator);
+			try {
+				Address from=new InternetAddress(mailInfo.getFromAdress());
+				Address to=new InternetAddress(mailInfo.getToAdress());
+				
+				Message message=new MimeMessage(session);
+				message.setSubject(mailInfo.getSubject());
+				
+				message.setFrom(from);
+				message.setRecipient(Message.RecipientType.TO, to);
+				message.setSentDate(new Date());
+				
+				// 向multipart对象中添加邮件的各个部分内容，包括文本内容和附件
+	            Multipart multipart = new MimeMultipart();
+	            // 添加邮件正文
+	            BodyPart contentPart = new MimeBodyPart();
+	            contentPart.setContent(mailInfo.getContent(), "text/html;charset=UTF-8");
+	            multipart.addBodyPart(contentPart);
+	            
+	            // 添加附件的内容
+	            if (attachment != null) {
+	                BodyPart attachmentBodyPart = new MimeBodyPart();
+	                DataSource source = new FileDataSource(attachment);
+	                attachmentBodyPart.setDataHandler(new DataHandler(source));
+	                
+	                // 网上流传的解决文件名乱码的方法，其实用MimeUtility.encodeWord就可以很方便的搞定
+	                // 这里很重要，通过下面的Base64编码的转换可以保证你的中文附件标题名在发送时不会变成乱码
+	                //sun.misc.BASE64Encoder enc = new sun.misc.BASE64Encoder();
+	                //messageBodyPart.setFileName("=?GBK?B?" + enc.encode(attachment.getName().getBytes()) + "?=");
+	                
+	                //MimeUtility.encodeWord可以避免文件名乱码
+	                attachmentBodyPart.setFileName(MimeUtility.encodeWord(attachment.getName()));
+	                multipart.addBodyPart(attachmentBodyPart);
+	            }
+	            
+	            // 将multipart对象放到message中
+	            message.setContent(multipart);
+	            // 保存邮件
+	            message.saveChanges();
+	            
+		        Transport.send(message);
+				return true;
+				
+			} catch (AddressException e) {
+				e.printStackTrace();
+			} catch (MessagingException e) {
+				e.printStackTrace();
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			return false;
+		}
 	}
 	
 	private class MyAuthenticator extends Authenticator{

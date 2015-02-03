@@ -1,5 +1,6 @@
 package org.xu.swan.bean;
 
+import org.apache.log4j.Logger;
 import org.xu.swan.db.DBManager;
 
 import java.sql.PreparedStatement;
@@ -8,9 +9,12 @@ import java.sql.Statement;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.math.BigDecimal;
 
 public class Giftcard {
+	private static Logger log = Logger.getLogger(Giftcard.class);
+	
     public static final String ID = "id";
     public static final String CODE = "code";
     public static final String CDT = "created";
@@ -303,7 +307,9 @@ public class Giftcard {
         try {
             dbm = new DBManager();
             Statement st = dbm.getStatement();
-            ResultSet rs = st.executeQuery("SELECT " + ID + "," + CODE + ", " + CDT +  ", " + AMOUNT + ", " + PAYMENT + ", " + STARTAMOUNT + ", " + ID_CUST + " FROM giftcard WHERE " + filter);
+            String sql = "SELECT " + ID + "," + CODE + ", " + CDT +  ", " + AMOUNT + ", " + PAYMENT + ", " + STARTAMOUNT + ", " + ID_CUST + " FROM giftcard WHERE " + filter;
+            log.debug(sql);
+            ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
                 Giftcard card = new Giftcard();
                 list.add(card);
@@ -326,6 +332,42 @@ public class Giftcard {
         return list;
     }
 
+    public static ArrayList<Giftcard> findByCustomerName(String name, int from, int to){
+    	ArrayList list = new ArrayList();
+        DBManager dbm = null;
+        if(name!=null)
+        	name = name.trim();
+        try {
+            dbm = new DBManager();
+            Statement st = dbm.getStatement();
+            String sql = "SELECT g." + ID + ", g." + CODE + ", g." + CDT +  ", g." + AMOUNT + ", g."+ PAYMENT + ", g." + STARTAMOUNT + ", g." + ID_CUST 
+        			+ " FROM giftcard as g, customer as c "
+        			+ "WHERE g." + ID_CUST+"= c.id and (c.fname like '%"+name+"%' or c.lname like '%"+name+"%')"
+        			+ " limit "+from +", " +to;
+            log.debug(sql);
+            ResultSet rs = st.executeQuery(sql);
+            while (rs.next()) {
+                Giftcard card = new Giftcard();
+                list.add(card);
+                card.setId(rs.getInt(1));
+                card.setCode(rs.getString(2));
+                card.setCreated(rs.getDate(3));
+                card.setAmount(rs.getBigDecimal(4));
+                card.setPayment(rs.getString(5));
+                card.setStartamount(rs.getBigDecimal(6));
+                card.setId_customer(rs.getInt(7));
+            }
+            rs.close();
+            st.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (dbm != null)
+                dbm.close();
+        }
+        return list;
+    }
+    
     public static int countByFilter(String filter)
     {
         ArrayList list = new ArrayList();

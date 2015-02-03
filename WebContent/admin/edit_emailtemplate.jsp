@@ -206,7 +206,11 @@
                     	break;
                     case "101": example += "Dear {customerName}, The Appointment at: {dataTime} has been canceled!";
                 		break;
-                    case "102": example += "<h3>{customerName}</h3>\n<h4>CLIENT TICKCT</h4>\n<table>\n<tr>\n<th>employee</th>\n<th>service/product</th>\n<th>quantity</th>\n<th>discount</th>\n<th>price</th>\n</tr>\n${employee}{service}{quantity}{discount}{price}$\n</table>\n<p>sub-total: {subtotal}</p>\n<p>tax: {taxe}</p>\n<p>total: {total}</p>\n<p>at {dateTime}</p>\n";
+                    case "102": example += "Dear {customerName},\n" +
+                    	"Thanks for using iSalon. Hope you enjoy the time with us.\n" +
+                    	"\n" +
+                    	"{dataTime}\n" +
+                    	"Isalon";
                     	break;
                 }
                 document.getElementById("example").value=example;

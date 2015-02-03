@@ -611,10 +611,10 @@ Please wait...
     }
 
     function AddReconciliation(status_){
-        AddReconciliation2(status_, true);
+        AddReconciliation2(status_, true, false);
     }
 
-    function AddReconciliation2(status_, redirect){
+    function AddReconciliation2(status_, redirect, isprint){
         if(transIDs.length == 0){
             alert('Cannot do any modifications on empty transaction');
             return;
@@ -754,7 +754,7 @@ Please wait...
                             var idCustomer = "<%=id_cust%>";
                             var location = <%=loc%>;
                             var transactionCode = "<%=code_trans%>";
-                            sendCheckoutEmail(idCustomer,location, transactionCode, function(){
+                            sendCheckoutEmail(idCustomer,location, transactionCode, isprint, function(){
                             	if (giftcard != 0){
                                     var gnum = document.getElementById("gift_paym").value;
                                     new Ajax.Request( './chkqry?rnd=' + Math.random() * 99999, { method: 'get',
@@ -3069,10 +3069,11 @@ Custom2.init();
 
                 }
                 </script>
-                <input type="image" src="img/checkout_pay_options_button.png"
+                <!-- <input type="image" src="img/checkout_pay_options_button.png"
                     onclick="var _t=document.getElementById('total').value; Modalbox.show('./pay_options.jsp?total='+_t+'&ct=<%=code_trans%>&dt=<%=dt%>&idc=<%=id_cust%>&rnd=' + Math.random() * 99999, {width: 600});"/>
+                -->
                 <%if(PrintVisible){%>
-                    <input type="image" src="img/checkout_ti_final_form1_29.png" onclick="if(document.getElementById('chb_gift') != null)AddReconciliation2(2, false); document.location.href='./report?query=invoice&varNameTran=<%=code_trans%>'" />
+                    <input type="image" src="img/checkout_ti_final_form1_29.png" onclick="if(document.getElementById('chb_gift') != null)AddReconciliation2(2, false, true); document.location.href='./report?query=invoice&varNameTran=<%=code_trans%>'" />
                 <%}%>
                 <%if(DeleteVisible){%>
                 <input type="image" src="img/checkout_ti_final_form1_21.png"  onclick="AddReconciliation(6);" />

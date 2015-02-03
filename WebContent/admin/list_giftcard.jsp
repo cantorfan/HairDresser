@@ -23,6 +23,7 @@
     String p_date = StringUtils.defaultString(request.getParameter("date"), "");
     String amount = StringUtils.defaultString(request.getParameter("amount"), "");
     String startamount = StringUtils.defaultString(request.getParameter("startamount"), "");
+    String customerName = StringUtils.defaultString(request.getParameter("customer"), "");
 //    String p_date_month = StringUtils.defaultString(request.getParameter("date_month"), "");
 //    String p_date_day = StringUtils.defaultString(request.getParameter("date_day"), "");
 //    String created = StringUtils.defaultString(request.getParameter("created"), "");
@@ -43,9 +44,9 @@
         pg_num = Integer.parseInt(pg);
         offset = ActionUtil.PAGE_ITEMS * pg_num;
     }
-    ArrayList list ;
+    ArrayList list = null;
     int count = 0;
-    if (code.equals("") && p_date.equals("") && amount.equals("") && startamount.equals(""))
+    if (code.equals("") && p_date.equals("") && amount.equals("") && startamount.equals("") && customerName.equals(""))
     {
         list = Giftcard.findAll(offset,ActionUtil.PAGE_ITEMS);
         count = Giftcard.countAll();
@@ -54,39 +55,52 @@
     {
         String filter = "";
         boolean flag = false;
-        if(!code.equals(""))
+        
+        if(!customerName.equals(""))
         {
-            filter = filter + Giftcard.CODE + " LIKE '%" + code + "%' " ;
-            flag = true;
+        	list = Giftcard.findByCustomerName(customerName, offset,ActionUtil.PAGE_ITEMS);
+        	count = list.size();
+        	flag = true;
         }
-        if(!p_date.equals(""))
-        {
-            if(flag)
-            {
-                filter = filter + " and ";
-            }
-            filter = filter + "DATE(created)= DATE('" + p_date + "') " ;
-            flag = true;
+        if(!flag){
+	        if(!code.equals(""))
+	        {
+	            filter = filter + Giftcard.CODE + " LIKE '%" + code + "%' " ;
+	            flag = true;
+	        } 
+	        if(!p_date.equals(""))
+	        {
+	            if(flag)
+	            {
+	                filter = filter + " and ";
+	            }
+	            filter = filter + "DATE(created)= DATE('" + p_date + "') " ;
+	            flag = true;
+	        }
+	        if(!amount.equals(""))
+	        {
+	            if(flag)
+	            {
+	                filter = filter + " and ";
+	            }
+	            filter = filter + Giftcard.AMOUNT + " = " + amount + " " ;
+	            flag = true;
+	        }
+	        if(!startamount.equals(""))
+	        {
+	            if(flag)
+	            {
+	                filter = filter + " and ";
+	            }
+	            filter = filter + Giftcard.STARTAMOUNT + " = " + startamount ;
+	            flag = true;
+	        }
+	        
+	        
+			list = Giftcard.findByFilter(filter + " LIMIT " + offset + "," + ActionUtil.PAGE_ITEMS);
+  		 	count = Giftcard.countByFilter(filter);
+	        
         }
-        if(!amount.equals(""))
-        {
-            if(flag)
-            {
-                filter = filter + " and ";
-            }
-            filter = filter + Giftcard.AMOUNT + " = " + amount + " " ;
-            flag = true;
-        }
-        if(!startamount.equals(""))
-        {
-            if(flag)
-            {
-                filter = filter + " and ";
-            }
-            filter = filter + Giftcard.STARTAMOUNT + " = " + startamount ;
-        }
-            list = Giftcard.findByFilter(filter + " LIMIT " + offset + "," + ActionUtil.PAGE_ITEMS);
-            count = Giftcard.countByFilter(filter);
     }
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -223,7 +237,7 @@
                         </tr>
                             <TR class="filter">
                                 <TD class="giftcard">
-                                    <input disabled type="text" id="customer" name="customer" value=""/>
+                                    <input type="text" id="customer" name="customer" value=""/>
                                 </TD>
                                 <TD class="phone">
                                     <input type="text" id="code" name="code" value="<%=code%>"/>

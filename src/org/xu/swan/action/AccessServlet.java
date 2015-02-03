@@ -19,6 +19,7 @@ import org.apache.log4j.LogManager;
 public class AccessServlet  extends HttpServlet {
     protected Logger logger = LogManager.getLogger(getClass());
     public void init() {
+    
         logger.info("AccessServlet initialized.");
     }
 
@@ -29,6 +30,7 @@ public class AccessServlet  extends HttpServlet {
 
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
+    	
         HttpSession session = request.getSession(true);
         String query = StringUtils.defaultString(request.getParameter("query"), "");
 
