@@ -145,7 +145,7 @@ function sendCheckoutEmail(custoumerId, location, transactionCode, isprint, doOt
 	
 }
 
-function sendCheckoutEmail(custoumerId, location, transactionCode){
+function sendInvoiceEmail(custoumerId, location, transactionCode){
 	console.log("Function:sendCheckoutEmail(customer id:"+custoumerId+", transactionCode:"+transactionCode+", location:"+location+")");
 	
 	jQuery.get("customerData", {"getCustomer": custoumerId, "timestamp" : new Date().getTime()}, 

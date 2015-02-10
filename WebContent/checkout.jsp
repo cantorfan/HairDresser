@@ -3089,7 +3089,7 @@ Custom2.init();
                 //.x.m.
                 if(code_trans.equals("0")==false){%>
                 <input type="image" src="img/checkout_send_mail.png"
-                    onclick="sendCheckoutEmail(<%=id_cust%>,<%=loc%>, '<%=code_trans%>')"/>
+                    onclick="sendInvoiceEmail(<%=id_cust%>,<%=loc%>, '<%=code_trans%>')"/>
                 <%}%>
                 <!--img src="img/checkout_ti_final_form1_23.png" width="98" height="21" alt=""-->
             </td>
