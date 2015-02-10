@@ -188,7 +188,7 @@ DayPilotCalendar.saveAppointment = function (start, end, column, event) {
 		                  		var data = "["+xmlRequestAppointment.responseText+"]"
 			                  	
 			                    var appointments = jQuery.parseJSON(data);
-			                    sendcomfrimEmail(appointments[0].ServerId, idEmployee, idCustomer);
+			                    sendcomfrimEmail(appointments[0].ServerId, idEmployee, idCustomer, true);
 		                  	}
                         }
                     };

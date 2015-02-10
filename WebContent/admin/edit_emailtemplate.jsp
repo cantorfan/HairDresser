@@ -24,6 +24,7 @@
         etp = EmailTemplate.findById(Integer.parseInt(id));
 //    else
 //        etp = (EmailTemplate) request.getAttribute("OBJECT");
+    System.out.println(etp.getText());
     String title = "";
     if (action.equalsIgnoreCase(ActionUtil.ACT_ADD)){
         title = "Add";

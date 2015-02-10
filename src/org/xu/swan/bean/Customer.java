@@ -1,22 +1,31 @@
 package org.xu.swan.bean;
 
-import org.xu.swan.db.DBManager;
+import java.sql.Blob;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Properties;
+import java.util.Random;
 
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMultipart;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Transport;
-import javax.mail.MessagingException;
-import java.sql.*;
-import java.sql.Date;
-import java.util.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+
+import org.apache.log4j.Logger;
+import org.xu.swan.db.DBManager;
 
 public class Customer {
+	private static Logger log = Logger.getLogger(Customer.class);
+	
     public static final String ID = "id";
     public static final String FNAME = "fname";
     public static final String LNAME = "lname";
@@ -66,6 +75,10 @@ public class Customer {
     private Date date_of_birth;
     private String login;
     private String password;
+    
+    //
+    private String employeeName;
+    
     private int country;
 
     public int getId() {
@@ -271,7 +284,15 @@ public class Customer {
         this.date_of_birth = date_of_birth;
     }
 
-    private static Random random = new Random();
+    public String getEmployeeName() {
+		return employeeName;
+	}
+
+	public void setEmployeeName(String employeeName) {
+		this.employeeName = employeeName;
+	}
+
+	private static Random random = new Random();
     private static int mtRand(int min, int max){
 
 
@@ -928,15 +949,54 @@ public class Customer {
         return cnt;
     }
 
+    public static ArrayList serachByEmployee(String employeeName, int from, int to){
+    	ArrayList list = new ArrayList();
+        DBManager dbm = null;
+        if(employeeName!=null)
+        	employeeName = employeeName.trim();
+        try {
+            dbm = new DBManager();
+            Statement st = dbm.getStatement();
+            String sql = "SELECT distinct c.id " +
+                    " FROM reconciliation as r, ticket as t, employee as e, customer as c "
+                    + "where e.id = t.employee_id "
+                    + "and t.code_transaction = r.code_transaction "
+                    + "and r.id_customer = c.id "
+                    + "and (e.fname like '%"+employeeName+"%' or e.lname like '%"+employeeName+"%')"
+            		+ " limit "+from+","+to;
+            
+            log.debug(sql);
+            
+            ResultSet rs = st.executeQuery(sql);
+            
+            while (rs.next()) {
+            	list.add(rs.getInt(1));
+            }
+            rs.close();
+            st.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (dbm != null)
+                dbm.close();
+        }
+        return list;
+    }
+    
     public static ArrayList findByFilter(String filter) {
         ArrayList list = new ArrayList();
         DBManager dbm = null;
         try {
             dbm = new DBManager();
             Statement st = dbm.getStatement();
-            ResultSet rs = st.executeQuery("SELECT " + ID + "," + FNAME + ", " + LNAME + ", " + EMAIL + ", " + PHONE + ", " + CELL
+            String sql = "SELECT " + ID + "," + FNAME + ", " + LNAME + ", " + EMAIL + ", " + PHONE + ", " + CELL
                     + ", " + TYPE + ", " + LOC + ", " + REQ + ","
-                    + WORK_PHONE_EXT + ", " + MALE_FEMALE +  ", " + ADDRESS + ", " + CITY + ", " + STATE + ", " + ZIP_CODE + ", " + PICTURE + ", " + DateOfBirth + ", " + COUNTRY + " FROM customer WHERE " + filter);
+                    + WORK_PHONE_EXT + ", " + MALE_FEMALE +  ", " + ADDRESS + ", " + CITY + ", " + STATE + ", " 
+                    + ZIP_CODE + ", " + PICTURE + ", " + DateOfBirth + ", " + COUNTRY + " FROM customer WHERE " + filter;
+            log.debug(sql);
+            ResultSet rs = st.executeQuery(sql);
+            
+            
             while (rs.next()) {
                 Customer cust = new Customer();
                 list.add(cust);

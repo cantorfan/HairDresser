@@ -3085,6 +3085,12 @@ Custom2.init();
                 <input type="image" src="img/checkout_ti_final_form1_28.png"
                     onclick="refundOnClick()"/>
                 <%}%>
+                <%
+                //.x.m.
+                if(code_trans.equals("0")==false){%>
+                <input type="image" src="img/checkout_send_mail.png"
+                    onclick="sendCheckoutEmail(<%=id_cust%>,<%=loc%>, '<%=code_trans%>')"/>
+                <%}%>
                 <!--img src="img/checkout_ti_final_form1_23.png" width="98" height="21" alt=""-->
             </td>
             <td>

@@ -1259,7 +1259,7 @@
 			                  		var data = "["+xmlRequestAppointment.responseText+"]"
 				                  	
 				                    var appointments = jQuery.parseJSON(data);
-				                    sendcomfrimEmail(appointments[0].ServerId, idEmployee, idCustomer);
+				                    sendcomfrimEmail(appointments[0].ServerId, idEmployee, idCustomer, false);
 			                  	}
                             }
                         }

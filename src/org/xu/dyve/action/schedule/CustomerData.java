@@ -352,7 +352,7 @@ public class CustomerData extends HttpServlet {
         }
         if (request.getParameter("getCustomer") != null) {
         	Customer customer = Customer.findById(Integer.parseInt(request.getParameter("getCustomer")));
-        	String json = "{\"id\": \""+customer.getId()+"\", \"email\": \""+customer.getEmail()+"\"}";
+        	String json = "{\"id\": \""+customer.getId()+"\", \"email\": \""+customer.getEmail()+"\", \"fname\":\""+customer.getFname()+"\", \"lname\":\""+customer.getLname()+"\"}";
         	 PrintWriter out = response.getWriter();
              out.write(json);
              out.close();

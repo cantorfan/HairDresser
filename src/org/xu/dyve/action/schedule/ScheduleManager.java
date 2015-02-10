@@ -67,7 +67,8 @@ public class ScheduleManager extends HttpServlet {
         doPost(request, response);
     }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
+    @SuppressWarnings("static-access")
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         HttpSession session = request.getSession(true);
 //        if (session != null){
@@ -314,21 +315,26 @@ public class ScheduleManager extends HttpServlet {
             		  EmailTemplate emailTemplate = EmailTemplate.findByType(2);  // type:2 --> Appointment Confirmation Email
 	            	  String content = emailTemplate.getText();
             		  
-	            	  String date = null;
-	            	  String time = null;
-	            	  String serviceItem = "";
-	            	  
 	            	  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	            	  SimpleDateFormat timeSdf = new SimpleDateFormat("HH:mm:ss");
+	            	  
+	            	  String date = null;
+                	  String time = null;
+                	  String employeeName = null;
+                	  String serviceItem = "";
 	            	  for(int i=0; i<appointments.size(); i++){
 
 	            		  Appointment appointment = appointments.get(i);
 	            		  
 		            	  Service service = Service.findById(appointment.getService_id());
+		            	  Employee employee = Employee.findById(appointment.getEmployee_id());
+		            	  if(employeeName == null && employee!=null){
+		            		  employeeName = employee.getFname()+" "+employee.getLname();
+		            	  }
+		            	  
 		            	  serviceItem += service.getName();
-
 		            	  if((i+1)<appointments.size())
-		            		  serviceItem +=", ";
+		            		  serviceItem +=",  ";
 		            	  
 		            	  if(date==null){
 		            		  date = sdf.format(appointment.getApp_dt());
@@ -338,16 +344,51 @@ public class ScheduleManager extends HttpServlet {
 		            	  }
 	            	  }
 	            	  
-	            	  content = content.replace("{customer}", customer.getLname());
-	            	  content = content.replace("{operator}", user.getUser());
+	            	  content = content.replace("{customerName}", customer.getFname()+" "+customer.getLname());
+	            	  content = content.replace("{employee}", employeeName);
 	            	  content = content.replace("{service}", serviceItem);
-	            	  content = content.replace("{date}", date);
-	            	  content = content.replace("{time}", time);
-	            	  content = content.replace("Shopping: {product}", "").replace("{product}", "");
-	            	 
+	            	  content = content.replace("{dateTime}", date+" "+time);
+	            	  
+	            	  /*
+	            	  String rows = "";
+	            	  for(int i=0; i<appointments.size(); i++){
+
+	            		  Appointment appointment = appointments.get(i);
+	            		  
+		            	  Service service = Service.findById(appointment.getService_id());
+		            	  Employee employee = Employee.findById(appointment.getEmployee_id());
+		            	  
+		            	  rows +="<tr>";
+		            	  rows +="<td>"+employee.getFname()+" "+employee.getLname()+"</td>";
+		            	  rows +="<td>"+service.getName()+"</td>";
+		            	  
+		            	  String date = null;
+		            	  String time = null;
+		            	  if(date==null){
+		            		  date = sdf.format(appointment.getApp_dt());
+		            	  }
+		            	  if(time==null){
+		            		  time = timeSdf.format(appointment.getSt_time());
+		            	  }
+		            	  rows +="<td>"+date+" "+time+"</td>";
+		            	  rows +="</tr>";
+	            	  }
+	            	  content = content.replaceAll("\\$.+\\$", rows);
+	            	  content = content.replace("{customerName}", customer.getFname()+" "+customer.getLname());
+	            	  */
+	            	  
+	            	  
+	            	  
 	            	  log.debug("appointment confirmation email to:"+email+", content:"+content);
 	            	  
+	            	  customer.updateCustomer(customer.getId(), customer.getFname(), customer.getLname(), email,
+	            			  customer.getPhone(), customer.getCell_phone(), customer.getType(), customer.getLocation_id(), 
+	            			  customer.getReq(), customer.getRem(), customer.getRemdays(), customer.getComment(), customer.getEmployee_id(),
+	            			  customer.getWork_phone_ext(), customer.getMale_female(), customer.getAddress(), customer.getCity(), 
+	            			  customer.getState(), customer.getZip_code(), customer.getPicture(), customer.getDate_of_birth(), customer.getCountry());
+	            	  
 	            	  //send email
+//	            	  Boolean result = SendMailHelper.sendHTML(content, "Appointment Confirmation Email", email);
 	            	  Boolean result = SendMailHelper.send(content, "Appointment Confirmation Email", email);
 	            	  
 	            	  for(int i=0; i<appointments.size()&&result; i++){
@@ -362,14 +403,6 @@ public class ScheduleManager extends HttpServlet {
 		            	  }
 	            	  }
 	            	  
-//	            	  //update email
-//	            	  Customer.updateCustomer(customer.getId(), customer.getFname(), customer.getLname(), email, 
-//	            			  customer.getPhone(), customer.getCell_phone(), customer.getType(), customer.getLocation_id(), customer.getReq(), customer.getRem(), 
-//	            			  customer.getRemdays(), customer.getComment(), customer.getEmployee_id(), customer.getWork_phone_ext(), 
-//	            			  customer.getMale_female(), customer.getAddress(), customer.getCity(), customer.getState(), customer.getZip_code(), 
-//	            			  customer.getPicture(), customer.getDate_of_birth(), customer.getCountry()
-//	            	  );
-
 	            	  response.getWriter().write(result.toString());
             	  } catch (Exception e) {
             		  response.getWriter().write(e.getMessage());

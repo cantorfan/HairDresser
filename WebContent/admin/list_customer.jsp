@@ -24,7 +24,7 @@
     String p_phone = StringUtils.defaultString(request.getParameter("phone"), "");
     String p_cellphone = StringUtils.defaultString(request.getParameter("cellphone"), "");
     String p_type = StringUtils.defaultString(request.getParameter("type"), "");
-    String p_work_phone_ext = StringUtils.defaultString(request.getParameter("work_phone_ext"), "");
+    String employeeName = StringUtils.defaultString(request.getParameter("employeeName"), "");
     String p_sex = StringUtils.defaultString(request.getParameter("sex"), "");
     String p_address = StringUtils.defaultString(request.getParameter("address"), "");
     String p_city = StringUtils.defaultString(request.getParameter("city"), "");
@@ -46,7 +46,7 @@
     ArrayList list ;
     int count = 0;
 
-    if (p_loc.equals("alllocation") && p_req.equals("allreq") && p_fname.equals("") && p_lname.equals("") && p_email.equals("") && p_phone.equals("") && p_cellphone.equals("") && p_work_phone_ext.equals(""))
+    if (p_loc.equals("alllocation") && p_req.equals("allreq") && p_fname.equals("") && p_lname.equals("") && p_email.equals("") && p_phone.equals("") && p_cellphone.equals("") && employeeName.equals(""))
     {
         list = Customer.findAll(offset,ActionUtil.PAGE_ITEMS);
         count = Customer.countAll();
@@ -54,24 +54,52 @@
     else{
         String loc_stmt = p_loc.equals("alllocation") ? "" : (Customer.LOC + " = '" +  p_loc + "' AND ");
         String req_stmt = p_req.equals("allreq") ? "" : (Customer.REQ + "='" + (p_req.equals("chkreq") ? "1" : "0") + "' AND ");
-		
+        
         String anyPhone = "";
         if(!p_phone.equals(""))
         	anyPhone = p_phone;
         else
         if(!p_cellphone.equals(""))
         	anyPhone = p_cellphone;
-        String filter =
-                  loc_stmt +
-                  req_stmt +
-                  Customer.FNAME + " LIKE '%" + p_fname + "%' AND " +
-                  Customer.LNAME + " LIKE '%" + p_lname + "%' AND " +
-                  Customer.EMAIL + " LIKE '%" + p_email + "%' AND (" +
-                  Customer.PHONE + " LIKE '%" + anyPhone + "%' OR " +
-                  Customer.CELL + " LIKE '%" + anyPhone + "%') AND " +
-                  Customer.WORK_PHONE_EXT  + " LIKE '%" + p_work_phone_ext + "%'";
-        list = Customer.findByFilter(filter + " LIMIT " + offset + "," + ActionUtil.PAGE_ITEMS);
-        count = Customer.countByFilter(filter);
+        String filter = "";
+                
+        if(employeeName.equals("")==false){
+        	ArrayList customerIds = Customer.serachByEmployee(employeeName, offset, ActionUtil.PAGE_ITEMS);
+        	if(customerIds.size()>0){
+        		filter = loc_stmt + 
+            			req_stmt +
+            			Customer.FNAME + " LIKE '%" + p_fname + "%' AND " +
+            			Customer.LNAME + " LIKE '%" + p_lname + "%' AND " +
+            			Customer.EMAIL + " LIKE '%" + p_email + "%' AND (" +
+            			Customer.PHONE + " LIKE '%" + anyPhone + "%' OR " +
+            			Customer.CELL + " LIKE '%" + anyPhone + "%') ";
+        		
+        		String sub = " AND "+Customer.ID + " in (";
+	        	for(int i=0; i<customerIds.size(); i++){
+	        		sub += customerIds.get(i);
+	        		if((i+1)<customerIds.size())
+	        			sub+=", ";
+	        	}
+	        	sub+=") ";
+        		filter += sub;
+        		list = Customer.findByFilter(filter + " LIMIT " + offset + "," + ActionUtil.PAGE_ITEMS);
+                count = Customer.countByFilter(filter);
+        	}else{
+        		list = new ArrayList();
+                count = 0;
+        	}
+        }else {
+        	filter = loc_stmt + 
+        			req_stmt +
+        			Customer.FNAME + " LIKE '%" + p_fname + "%' AND " +
+        			Customer.LNAME + " LIKE '%" + p_lname + "%' AND " +
+        			Customer.EMAIL + " LIKE '%" + p_email + "%' AND (" +
+        			Customer.PHONE + " LIKE '%" + anyPhone + "%' OR " +
+        			Customer.CELL + " LIKE '%" + anyPhone + "%') ";
+        	list = Customer.findByFilter(filter + " LIMIT " + offset + "," + ActionUtil.PAGE_ITEMS);
+            count = Customer.countByFilter(filter);
+        }
+        
     }
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -202,7 +230,7 @@
                             <th class="email_cust" title="Email address">Email</th>
                             <th class="phone_cust" title="Phone number">Phone</th>
                             <th class="phone_cust" title="Cell phone number">Cell Phone</th>
-                            <th class="phone_cust" title="Work phone ext">Work phone ext</th>
+                            <th class="phone_cust" title="Work phone ext">Employee Name</th>
                             <th style="width:80px;text-align:center"">
                                 <a href="#"><IMG onclick="ExportToExel();" height="32" alt="Export to Excel" title="Export to Excel" src="../img/exporttoexcel.png" width="32" longDesc="../img/exporttoexcel.png"></a> Export
                             </th>
@@ -217,15 +245,12 @@
                                 <TD class="email_cust">
                                     <input type="text" id="email" name="email" value="<%=p_email%>"/>
                                 </TD>
-                                <TD class="phone_cust">
-                                    <input type="text" id="phone" name="phone" value="<%=p_phone%>"/>
-                                </TD>
-                                <TD class="phone_cust">
-                                    <input type="text" id="cellphone" name="cellphone" value="<%=p_cellphone%>"/>
+                                <TD class="phone_cust" colspan="2" style="text-align:left;">
+                                    <input type="text" id="phone" name="phone" style="width:90%;" value="<%=p_phone%>"/>
                                 </TD>
 
                                 <TD class="phone_cust">
-                                    <input type="text" id="work_phone_ext" name="work_phone_ext" value="<%=p_work_phone_ext%>"/>
+                                    <input type="text" id="employeeName" name="employeeName" value="<%=employeeName%>"/>
                                 </TD>
                                 <td class="submit">
                                     <input class="button_small" type="submit" value="Search" onclick="document.getElementById('<%=ActionUtil.PAGE%>').value='0'; document.list_form.submit();" />
@@ -272,7 +297,7 @@
                                 <%=cust.getCell_phone()%>
                             </TD>
                             <TD>
-                                <%=cust.getWork_phone_ext()%>
+                                <!-- <%=cust.getWork_phone_ext()%>  -->
                             </TD>
                             <TD nowrap>
                                 <a href="./history_customer.jsp?action=hist&id=<%=cust.getId()%>"><IMG title="History" height="16" alt="history" src="../images/history.png" width="16" longDesc="../images/history.png"></a>

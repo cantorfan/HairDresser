@@ -1,17 +1,14 @@
 package org.xu.swan.bean;
 
-import org.xu.swan.db.DBManager;
-import org.xu.swan.util.ActionUtil;
-import org.xu.swan.util.TransactionCodeGenerator;
-
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+
+import org.xu.swan.db.DBManager;
+import org.xu.swan.util.ActionUtil;
 
 public class Reconciliation {
     public static final String TABLE = "reconciliation";
