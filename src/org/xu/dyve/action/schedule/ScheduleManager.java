@@ -320,17 +320,17 @@ public class ScheduleManager extends HttpServlet {
 	            	  
 	            	  String date = null;
                 	  String time = null;
-                	  String employeeName = null;
+                	  //String employeeName = null;
                 	  String serviceItem = "";
 	            	  for(int i=0; i<appointments.size(); i++){
 
 	            		  Appointment appointment = appointments.get(i);
 	            		  
 		            	  Service service = Service.findById(appointment.getService_id());
-		            	  Employee employee = Employee.findById(appointment.getEmployee_id());
-		            	  if(employeeName == null && employee!=null){
-		            		  employeeName = employee.getFname()+" "+employee.getLname();
-		            	  }
+//		            	  Employee employee = Employee.findById(appointment.getEmployee_id());
+//		            	  if(employeeName == null && employee!=null){
+//		            		  employeeName = employee.getFname()+" "+employee.getLname();
+//		            	  }
 		            	  
 		            	  serviceItem += service.getName();
 		            	  if((i+1)<appointments.size())
@@ -345,7 +345,7 @@ public class ScheduleManager extends HttpServlet {
 	            	  }
 	            	  
 	            	  content = content.replace("{customerName}", customer.getFname()+" "+customer.getLname());
-	            	  content = content.replace("{employee}", employeeName);
+	            	  content = content.replace("{operator}", user.getFname()+" "+user.getLname());
 	            	  content = content.replace("{service}", serviceItem);
 	            	  content = content.replace("{dateTime}", date+" "+time);
 	            	  
@@ -405,6 +405,7 @@ public class ScheduleManager extends HttpServlet {
 	            	  
 	            	  response.getWriter().write(result.toString());
             	  } catch (Exception e) {
+            		  e.printStackTrace();
             		  response.getWriter().write(e.getMessage());
             	  }
             	  return ;
@@ -744,6 +745,10 @@ public class ScheduleManager extends HttpServlet {
         boolean rez = false;
 //        InboxPublicBean ipb_old = old;
 //        InboxPublicBean ipb_new = new;
+        
+        //.x.m disable send email 
+       type = -1;
+        
         EmailTemplate etp = EmailTemplate.findByType(type);
         if (ipb_old!= null && ipb_new!=null && etp!=null){
 

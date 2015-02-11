@@ -798,7 +798,7 @@ public class Appointment {
             String sql = "SELECT " + ID + ","  + LOC + ","  + CUST + ","  + EMP + "," + SVC + ","
                     + CATE + ","  + PRICE + ","  + APPDT + ","  + ST + ","  + ET + ","+ STATE + ","+ COMMENT +","+REQUEST+","
             		+ IS_SEND_APPOINTMENT_MAIL+","+IS_SEND_REMINDER_MAIL
-            		+" FROM appointment WHERE " + CUST + "=" + cust_id +" and "+IS_SEND_APPOINTMENT_MAIL+" ="+status+" ORDER BY " + CUST + " DESC";
+            		+" FROM appointment WHERE " + CUST + "=" + cust_id +" and "+IS_SEND_APPOINTMENT_MAIL+" ="+status+" ORDER BY " + APPDT+", "+ST + " ASC";
             log.debug(sql);
             ResultSet rs = st.executeQuery(sql); //TODO FOUND_ROWS()
             while(rs.next()){

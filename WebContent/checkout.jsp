@@ -755,6 +755,7 @@ Please wait...
                             var location = <%=loc%>;
                             var transactionCode = "<%=code_trans%>";
                             sendCheckoutEmail(idCustomer,location, transactionCode, isprint, function(){
+                            	
                             	if (giftcard != 0){
                                     var gnum = document.getElementById("gift_paym").value;
                                     new Ajax.Request( './chkqry?rnd=' + Math.random() * 99999, { method: 'get',
@@ -782,6 +783,8 @@ Please wait...
                                     updateTransactionValues(redirect,recAction);
                                 } else if(redirect){
                                     document.location.href = "./checkout.do?dt=<%=dt%>&rnd=" + Math.random();
+                                }else {
+                                	document.getElementById("overlay").style.display = "none";
                                 }
                             });
                     }.bind(this),
@@ -3079,7 +3082,7 @@ Custom2.init();
                 <input type="image" src="img/checkout_ti_final_form1_21.png"  onclick="AddReconciliation(6);" />
                 <%}%>
                 <%if(SaveVisible){%>
-                <input type="image" src="img/checkout_ti_final_form1_34.png"  onclick="AddReconciliation(2);" />
+                <input type="image" src="img/checkout_ti_final_form1_34.png"  onclick="AddReconciliation2(2, false, true);" />
                 <%}%>
                 <%if(RefundVisible){%>
                 <input type="image" src="img/checkout_ti_final_form1_28.png"

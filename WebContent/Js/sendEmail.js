@@ -82,7 +82,7 @@ function sendcomfrimEmail(appointmentID, idEmployee, idCustomer, isLater){
 }
 
 function sendCheckoutEmail(custoumerId, location, transactionCode, isprint, doOther){
-	console.log("Function:sendCheckoutEmail(customer id:"+custoumerId+", transactionCode:"+transactionCode+", location:"+location+")");
+	console.log("Function:sendCheckoutEmail(customer id:"+custoumerId+", transactionCode:"+transactionCode+", location:"+location+", isprint:"+isprint+")");
 	
 	if(isprint){
 		if(doOther)

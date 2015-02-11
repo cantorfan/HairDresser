@@ -116,7 +116,7 @@
 			var myid = $(this).val()+"";
 			$.ajax({
 				type: "GET",
-				url: "/HairdresserSvn/admin/loginConfig.do",
+				url: "loginConfig.do",
 
 				data: {'action': "load_all", 'id':myid, date:new Date()},
 				dataType: "text",
@@ -196,12 +196,12 @@
 			
 			$.ajax({
 				type: "GET",
-				url: "/HairdresserSvn/admin/loginConfig.do",
+				url: "loginConfig.do",
 				data: {'action': "submit", 'id': userId, date:new Date(), "ips": ips},
 				dataType: "text",
 				success: function(data){
 					alert(data);
-					window.location="/HairdresserSvn/admin/loginConfig.do";
+					window.location="loginConfig.do";
 				}
 			});	
 			

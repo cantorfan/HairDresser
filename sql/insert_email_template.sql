@@ -15,9 +15,10 @@ INSERT INTO `emailstemplate` VALUES (8, 1, 102, 'Dear {customerName},\nThanks fo
 --update emailstemplate set text='<h3>Dear {customerName}</h3><h4>You booking has been accepted.</h4><table border="1"><tr><th>Employee</th><th>Service</th><th>Date</th></tr>${employee}{service}{dateTime}$</table><p>Sincerely, Administration https://isalon2you-soft.com/manhattanonline/</p>' where type=2;
 --update emailstemplate set text='Dear {customerName},\nThanks for using iSalon. Hope you enjoy the time with us.\n\n{dateTime}\nIsalon\n' where type=102;
 
-update emailstemplate set text='Dear {customerName}, \r\n\r\nYou booking has been accepted.\r\nEmployee: {employee}\r\nService: {service}\r\nDate: {dateTime}\r\n\r\nSincerely, Administration https://isalon2you-soft.com/manhattanonline/' where type=2;
+update emailstemplate set text='Dear {customerName}, \r\n\r\nYou booking has been accepted.\r\nOperator: {operator}\r\nService: {service}\r\nDate: {dateTime}\r\n\r\nSincerely, Administration https://isalon2you-soft.com/manhattanonline/' where type=2;
 
 
 alter table `appointment` add column `is_send_appointment_mail` boolean default false; 
 alter table `appointment` add column `is_send_reminder_mail` boolean default false; 
 update appointment set is_send_reminder_mail=true;
+update appointment set is_send_appointment_mail=true;

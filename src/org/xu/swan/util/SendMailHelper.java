@@ -149,7 +149,7 @@ public class SendMailHelper{
             Multipart multipart = new MimeMultipart();
             // 添加邮件正文
             BodyPart contentPart = new MimeBodyPart();
-            contentPart.setContent(text, "text/html;charset=UTF-8");
+            contentPart.setContent(text, "text/plain");
             multipart.addBodyPart(contentPart);
             
             // 添加附件的内容

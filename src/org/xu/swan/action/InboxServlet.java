@@ -326,11 +326,15 @@ public class InboxServlet extends HttpServlet {
 
     private boolean sendEmail(int id_booking, int type)
     {
+    	
+    	//.x.m disable send email
+        type = -1;
+    	
         boolean rez = false;
         InboxPublicBean ipb = InboxPublicBean.getBookingById(id_booking);
         EmailTemplate etp = EmailTemplate.findByType(type);
         if (ipb!= null && etp!=null){
-
+        
         if (ipb.getEmail()!= null && !ipb.getEmail().equals("")){
             Location loc = Location.findById(etp.getLocation_id());
             String[] tmp;
