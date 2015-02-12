@@ -36,6 +36,8 @@ public class SendMailHelper{
 	 * 	mail.smtp.host=smtp.163.com
 	 	fromAddress=tuxmingg@163.com
 		
+		mail.run=false
+		
 		mail.smtp.starttls.enable=true
 		mail.smtp.user=tuxmingg@163.com
 		mail.smtp.password=8705429316
@@ -61,9 +63,22 @@ public class SendMailHelper{
 
 	}
 	
+	public static boolean isMailActive(){
+		SendMailHelper helper = new SendMailHelper();
+		if(Boolean.parseBoolean(props.getProperty("mail.run"))==false){
+			return false;
+		}
+		return true;
+	}
+	
 	public static boolean send(String text, String subject, String toAddress){
 		SendMailHelper helper = new SendMailHelper();
 		MyAuthenticator authenticator=null;
+		
+		if(Boolean.parseBoolean(props.getProperty("mail.run"))==false){
+			return false;
+		}
+		
 		if(Boolean.parseBoolean(props.getProperty("mail.smtp.auth"))){
 			authenticator=helper.getMyAuthenticator(props.getProperty("mail.smtp.user"), 
 					props.getProperty("mail.smtp.password"));
@@ -92,6 +107,11 @@ public class SendMailHelper{
 	
 	public static boolean sendHTMLMail(String text, String subject, String toAddress){
 		SendMailHelper helper = new SendMailHelper();
+		
+		if(Boolean.parseBoolean(props.getProperty("mail.run"))==false){
+			return false;
+		}
+		
 		MyAuthenticator authenticator=null;
 		if(Boolean.parseBoolean(props.getProperty("mail.smtp.auth"))){
 			authenticator=helper.getMyAuthenticator(props.getProperty("mail.smtp.user"), 
@@ -127,6 +147,11 @@ public class SendMailHelper{
 	
 	public static boolean sendAttatchment(String text, String subject, String toAddress, File attachment) {
 		SendMailHelper helper = new SendMailHelper();
+		
+		if(Boolean.parseBoolean(props.getProperty("mail.run"))==false){
+			return false;
+		}
+		
 		MyAuthenticator authenticator=null;
 		if(Boolean.parseBoolean(props.getProperty("mail.smtp.auth"))){
 			authenticator=helper.getMyAuthenticator(props.getProperty("mail.smtp.user"), 
