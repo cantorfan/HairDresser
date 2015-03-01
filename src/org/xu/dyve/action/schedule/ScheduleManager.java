@@ -301,7 +301,7 @@ public class ScheduleManager extends HttpServlet {
             	  int employeeId = Integer.parseInt(request.getParameter("employeeId"));
             	  int customerId = Integer.parseInt(request.getParameter("customerId"));
             	  String email = request.getParameter("email");
-//            	  Employee employee = Employee.findById(employeeId);
+            	  //Employee employee = Employee.findById(employeeId);
             	  Customer customer = Customer.findById(customerId);
             	  List<Appointment> appointments = Appointment.findByCustIdAndMailStatus(customerId, false);
             	  
@@ -320,17 +320,18 @@ public class ScheduleManager extends HttpServlet {
 	            	  
 	            	  String date = null;
                 	  String time = null;
-                	  //String employeeName = null;
+                	  String employeeName = "";
                 	  String serviceItem = "";
 	            	  for(int i=0; i<appointments.size(); i++){
 
 	            		  Appointment appointment = appointments.get(i);
 	            		  
 		            	  Service service = Service.findById(appointment.getService_id());
-//		            	  Employee employee = Employee.findById(appointment.getEmployee_id());
-//		            	  if(employeeName == null && employee!=null){
-//		            		  employeeName = employee.getFname()+" "+employee.getLname();
-//		            	  }
+		            	  Employee employee = Employee.findById(appointment.getEmployee_id());
+		            	  
+		            	  if(employeeName.indexOf(employee.getFname()+" "+employee.getLname()) == -1)
+		            		  employeeName += employee.getFname()+" "+employee.getLname() + ", ";
+		            	  
 		            	  
 		            	  serviceItem += service.getName();
 		            	  if((i+1)<appointments.size())
@@ -344,8 +345,11 @@ public class ScheduleManager extends HttpServlet {
 		            	  }
 	            	  }
 	            	  
+	            	  if(employeeName.length() > 0)
+	            		  employeeName = employeeName.substring(0, employeeName.length() -2);
+	            	  
 	            	  content = content.replace("{customerName}", customer.getFname()+" "+customer.getLname());
-	            	  content = content.replace("{operator}", user.getFname()+" "+user.getLname());
+	            	  content = content.replace("{operator}", employeeName);
 	            	  content = content.replace("{service}", serviceItem);
 	            	  content = content.replace("{dateTime}", date+" "+time);
 	            	  
