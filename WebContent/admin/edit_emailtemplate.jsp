@@ -213,6 +213,13 @@
                     	"{dataTime}\n" +
                     	"Isalon";
                     	break;
+                    case "103": example += "Dear {customerName}, \n\n" + 
+                    	"You booking has been accepted.\n" + 
+                    	"Operator: {operator}\n" + 
+                    	"Service: {service}\n" + 
+                    	"Date: {dateTime}\n" + 
+                    	"Sincerely, Administration https://isalon2you-soft.com/manhattanonline/";
+                	break;
                 }
                 document.getElementById("example").value=example;
             }
@@ -263,6 +270,7 @@
                                     <option value="100" <%=(etp!=null && etp.getType()==100?"selected":"")%>>Appointment Reminder Email</option>
                                     <option value="101" <%=(etp!=null && etp.getType()==101?"selected":"")%>>Appointment Canceled Notification</option>
                                     <option value="102" <%=(etp!=null && etp.getType()==102?"selected":"")%>>Check Out Notification</option>
+                                    <option value="103" <%=(etp!=null && etp.getType()==103?"selected":"")%>>Batch Appointment Confirmation Email</option>
                                 </select>
                                 <%--<input style = "color:black" disabled id="description" name="description" type="text" value="">--%>
                             </div>

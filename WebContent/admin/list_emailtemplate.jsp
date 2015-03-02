@@ -164,6 +164,7 @@
                                         case 100: type ="Appointment Reminder Email"; break;
                                         case 101: type ="Appointment Canceled Notification"; break;
                                         case 102: type ="Check Out Notification"; break;
+                                        case 103: type ="Batch Appointment Confirmation Email"; break;
                                     }
                                 %>
                                 <%=type%>
