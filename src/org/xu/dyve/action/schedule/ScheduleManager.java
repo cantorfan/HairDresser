@@ -493,6 +493,51 @@ public class ScheduleManager extends HttpServlet {
                               if (ap!= null && ap.getTicket_id() != 0)
                                   Ticket.deleteTicket(user_ses.getId(), ap.getTicket_id());
                           }
+	                  }else if (reason.equals("send_confirm_email")) {//.x.m.
+	                	  int customerId = ap.getCustomer_id();
+	                	  Customer customer = Customer.findById(customerId);
+	                	  String email = customer.getEmail();
+	                	  
+	                	  if(customer==null || email.trim().length()==0 ){
+	                		  response.getWriter().write("failure : email is null!");
+	                		  return ;
+	                	  }
+	                	  
+	                	  Employee employee = Employee.findById(ap.getEmployee_id());
+	                	  String employeeName = "";
+		            	  if(employeeName.indexOf(employee.getFname()+" "+employee.getLname()) == -1)
+		            		  employeeName += employee.getFname()+" "+employee.getLname() + ", ";
+		            	  
+	                	  
+	                	  try {
+	                		  EmailTemplate emailTemplate = EmailTemplate.findByType(2);  // type:2 --> Appointment Confirmation Email
+	    	            	  String content = emailTemplate.getText();
+	                		  
+	    	            	  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	    	            	  SimpleDateFormat timeSdf = new SimpleDateFormat("HH:mm:ss");
+	    	            	  
+	    	            	  String date = sdf.format(ap.getApp_dt());
+	                    	  String time = timeSdf.format(ap.getSt_time());
+	                    	  Service service = Service.findById(ap.getService_id());
+    		            	  
+	                    	  String serviceItem = service.getName();
+	                    	  
+	    	            	  content = content.replace("{customerName}", customer.getFname()+" "+customer.getLname());
+	    	            	  content = content.replace("{operator}", employeeName);
+	    	            	  content = content.replace("{service}", serviceItem);
+	    	            	  content = content.replace("{dateTime}", date+" "+time);
+	    	            	  
+	    	            	  log.debug("appointment confirmation email to:"+email+", content:"+content);
+	    	            	  
+	    	            	  //send email
+	    	            	  Boolean result = SendMailHelper.send(content, "Appointment Confirmation Email", email);
+	    	            	  
+	    	            	  response.getWriter().write(result.toString());
+	                	  } catch (Exception e) {
+	                		  e.printStackTrace();
+	                		  response.getWriter().write(e.getMessage());
+	                	  }
+	                	  return ;
 	                  } 
                   } else {
                           operation = "REFRESHALL";

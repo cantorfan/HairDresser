@@ -94,7 +94,14 @@ public class SendMailHelper{
 			message.setHeader("X-Mailer", "JavaMail");
 			message.setSentDate(new Date());
 			message.setText(text);
-			Transport.send(message); 
+			Transport transport = session.getTransport(props.getProperty("protocol"));
+			transport.connect(props.getProperty("mail.smtp.host"), 
+					Integer.parseInt(props.getProperty("mail.smtp.port")), 
+					props.getProperty("mail.smtp.user"), 
+					props.getProperty("mail.smtp.password"));
+			transport.sendMessage(message, message.getAllRecipients());
+			transport.close();
+//			 Transport.send(message);
 			return true;
 			
 		} catch (AddressException e) {
@@ -134,7 +141,15 @@ public class SendMailHelper{
 			bodyPart.setDataHandler(new DataHandler(text, "text/html;charset=utf-8"));
 			mp.addBodyPart(bodyPart); 
 			message.setContent(mp);
-	        Transport.send(message);
+			Transport transport = session.getTransport(props.getProperty("protocol"));
+			transport.connect(props.getProperty("mail.smtp.host"), 
+					Integer.parseInt(props.getProperty("mail.smtp.port")), 
+					props.getProperty("mail.smtp.user"), 
+					props.getProperty("mail.smtp.password"));
+			transport.sendMessage(message, message.getAllRecipients());
+			transport.close();
+//			 Transport.send(message);
+	        //Transport.send(message);
 			return true;
 			
 		} catch (AddressException e) {
@@ -198,7 +213,14 @@ public class SendMailHelper{
             // 保存邮件
             message.saveChanges();
             
-	        Transport.send(message);
+//	        Transport.send(message);
+            Transport transport = session.getTransport(props.getProperty("protocol"));
+			transport.connect(props.getProperty("mail.smtp.host"), 
+					Integer.parseInt(props.getProperty("mail.smtp.port")), 
+					props.getProperty("mail.smtp.user"), 
+					props.getProperty("mail.smtp.password"));
+			transport.sendMessage(message, message.getAllRecipients());
+			transport.close();
 			return true;
 			
 		} catch (AddressException e) {

@@ -81,8 +81,8 @@ function sendcomfrimEmail(appointmentID, idEmployee, idCustomer, isLater){
 	
 }
 
-function sendCheckoutEmail(custoumerId, location, transactionCode, isprint, doOther){
-	console.log("Function:sendCheckoutEmail(customer id:"+custoumerId+", transactionCode:"+transactionCode+", location:"+location+", isprint:"+isprint+")");
+function sendCheckoutEmail(customerId, location, transactionCode, isprint, doOther){
+	console.log("Function:sendCheckoutEmail(customer id:"+customerId+", transactionCode:"+transactionCode+", location:"+location+", isprint:"+isprint+")");
 	
 	if(isprint){
 		if(doOther)
@@ -90,7 +90,7 @@ function sendCheckoutEmail(custoumerId, location, transactionCode, isprint, doOt
 		return;
 	}
 	
-	jQuery.get("customerData", {"getCustomer": custoumerId, "timestamp" : new Date().getTime()}, 
+	jQuery.get("customerData", {"getCustomer": customerId, "timestamp" : new Date().getTime()}, 
 		function(data, textStatus, response){
 		
 			console.log(response.responseText);
@@ -102,7 +102,7 @@ function sendCheckoutEmail(custoumerId, location, transactionCode, isprint, doOt
 				email = customer.email;
 			}
 			
-			var pop = new popup;
+			var pop = new popup();
 			options = {
 				title: "Send Check Out e-mail",
 				tip: "please check the e-mail address!",
@@ -160,7 +160,7 @@ function sendInvoiceEmail(custoumerId, location, transactionCode){
 				email = customer.email;
 			}
 			
-			var pop = new popup;
+			var pop = new popup();
 			options = {
 				title: "Send Check Out e-mail",
 				tip: "please check the e-mail address!",

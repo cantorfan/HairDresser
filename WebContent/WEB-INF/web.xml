@@ -118,6 +118,12 @@
         <servlet-name>TemplateServlet</servlet-name>
         <servlet-class>org.xu.swan.action.TemplateServlet</servlet-class>
     </servlet>
+    <servlet>
+    	<servlet-name>BatchAppointmenServlet</servlet-name>
+    	<display-name>BatchAppointmenServlet</display-name>
+    	<description></description>
+    	<servlet-class>org.xu.swan.action.BatchAppointmentServlet</servlet-class>
+    </servlet>
     <!--servlet>
         <servlet-name>action</servlet-name>
         <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
@@ -218,6 +224,10 @@
     <servlet-mapping>
     	<servlet-name>TemplateServlet</servlet-name>
     	<url-pattern>/template</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+    	<servlet-name>BatchAppointmenServlet</servlet-name>
+    	<url-pattern>/batchAppointment</url-pattern>
     </servlet-mapping>
 
     <!-- Struts Tag Library Descriptors -->

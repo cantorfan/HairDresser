@@ -1,15 +1,19 @@
 package org.xu.swan.bean;
 
-import org.apache.log4j.Logger;
-import org.xu.swan.db.DBManager;
-import org.xu.swan.dashboard.*;
-
 import java.math.BigDecimal;
-import java.sql.*;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Appointment {
+import org.apache.log4j.Logger;
+import org.xu.swan.dashboard.ChartData;
+import org.xu.swan.db.DBManager;
+
+public class Appointment implements Cloneable{
 	private static final Logger log = Logger.getLogger(Appointment.class);
 	
     public static final String ID = "id";
@@ -19,6 +23,7 @@ public class Appointment {
     public static final String SVC = "service_id";
     public static final String TICKET = "ticket_id";    
     public static final String CATE = "category_id";
+    public static final String BATCH = "batchId";
     public static final String PRICE = "price";
     public static final String APPDT = "appt_date";
     public static final String ST = "st_time";
@@ -44,10 +49,30 @@ public class Appointment {
     private String comment;
     private boolean isSendAppointmentMail;
     private boolean isSendReminderMail;
+    private String batchId;
     
     private Boolean request = false;
 
-    public Boolean getRequest() {
+    @Override
+	public Object clone() throws CloneNotSupportedException {
+    	Appointment ap = (Appointment) super.clone();
+    	ap.app_dt = this.app_dt;
+    	ap.et_time = this.et_time;
+    	ap.price = this.price;
+    	ap.request = this.request;
+    	ap.st_time = this.st_time;
+    	return ap;
+	}
+
+	public String getBatchId() {
+		return batchId;
+	}
+
+	public void setBatchId(String batchId) {
+		this.batchId = batchId;
+	}
+
+	public Boolean getRequest() {
         return request;
     }
 
@@ -231,6 +256,84 @@ public class Appointment {
         return appt;
     }
 
+	public static Appointment insert(Appointment ap){
+        DBManager dbm = null;
+        try{
+            dbm = new DBManager();
+            PreparedStatement pst = dbm.getPreparedStatement("INSERT INTO appointment (" + LOC + ","  + CUST + ","  + EMP + "," + SVC + ","
+                + CATE + ","  + PRICE + ","  + APPDT + ","  + ST + ","  + ET + ","+ STATE + ","  + COMMENT  + "," + REQUEST+","
+        		+IS_SEND_APPOINTMENT_MAIL+","+IS_SEND_REMINDER_MAIL + ", "+BATCH+") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            pst.setInt(1,ap.getLocation_id());
+            pst.setInt(2,ap.getCustomer_id());
+            pst.setInt(3,ap.getEmployee_id());
+            pst.setInt(4,ap.getService_id());
+            pst.setInt(5,ap.getCategory_id());
+            pst.setBigDecimal(6,ap.getPrice());
+            pst.setDate(7,ap.getApp_dt());
+            pst.setTime(8,ap.getSt_time());
+            pst.setTime(9,ap.getEt_time());
+            pst.setInt(10,ap.getState());
+            pst.setString(11,ap.getComment());
+            pst.setBoolean(12,ap.getRequest());
+            pst.setBoolean(13,false);
+            pst.setBoolean(14,false);
+            pst.setString(15, ap.getBatchId());
+
+            int rows = pst.executeUpdate();
+            if(rows>=0){
+                
+                ResultSet rs = pst.getGeneratedKeys();
+                if(rs.next())
+                    ap.setId(rs.getInt(1));
+                rs.close();
+            }
+            pst.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            if(dbm!=null)
+                dbm.close();
+        }
+        return ap;
+	}
+	
+	public static boolean updateBatchAppointment(int appId, String batchId) throws Exception{
+		DBManager dbm = null;
+        boolean bComplete = true;
+        try{
+            dbm = new DBManager();
+            PreparedStatement pst = dbm.getPreparedStatement("UPDATE appointment SET "+BATCH+" =? WHERE " + ID + "=?");
+            pst.setString(1,batchId);
+            pst.setInt(2,appId);
+            int rows = pst.executeUpdate();
+            pst.close();
+            return true;
+        }catch(Exception e){
+        	throw e;
+        }finally{
+            if(dbm!=null)
+                dbm.close();
+        }
+	}
+	
+	public static boolean removeBatchAppointment(String BATCH, String fromDate) throws Exception{
+		DBManager dbm = null;
+        try{
+            dbm = new DBManager();
+            PreparedStatement pst = dbm.getPreparedStatement("delete from appointment where "+BATCH+"=? and "+APPDT+">?");
+            pst.setString(1, BATCH);
+            pst.setString(2, fromDate);
+            int rows = pst.executeUpdate();
+            pst.close();
+            return true;
+        }catch(Exception e){
+        	throw e;
+        }finally{
+            if(dbm!=null)
+                dbm.close();
+        }
+	}
+	
     public static Appointment updateAppointment(int id, int loc,int cust,int emp,int svc,int cate, BigDecimal price, Date dt, Time st, Time et, int newState, String comment){
         Appointment appt = null;
         DBManager dbm = null;
@@ -720,7 +823,7 @@ public class Appointment {
             dbm = new DBManager();
             PreparedStatement pst = dbm.getPreparedStatement("SELECT " + ID + ","  + LOC + ","  + CUST + ","  + EMP + "," + SVC + ","
                 + CATE + ","  + PRICE + ","  + APPDT + ","  + ST + ","  + ET + ","+ STATE +  ","+ COMMENT + "," + REQUEST + "," + TICKET + "," 
-                + IS_SEND_APPOINTMENT_MAIL+","+IS_SEND_REMINDER_MAIL+" FROM appointment WHERE " + ID + "=?");
+                + IS_SEND_APPOINTMENT_MAIL+","+IS_SEND_REMINDER_MAIL+", "+BATCH+" FROM appointment WHERE " + ID + "=?");
             pst.setInt(1,id);
             ResultSet rs = pst.executeQuery();
             if(rs.next()){
@@ -741,6 +844,7 @@ public class Appointment {
                 appt.setTicket_id(rs.getInt(14));
                 appt.setSendAppointmentMail(rs.getBoolean(15));
                 appt.setSendReminderMail(rs.getBoolean(16));
+                appt.setBatchId(rs.getString(17));
             }
             rs.close();
             pst.close();
@@ -909,6 +1013,46 @@ public class Appointment {
         return hm;
     }
 
+    public static ArrayList<Appointment> findByBatchId(String batchId){
+        ArrayList<Appointment> list = new ArrayList<Appointment>();
+        DBManager dbm = null;
+        try{
+            dbm = new DBManager();
+            Statement st = dbm.getStatement();
+            String sql = "SELECT " + ID + ","  + LOC + ","  + CUST + ","  + EMP + "," + SVC + ","
+                + CATE + ","  + PRICE + ","  + APPDT + ","  + ST + ","  + ET + ","+ STATE + "," + COMMENT + "," + REQUEST + "," + TICKET + 
+                " FROM appointment WHERE " + BATCH + "=" + batchId;
+            ResultSet rs = st.executeQuery(sql);
+            while(rs.next()){
+                Appointment appt = new Appointment();
+                list.add(appt);
+                appt.setId(rs.getInt(1));
+                appt.setLocation_id(rs.getInt(2));
+                appt.setCustomer_id(rs.getInt(3));
+                appt.setEmployee_id(rs.getInt(4));
+                appt.setService_id(rs.getInt(5));
+                appt.setCategory_id(rs.getInt(6));
+                appt.setPrice(rs.getBigDecimal(7));
+                appt.setApp_dt(rs.getDate(8));
+                appt.setSt_time(rs.getTime(9));
+                appt.setEt_time(rs.getTime(10));
+                appt.setState(rs.getInt(11));
+                appt.setComment(rs.getString(12));
+                appt.setRequest(rs.getBoolean(13));
+                appt.setTicket_id(rs.getInt(14));
+                appt.setBatchId(batchId);
+            }
+            rs.close();
+            st.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            if(dbm!=null)
+                dbm.close();
+        }
+        return list;
+    }
+    
     public static ArrayList findAllByTicketId(int ticket_id){
         ArrayList list = new ArrayList();
         DBManager dbm = null;

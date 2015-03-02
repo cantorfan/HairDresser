@@ -1,0 +1,1 @@
+alter table `appointment` add column `batchId` varchar(80);

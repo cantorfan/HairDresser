@@ -109,6 +109,9 @@
     <link rel='stylesheet' type='text/css' href='./plugins/popup/popup.css' />
     <script type="text/javascript" src="./plugins/popup/popup.js"></script>
     <script language="javascript" type="text/javascript" src="Js/sendEmail.js"></script>
+    <link rel='stylesheet' type='text/css' href='plugins/calendar/tcal.css' />
+    <script language="javascript" type="text/javascript" src="plugins/calendar/tcal.js"></script>
+
     <script type="text/javascript" src="./Js/selectworker.js"></script>
     <script type="text/javascript" src="./script/schedule.js"></script>
 	<script type="text/javascript" src="./jscalendar/calendar.js"></script>
@@ -128,6 +131,8 @@
     <script language="javascript" type="text/javascript" src="Js/CustomerControl.js" ></script>       
     <script language="javascript" type="text/javascript" src="Js/ServiceListControl.js" ></script>
     <script language="javascript" type="text/javascript" src="Js/custom-form-elements.js" ></script>
+    
+    <script language="javascript" type="text/javascript" src="Js/batchAppointment.js"></script>
         <%
         //CashDrawing cd = CashDrawing.findByDate(Integer.parseInt(id), DateUtil.parseSqlDate(dt));
         %>
@@ -163,7 +168,7 @@
         }
     </script>
     <script language="javascript" type="text/javascript">
-        var isChoice = 0;
+        var isChoice = 0; //.x.m.
         function callYes(){
             if (document.getElementById("win2.delete").checked){
                 isChoice = 7;
@@ -172,12 +177,29 @@
                 isChoice = 6;
             }else if (document.getElementById("win2.canceled").checked){
                 isChoice = 8;
+            }else if (document.getElementById("win2.confirm_email").checked){
+                isChoice = 9;
+            }else if(document.getElementById("win2.weekly").checked){  // batch appointment handler
+            	var app_id = document.getElementById("app_id").value;
+            	var batchApp = new batchAppointment();
+            	batchApp.batchOfWeekly(hide_bar2, app_id);
+            }else if(document.getElementById("win2.monthly").checked){
+            	var batchApp = new batchAppointment();
+            	var app_id = document.getElementById("app_id").value;
+            	batchApp.batchOfMonthly(hide_bar2, app_id);
+            }else if(document.getElementById("win2.remove.batch.app").checked){
+            	var app_id = document.getElementById("app_id").value;
+            	var batchApp = new batchAppointment();
+            	batchApp.remove(hide_bar2, app_id);	
             }
-            var e=document.getElementById("event").value;
-            mainCalendar.eventDeleteCustom(e);
-            hide_bar2();
+            
+            if(isChoice > 6 && isChoice < 10){
+            	var e=document.getElementById("event").value;
+            	mainCalendar.eventDeleteCustom(e);
+            	hide_bar2();
+            }
         }
-
+        
         function clear_data() {
             document.getElementById('cust_id').value = '';
             clear_data1();
@@ -863,7 +885,7 @@
                <tr/> <tr/>
 			</table>
 		</div>
-    <div id="win2" style="position: absolute;border:0;width: 322px;height: 224px;background-image: url(img/win_bg1.png);visibility: hidden;background-color: transparent;z-index: 1000;" align="center">
+    <div id="win2" style="position: absolute;width: 322px; visibility: hidden;background:black; border:5px solid white;border-radius: 15px; z-index: 1000;" align="center">
         <br/>
         <table style="height:190px">
             <tr/>
@@ -872,8 +894,30 @@
                 <td align="left" style="font-family: Tahoma; font-size: 8pt;">
                     <!-- .x.m. <input type="radio" name="delete" id="win2.noshow" value="6" class="styled" checked><img src="img/win_customer_no_show_bak.png" alt="" /><br/><br/> -->
                     <input type="radio" name="delete" id="win2.noshow" value="6" class="styled" checked><img src="img/win_customer_no_show.png" alt="" /><br/><br/>
+                    <input type="radio" name="delete" id="win2.confirm_email" value="9" class="styled" checked><img src="img/win_send_confirm_email.png" alt="" /><br/><br/>
                     <input type="radio" name="delete" id="win2.canceled" value="6" class="styled"><img src="img/win_canceled_by_customer.png" alt="" /><br/><br/>
                     <input type="radio" name="delete" id="win2.delete" value="7" class="styled"><img src="img/win_deleted.png" alt="" /><br/><br/>
+                    <table border=0><!-- .x.m. -->
+                    	<tr>
+                    		<th colspan="3">Appointment Options</th>
+                    	</tr>
+                    	<tr>
+                    		<td>
+                    			<input type="radio" name="delete" id="win2.weekly" value="10" class="styled"/>Weekly
+                    		</td>
+                    		<td>
+                    			<input type="radio" name="delete" id="win2.monthly" value="11" class="styled"/>Monthly
+                    		</td>
+                    		<td>
+                    			<input type="radio" name="delete" id="win2.remove.batch.app" value="12" class="styled"/>Remove
+                    		</td>
+                    	</tr>
+                    	<tr>
+                    		<td colspan="3">
+                    			END APP TIME: <input name="endAppintmentTime" class="tcal" id="endAppointmentTime" />
+                    		</td>
+                    	</tr>
+                    </table>
                     <input type="hidden" name="event" id="event" value="">
                 </td>
             </tr>
@@ -1465,6 +1509,7 @@
                 if (isChoice == 6) del = "delcust";
                 else if (isChoice == 7) del = "delok";
                 else if (isChoice == 8) del = "delcancel";
+                else if (isChoice == 9) del = "send_confirm_email";
                 else del = "";
                 isChoice = 0;
                 var xmlRequest;
@@ -2261,9 +2306,6 @@
         ];
 
      </script>
-     <script>
-     </script>
-
 </body>
 </html>
 
