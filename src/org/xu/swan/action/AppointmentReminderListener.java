@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import org.xu.swan.bean.Appointment;
 import org.xu.swan.bean.Customer;
 import org.xu.swan.bean.EmailTemplate;
+import org.xu.swan.service.MailService;
 import org.xu.swan.util.SendMailHelper;
 
 /**
@@ -51,80 +52,12 @@ public class AppointmentReminderListener implements ServletContextListener {
         final Long step = 10*60*1000L;
 		timer.schedule(new TimerTask(){
 			public void run() {
-				/*load db*/
 				
-				Date date = new Date();
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				SimpleDateFormat timeSdf = new SimpleDateFormat("HH:mm:ss");
-				
-				Calendar fromDate = Calendar.getInstance();
-				fromDate.add(Calendar.HOUR_OF_DAY, 3);
-				
-				String filter = " where "+Appointment.IS_SEND_REMINDER_MAIL+"=false and " + 
-						Appointment.APPDT + " = '"+sdf.format(fromDate.getTime())+"' and state=0 and " +
-						Appointment.ST+" < '" + timeSdf.format(fromDate.getTime())+"'";
-				List<Appointment> as = Appointment.findByFilter(filter);
-				
-				EmailTemplate emailTemplate = null;
-				if(as!=null&&as.size()>0){
-					emailTemplate = EmailTemplate.findByType(100);
-					Map<Integer, ContentInfo> mailContents = new HashMap<Integer, ContentInfo>();
-					//send mail
-					for (Appointment appointment : as) {
-						
-						int customerID = appointment.getCustomer_id();
-						String content =  sdf.format(date)+" "+timeSdf.format(appointment.getSt_time());
-						
-						ContentInfo info = new ContentInfo();
-						info.appt = appointment;
-						info.mailContent = content;
-						
-						if(mailContents.get(customerID) == null){
-							mailContents.put(customerID, info);
-						}
-						
-						mailContents.get(customerID).appIds.add(appointment.getId());
-						
-//						Service service = Service.findById(appointment.getService_id());
-						
-//						String content = "Service: "+service.getName()+"\n"+ "at ";
-					}
-					
-					for (Integer customerID : mailContents.keySet()) {
-						ContentInfo info = mailContents.get(customerID);
-						
-						Customer customer = Customer.findById(info.appt.getCustomer_id());
-						String content = emailTemplate.getText().replace("{customerName}", customer.getFname());
-						content = content.replace("{appointmentTime}", info.mailContent);
-						boolean result = SendMailHelper.send(content, "Appointment Reminder", customer.getEmail());
-						
-						log.debug(info);
-						log.debug("send reminder email to:"+customer.getEmail()+", content:"+ content);
-						if(result)
-							for (Integer apptId : info.appIds) {
-								Appointment.updateChangeSendMailStatus(apptId, 2, true);
-							}
-					}
-					
-				}
+				MailService mail = new MailService();
+				mail.sendMailRemindeAppointment();
 				
 			}	
 		}, 10*1000, step);
-    }
-    
-    /**
-     * @author Think
-     *
-     */
-    public class ContentInfo{
-    	public Appointment appt;
-    	public String mailContent;
-    	public List<Integer> appIds = new ArrayList<Integer>();
-		@Override
-		public String toString() {
-			return "Info [appt=" + appt + ", mailContent=" + mailContent
-					+ ", appIds=" + appIds + "]";
-		}
     }
     
 }

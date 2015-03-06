@@ -11,7 +11,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -29,9 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.poi.util.StringUtil;
 import org.xu.swan.bean.Appointment;
 import org.xu.swan.bean.Customer;
 import org.xu.swan.bean.EmailTemplate;
@@ -46,6 +43,7 @@ import org.xu.swan.bean.Service;
 import org.xu.swan.bean.Ticket;
 import org.xu.swan.bean.User;
 import org.xu.swan.bean.WorkingtimeLoc;
+import org.xu.swan.service.MailService;
 import org.xu.swan.util.DateUtil;
 import org.xu.swan.util.Html2Text;
 import org.xu.swan.util.ResourcesManager;
@@ -301,153 +299,43 @@ public class ScheduleManager extends HttpServlet {
             	  int employeeId = Integer.parseInt(request.getParameter("employeeId"));
             	  int customerId = Integer.parseInt(request.getParameter("customerId"));
             	  String email = request.getParameter("email");
-            	  //Employee employee = Employee.findById(employeeId);
-            	  Customer customer = Customer.findById(customerId);
-            	  List<Appointment> appointments = Appointment.findByCustIdAndMailStatus(customerId, false);
-            	  
-            	  User user = (User) session.getAttribute("user");
-            	  if(customer==null || email.trim().length()==0 ){
-            		  response.getWriter().write("failure : email is null!");
-            		  return ;
-            	  }
-            	  
+				  
             	  try {
-            		  EmailTemplate emailTemplate = EmailTemplate.findByType(2);  // type:2 --> Appointment Confirmation Email
-	            	  String content = emailTemplate.getText();
-            		  
-	            	  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	            	  SimpleDateFormat timeSdf = new SimpleDateFormat("HH:mm:ss");
-	            	  
-	            	  String date = null;
-                	  String time = null;
-                	  String employeeName = "";
-                	  String serviceItem = "";
-	            	  for(int i=0; i<appointments.size(); i++){
-
-	            		  Appointment appointment = appointments.get(i);
-	            		  
-		            	  Service service = Service.findById(appointment.getService_id());
-		            	  Employee employee = Employee.findById(appointment.getEmployee_id());
-		            	  
-		            	  if(employeeName.indexOf(employee.getFname()+" "+employee.getLname()) == -1)
-		            		  employeeName += employee.getFname()+" "+employee.getLname() + ", ";
-		            	  
-		            	  
-		            	  serviceItem += service.getName();
-		            	  if((i+1)<appointments.size())
-		            		  serviceItem +=",  ";
-		            	  
-		            	  if(date==null){
-		            		  date = sdf.format(appointment.getApp_dt());
-		            	  }
-		            	  if(time==null){
-		            		  time = timeSdf.format(appointment.getSt_time());
-		            	  }
-	            	  }
-	            	  
-	            	  if(employeeName.length() > 0)
-	            		  employeeName = employeeName.substring(0, employeeName.length() -2);
-	            	  
-	            	  content = content.replace("{customerName}", customer.getFname()+" "+customer.getLname());
-	            	  content = content.replace("{operator}", employeeName);
-	            	  content = content.replace("{service}", serviceItem);
-	            	  content = content.replace("{dateTime}", date+" "+time);
-	            	  
-	            	  /*
-	            	  String rows = "";
-	            	  for(int i=0; i<appointments.size(); i++){
-
-	            		  Appointment appointment = appointments.get(i);
-	            		  
-		            	  Service service = Service.findById(appointment.getService_id());
-		            	  Employee employee = Employee.findById(appointment.getEmployee_id());
-		            	  
-		            	  rows +="<tr>";
-		            	  rows +="<td>"+employee.getFname()+" "+employee.getLname()+"</td>";
-		            	  rows +="<td>"+service.getName()+"</td>";
-		            	  
-		            	  String date = null;
-		            	  String time = null;
-		            	  if(date==null){
-		            		  date = sdf.format(appointment.getApp_dt());
-		            	  }
-		            	  if(time==null){
-		            		  time = timeSdf.format(appointment.getSt_time());
-		            	  }
-		            	  rows +="<td>"+date+" "+time+"</td>";
-		            	  rows +="</tr>";
-	            	  }
-	            	  content = content.replaceAll("\\$.+\\$", rows);
-	            	  content = content.replace("{customerName}", customer.getFname()+" "+customer.getLname());
-	            	  */
-	            	  
-	            	  
-	            	  
-	            	  log.debug("appointment confirmation email to:"+email+", content:"+content);
-	            	  
-	            	  customer.updateCustomer(customer.getId(), customer.getFname(), customer.getLname(), email,
-	            			  customer.getPhone(), customer.getCell_phone(), customer.getType(), customer.getLocation_id(), 
-	            			  customer.getReq(), customer.getRem(), customer.getRemdays(), customer.getComment(), customer.getEmployee_id(),
-	            			  customer.getWork_phone_ext(), customer.getMale_female(), customer.getAddress(), customer.getCity(), 
-	            			  customer.getState(), customer.getZip_code(), customer.getPicture(), customer.getDate_of_birth(), customer.getCountry());
-	            	  
-	            	  //send email
-//	            	  Boolean result = SendMailHelper.sendHTML(content, "Appointment Confirmation Email", email);
-	            	  Boolean result = SendMailHelper.send(content, "Appointment Confirmation Email", email);
-	            	  
-	            	  for(int i=0; i<appointments.size()&&result; i++){
-	            		  Appointment appointment = appointments.get(i);
-		            	  try {
-		            		  Appointment.updateChangeSendMailStatus(appointment.getId(), 1, true);
-		            	  } catch (Exception e) {
-		            		  	response.getWriter().write(e.getMessage()+", appointment ID:"+appointment.getId());
-		            		  	e.printStackTrace();
-								log.error(e.getMessage(), e);
-								return;
-		            	  }
-	            	  }
-	            	  
-	            	  response.getWriter().write(result.toString());
+            		  MailService mailservice = new MailService();
+            		  String result = mailservice.sendAppointmentConfirmation(employeeId, customerId, email);
+            		  response.getWriter().write(result);
+					
             	  } catch (Exception e) {
             		  e.printStackTrace();
             		  response.getWriter().write(e.getMessage());
             	  }
-            	  return ;
+				return ;
               }
               
-        	  if(operation.equals("canceled_send_email")){
+        	  if(operation.equals("resend_confirm_email")){
             	  try {  //.x.m.
-	            	  log.debug("canceled_send_email:111111");
 	            	  String appId = request.getParameter("appointmentID");
-	            	  Appointment ap = Appointment.findById(Integer.parseInt(appId.replace("appoint_", "")));
-	            	  if(ap!=null){
-	            		  log.debug("canceled_send_email:222222");
-	            		  Customer customer = Customer.findById(ap.getCustomer_id());
-	                      if(customer!=null){ //send cancel mail
-	                    	  log.debug("canceled_send_email:333333");
-	                          SimpleDateFormat dateSdf = new SimpleDateFormat("yyyy-MM-dd");
-	                          SimpleDateFormat timeSdf = new SimpleDateFormat(" HH:mm:ss");
-	                          String date = dateSdf.format(ap.getApp_dt());
-	                          String time = timeSdf.format(ap.getSt_time());
-	                          String dateTime = date+time;
-	                          
-	                          EmailTemplate cancelMailTemplate = EmailTemplate.findByType(101);
-	                          
-	                		  //String text = "Dear {customer}, The Appointment at: {2015-09-09} {11:11:11} has been canceled!";
-	                          String text = cancelMailTemplate.getText().replace("{customerName}", customer.getLname());
-	                          text = text.replace("{dataTime}", dateTime);
-	                          
-	                          log.debug("canceled_send_email to :"+customer.getEmail()+", content"+text);
-	                    	  SendMailHelper.send(text, "Appointment Canceled", customer.getEmail());
-	                      }
-	                      log.debug("canceled_send_email:444444");
-	                	  response.getWriter().write("send mail successed!");
-	            	  }else{
-	            		  log.debug("canceled_send_email:55555");
-	            		  response.getWriter().write("send mail failure, appointment not found!");
-	            	  }
+	            	  String email = request.getParameter("email");
+	            	  int appointmentID = Integer.parseInt(appId.replace("appoint_", ""));
+	            	  MailService mailService = new MailService();
+	            	  String result = mailService.reSendAppointmentConfirmation(appointmentID, email);
+	            	  response.getWriter().write(result);
             	  } catch (Exception e) {
-            		  log.debug("canceled_send_email:66666");
+            		  response.getWriter().write("send mail failure: "+e.getMessage());
+            		  e.printStackTrace();
+            	  }
+            	  return ;
+              }
+        	  
+        	  if(operation.equals("delete_send_mail")){
+            	  try {  //.x.m.
+	            	  String appId = request.getParameter("appointmentID");
+	            	  String email = request.getParameter("email");
+	            	  int appointmentID = Integer.parseInt(appId.replace("appoint_", ""));
+	            	  MailService mailService = new MailService();
+	            	  String result = mailService.sendCanceledAppointmentMail(appointmentID, email);
+	            	  response.getWriter().write(result);
+            	  } catch (Exception e) {
             		  response.getWriter().write("send mail failure: "+e.getMessage());
             		  e.printStackTrace();
             	  }
@@ -487,58 +375,14 @@ public class ScheduleManager extends HttpServlet {
                           }else {
                               if (reason.equals("delcust")) newState = 2;
                               else newState = 4;
+                              log.debug("reason:"+reason+", newState:"+newState);
                               Appointment.updateAppointmentByIdState(idAppointment, newState);
                               Appointment.updateAddTicketID(idAppointment, 0);
                               delcust = true;
                               if (ap!= null && ap.getTicket_id() != 0)
                                   Ticket.deleteTicket(user_ses.getId(), ap.getTicket_id());
                           }
-	                  }else if (reason.equals("send_confirm_email")) {//.x.m.
-	                	  int customerId = ap.getCustomer_id();
-	                	  Customer customer = Customer.findById(customerId);
-	                	  String email = customer.getEmail();
-	                	  
-	                	  if(customer==null || email.trim().length()==0 ){
-	                		  response.getWriter().write("failure : email is null!");
-	                		  return ;
-	                	  }
-	                	  
-	                	  Employee employee = Employee.findById(ap.getEmployee_id());
-	                	  String employeeName = "";
-		            	  if(employeeName.indexOf(employee.getFname()+" "+employee.getLname()) == -1)
-		            		  employeeName += employee.getFname()+" "+employee.getLname() + ", ";
-		            	  
-	                	  
-	                	  try {
-	                		  EmailTemplate emailTemplate = EmailTemplate.findByType(2);  // type:2 --> Appointment Confirmation Email
-	    	            	  String content = emailTemplate.getText();
-	                		  
-	    	            	  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	    	            	  SimpleDateFormat timeSdf = new SimpleDateFormat("HH:mm:ss");
-	    	            	  
-	    	            	  String date = sdf.format(ap.getApp_dt());
-	                    	  String time = timeSdf.format(ap.getSt_time());
-	                    	  Service service = Service.findById(ap.getService_id());
-    		            	  
-	                    	  String serviceItem = service.getName();
-	                    	  
-	    	            	  content = content.replace("{customerName}", customer.getFname()+" "+customer.getLname());
-	    	            	  content = content.replace("{operator}", employeeName);
-	    	            	  content = content.replace("{service}", serviceItem);
-	    	            	  content = content.replace("{dateTime}", date+" "+time);
-	    	            	  
-	    	            	  log.debug("appointment confirmation email to:"+email+", content:"+content);
-	    	            	  
-	    	            	  //send email
-	    	            	  Boolean result = SendMailHelper.send(content, "Appointment Confirmation Email", email);
-	    	            	  
-	    	            	  response.getWriter().write(result.toString());
-	                	  } catch (Exception e) {
-	                		  e.printStackTrace();
-	                		  response.getWriter().write(e.getMessage());
-	                	  }
-	                	  return ;
-	                  } 
+	                  }
                   } else {
                           operation = "REFRESHALL";
                       }

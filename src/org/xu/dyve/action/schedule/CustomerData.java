@@ -358,7 +358,17 @@ public class CustomerData extends HttpServlet {
              out.close();
              return;
         }
-        
+        if (request.getParameter("getCustomerByAppID") != null) {
+        	String appID = request.getParameter("getCustomerByAppID");
+        	appID = appID.replace("appoint_", "");
+        	Appointment app = Appointment.findById(Integer.parseInt(appID));
+        	Customer customer = Customer.findById(app.getCustomer_id());
+        	String json = "{\"id\": \""+customer.getId()+"\", \"email\": \""+customer.getEmail()+"\", \"fname\":\""+customer.getFname()+"\", \"lname\":\""+customer.getLname()+"\"}";
+        	 PrintWriter out = response.getWriter();
+             out.write(json);
+             out.close();
+             return;
+        }
         if (responseXML.length() == 0) {
             // System.out.println("lalala4");
             responseXML = "<?xml version=\"1.0\"?><root/>";

@@ -9,22 +9,21 @@
 */
 
 /* input box in default state */ 
-.tcalInput {
+.pop-form-item input.tcalInput,  .tcalInput{
 	background: url('img/cal.gif') 100% 50% no-repeat;
 	padding-right: 20px;
 	cursor: pointer;
-	color:#fff;
 }
 
 /* additional properties for input boxe in activated state, above still applies unless in conflict */
-.tcalActive {
+.pop-form-item input.tcalActive, .tcalActive{
 	background-image: url('img/no_cal.gif');
 }
 /* container of calendar's pop-up */
 #tcal {
 	position: absolute;
 	visibility: hidden;
-	z-index: 6666;
+	z-index: 12000;
 	width: 170px;
 	background-color: white;
 	margin-top: 2px;
@@ -36,7 +35,7 @@
 	box-shadow: 3px 3px 4px silver;
 	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='silver')";
 	filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='silver');
-	color: #666;
+	color: black;
 }
 
 /* table containing navigation and current month */

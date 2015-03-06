@@ -129,7 +129,7 @@ span.pop-form-label{
 }
 
 .pop-form-item input[type="text"], .pop-form-item input[type="password"]{
-	background: none repeat scroll 0 0 rgba(0, 0, 0, 0);
+	background: none repeat scroll 0 0;
     border: medium none;
     color: gray;
     font-family: inherit;

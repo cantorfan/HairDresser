@@ -2,58 +2,113 @@
  * 
  */
 
-var batchAppointment = function(){
+var batchAppointment = function(appID){
 	var pop = new popup();
-	this.batchOfWeekly = function(hiddenWin2, appID){
-		var endtime = jQuery("#endAppointmentTime").val();
-		if(!endtime)
-			pop.enter({message:"END APP TIME not null!","visiable" : true, "type": "warning"});
-		else{
-			jQuery.get("batchAppointment", {"action": "weekly", "endTime": endtime, "appointmentID": appID, "timestamp" : new Date().getTime()}, 
-				function(data, textStatus, response){
-					var jsonData = jQuery.parseJSON(response.responseText);
-					if(jsonData.status){
-						pop.tip({message: jsonData.message, "visiable" : false, "type": "success", "showLocation" : "center"});
-						sendMail(jsonData.customerId, jsonData.batchId, hiddenWin2);
-					}else{
-						pop.tip({message: jsonData.message, "visiable" : false, "type": "error", "showLocation" : "center"});
+	
+	jQuery.get("batchAppointment", {"action": "batch_type", "appointmentID": appID, "timestamp" : new Date().getTime()}, 
+		function(data, textStatus, response){
+			var jsonData = jQuery.parseJSON(response.responseText);
+			if(jsonData.status){
+				
+				var batchType = jsonData.batchType;
+				var batchOptions = {
+					title: "Standing Appointment",
+					tip: "select a item & date not null",
+					visiable: true,
+					form:[
+					    {type:"radio", name: "standing_app_item", className:"standing_app_item", "value": ["Weekly", "Monthly", "Remove"]},
+						{type:"text", label:"from", placeholder:"from date time", className:"standing_app_from tcal"},
+						{type:"text", label:"to", placeholder:"to date time", className:"standing_app_to tcal"}
+					],
+					btn1: {text:"Approve", callback : function(form, close){
+						//pop.enter({message:"this tip message!","visiable" : true});
+						if(form.length>0){
+							var select = jQuery('input:radio[name="standing_app_item"]:checked').val();
+							var from = jQuery(".standing_app_from").val();
+							var to = jQuery(".standing_app_to").val();
+							if(!select){
+								pop.enter({message:"please select a item!","visiable" : true, "type": "warning"});
+							}else if(select=="Remove"){
+								remove(close);
+							}else if(!from){
+								pop.enter({message:"from is null","visiable" : true, "type": "warning"});
+							}else if(!to){
+								pop.enter({message:"to is null","visiable" : true, "type": "warning"});
+							}else {
+								if(select=="Weekly"){
+									batchOfWeekly(close, from, to);
+								}else if(select=="Monthly"){
+									batchOfMonthly(close, from, to);
+								}else if(select=="Remove"){
+									remove(close);
+								}
+							}
+						}
+					}},
+					btn2: {text:"Cancel", callback: function(closePop){
+						closePop();
+					}},
+					before : function(){
+						if(jsonData.batchType){
+							jQuery('input:radio[value="Weekly"]').attr("disabled", "disabled");
+							jQuery('input:radio[value="Monthly"]').attr("disabled", "disabled");
+						}else{
+							jQuery('input:radio[value="Remove"]').attr("disabled", "disabled");
+						}
 					}
-				});
+				}
+				pop.form(batchOptions);
+				f_tcalCancel();
+				f_tcalInit();
+					
+			}else{
+				pop.tip({message: jsonData.message, "visiable" : false, "type": "error", "showLocation" : "center"});
+			}
 		}
+	);
+	
+	var batchOfWeekly = function(closePop, from, to){
+		jQuery.get("batchAppointment", {"action": "weekly","fromTime": from, "toTime": to, "appointmentID": appID, "timestamp" : new Date().getTime()}, 
+			function(data, textStatus, response){
+				var jsonData = jQuery.parseJSON(response.responseText);
+				if(jsonData.status){
+					pop.tip({message: jsonData.message, "visiable" : false, "type": "success", "showLocation" : "center"});
+					sendMail(jsonData.customerId, jsonData.batchId, closePop);
+				}else{
+					pop.tip({message: jsonData.message, "visiable" : false, "type": "error", "showLocation" : "center"});
+				}
+			});
 	};
 	
-	this.batchOfMonthly = function(hiddenWin2, appID){
-		var endtime = jQuery("#endAppointmentTime").val();
-		if(!endtime)
-			pop.enter({message:"END APP TIME not null!","visiable" : true, "type": "warning"});
-		else{
-			jQuery.get("batchAppointment", {"action": "monthly", "endTime": endtime, "appointmentID": appID, "timestamp" : new Date().getTime()}, 
-				function(data, textStatus, response){
-					var jsonData = jQuery.parseJSON(response.responseText);
-					if(jsonData.status){
-						pop.tip({message: jsonData.message, "visiable" : false, "type": "success", "showLocation" : "center"});
-						sendMail(jsonData.customerId, jsonData.batchId, hiddenWin2);
-					}else{
-						pop.tip({message: jsonData.message, "visiable" : false, "type": "error", "showLocation" : "center"});
-					}
-				});
-		}
+	var batchOfMonthly = function(closePop, from, to){
+		jQuery.get("batchAppointment", {"action": "monthly", "fromTime": from, "toTime": to,  "appointmentID": appID, "timestamp" : new Date().getTime()}, 
+			function(data, textStatus, response){
+				var jsonData = jQuery.parseJSON(response.responseText);
+				if(jsonData.status){
+					pop.tip({message: jsonData.message, "visiable" : false, "type": "success", "showLocation" : "center"});
+					sendMail(jsonData.customerId, jsonData.batchId, closePop);
+				}else{
+					pop.tip({message: jsonData.message, "visiable" : false, "type": "error", "showLocation" : "center"});
+				}
+			}
+		);
 	};
 	
-	this.remove=  function(hiddenWin2, appID){
+	var remove=  function(closePop){
 		jQuery.get("batchAppointment", {"action": "remove", "appointmentID": appID, "timestamp" : new Date().getTime()}, 
 			function(data, textStatus, response){
 				var jsonData = jQuery.parseJSON(response.responseText);
 				if(jsonData.status){
 					pop.tip({message: jsonData.message, "visiable" : false, "type": "success", "showLocation" : "center"});
-					hiddenWin2();
 				}else{
 					pop.tip({message: jsonData.message, "visiable" : false, "type": "error", "showLocation" : "center"});
 				}
-			});
+				closePop();
+			}
+		);
 	}
 	
-	var sendMail = function(customerId, batchId, hiddenWin2){
+	var sendMail = function(customerId, batchId,closePop){
 		jQuery.get("customerData", {"getCustomer": customerId, "timestamp" : new Date().getTime()}, 
 			function(data, textStatus, response){
 			
@@ -77,7 +132,7 @@ var batchAppointment = function(){
 						//pop.enter({message:"this tip message!","visiable" : true});
 											
 						if(form.length>0){
-							var emailVal = jQuery("."+form[0]).val();
+							var emailVal = jQuery(".emailInput").val();
 							if(emailVal.length==0){
 								pop.enter({message:"please enter the e-mail address!","visiable" : true, "type": "warning"});
 							}else{
@@ -89,7 +144,7 @@ var batchAppointment = function(){
 											closeloading();
 											pop.tip({message:jsonResult.message,"visiable" : false, "type": "warning", "showLocation" : "buttom"});
 											close();
-											hiddenWin2();
+											closePop();
 										});
 								});	
 							}
@@ -97,6 +152,7 @@ var batchAppointment = function(){
 					}},
 					btn2: {text:"Cancel", callback: function(closePop){
 						closePop();
+						close();
 					}},
 					visiable: true
 				}

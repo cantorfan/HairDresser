@@ -104,9 +104,12 @@
     }
     //-->
             function getExample(){
+            	
+            	var loc_map = "Location variable: {address}, {address2}, {blogger}, {city}, {country}, {currency}, {locEmail}, {fax}, {locName}, {phone}, {state}, {timezone}, {twitter}\n\n ====================================\n\n"
+            	
                 var id = document.getElementById("type").value;
 //                alert(id);
-                var example = "Example:\n";
+                var example = loc_map+"Example:\n";
 //                if (id == 0)
 //                    example = "Hello, {customer}!\n" +
 //                        "Thank you for registering at https://isalon2you-soft.com/online/\n" +

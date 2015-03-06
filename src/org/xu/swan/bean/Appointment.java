@@ -33,6 +33,7 @@ public class Appointment implements Cloneable{
     public static final String REQUEST = "request";
     public static final String IS_SEND_APPOINTMENT_MAIL="is_send_appointment_mail";
     public static final String IS_SEND_REMINDER_MAIL="is_send_reminder_mail";
+    public static final String BATCH_TYPE="batchType";
 
     private int id;
     private int customer_id;
@@ -50,6 +51,7 @@ public class Appointment implements Cloneable{
     private boolean isSendAppointmentMail;
     private boolean isSendReminderMail;
     private String batchId;
+    private String batchType;
     
     private Boolean request = false;
 
@@ -62,6 +64,14 @@ public class Appointment implements Cloneable{
     	ap.request = this.request;
     	ap.st_time = this.st_time;
     	return ap;
+	}
+
+    public String getBatchType() {
+		return batchType;
+	}
+
+	public void setBatchType(String batchType) {
+		this.batchType = batchType;
 	}
 
 	public String getBatchId() {
@@ -262,7 +272,7 @@ public class Appointment implements Cloneable{
             dbm = new DBManager();
             PreparedStatement pst = dbm.getPreparedStatement("INSERT INTO appointment (" + LOC + ","  + CUST + ","  + EMP + "," + SVC + ","
                 + CATE + ","  + PRICE + ","  + APPDT + ","  + ST + ","  + ET + ","+ STATE + ","  + COMMENT  + "," + REQUEST+","
-        		+IS_SEND_APPOINTMENT_MAIL+","+IS_SEND_REMINDER_MAIL + ", "+BATCH+") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+        		+IS_SEND_APPOINTMENT_MAIL+","+IS_SEND_REMINDER_MAIL + ", "+BATCH+ ", "+BATCH_TYPE+") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
             pst.setInt(1,ap.getLocation_id());
             pst.setInt(2,ap.getCustomer_id());
             pst.setInt(3,ap.getEmployee_id());
@@ -278,6 +288,7 @@ public class Appointment implements Cloneable{
             pst.setBoolean(13,false);
             pst.setBoolean(14,false);
             pst.setString(15, ap.getBatchId());
+            pst.setString(16, ap.getBatchType());
 
             int rows = pst.executeUpdate();
             if(rows>=0){
@@ -297,15 +308,16 @@ public class Appointment implements Cloneable{
         return ap;
 	}
 	
-	public static boolean updateBatchAppointment(int appId, String batchId) throws Exception{
+	public static boolean updateBatchAppointment(String batchId, String batchType, String appID) throws Exception{
 		DBManager dbm = null;
-        boolean bComplete = true;
         try{
             dbm = new DBManager();
-            PreparedStatement pst = dbm.getPreparedStatement("UPDATE appointment SET "+BATCH+" =? WHERE " + ID + "=?");
-            pst.setString(1,batchId);
-            pst.setInt(2,appId);
+            PreparedStatement pst = dbm.getPreparedStatement("update appointment set "+BATCH+"=?, "+BATCH_TYPE+"=? where "+ID+"=?");
+            pst.setString(1, batchId);
+            pst.setString(2, batchType);
+            pst.setString(3, appID);
             int rows = pst.executeUpdate();
+            
             pst.close();
             return true;
         }catch(Exception e){
@@ -316,14 +328,21 @@ public class Appointment implements Cloneable{
         }
 	}
 	
-	public static boolean removeBatchAppointment(String BATCH, String fromDate) throws Exception{
+	public static boolean removeBatchAppointment(String batchId, String fromDate) throws Exception{
 		DBManager dbm = null;
         try{
             dbm = new DBManager();
             PreparedStatement pst = dbm.getPreparedStatement("delete from appointment where "+BATCH+"=? and "+APPDT+">?");
-            pst.setString(1, BATCH);
+            pst.setString(1, batchId);
             pst.setString(2, fromDate);
             int rows = pst.executeUpdate();
+            
+            pst = dbm.getPreparedStatement("update appointment set "+BATCH+"=?, "+BATCH_TYPE+"=? where "+BATCH+"=?");
+            pst.setString(1, null);
+            pst.setString(2, null);
+            pst.setString(3, batchId);
+            pst.executeUpdate();
+            
             pst.close();
             return true;
         }catch(Exception e){
@@ -823,7 +842,7 @@ public class Appointment implements Cloneable{
             dbm = new DBManager();
             PreparedStatement pst = dbm.getPreparedStatement("SELECT " + ID + ","  + LOC + ","  + CUST + ","  + EMP + "," + SVC + ","
                 + CATE + ","  + PRICE + ","  + APPDT + ","  + ST + ","  + ET + ","+ STATE +  ","+ COMMENT + "," + REQUEST + "," + TICKET + "," 
-                + IS_SEND_APPOINTMENT_MAIL+","+IS_SEND_REMINDER_MAIL+", "+BATCH+" FROM appointment WHERE " + ID + "=?");
+                + IS_SEND_APPOINTMENT_MAIL+","+IS_SEND_REMINDER_MAIL+", "+BATCH+", "+BATCH_TYPE+" FROM appointment WHERE " + ID + "=?");
             pst.setInt(1,id);
             ResultSet rs = pst.executeQuery();
             if(rs.next()){
@@ -845,6 +864,7 @@ public class Appointment implements Cloneable{
                 appt.setSendAppointmentMail(rs.getBoolean(15));
                 appt.setSendReminderMail(rs.getBoolean(16));
                 appt.setBatchId(rs.getString(17));
+                appt.setBatchType(rs.getString(18));
             }
             rs.close();
             pst.close();
@@ -1020,8 +1040,8 @@ public class Appointment implements Cloneable{
             dbm = new DBManager();
             Statement st = dbm.getStatement();
             String sql = "SELECT " + ID + ","  + LOC + ","  + CUST + ","  + EMP + "," + SVC + ","
-                + CATE + ","  + PRICE + ","  + APPDT + ","  + ST + ","  + ET + ","+ STATE + "," + COMMENT + "," + REQUEST + "," + TICKET + 
-                " FROM appointment WHERE " + BATCH + "=" + batchId;
+                + CATE + ","  + PRICE + ","  + APPDT + ","  + ST + ","  + ET + ","+ STATE + "," + COMMENT + "," + REQUEST + "," + TICKET + "," + BATCH_TYPE + 
+                " FROM appointment WHERE " + BATCH + "=" + batchId+" order by "+APPDT+" ASC";
             ResultSet rs = st.executeQuery(sql);
             while(rs.next()){
                 Appointment appt = new Appointment();
@@ -1040,6 +1060,7 @@ public class Appointment implements Cloneable{
                 appt.setComment(rs.getString(12));
                 appt.setRequest(rs.getBoolean(13));
                 appt.setTicket_id(rs.getInt(14));
+                appt.setBatchType(rs.getString(15));
                 appt.setBatchId(batchId);
             }
             rs.close();

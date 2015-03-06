@@ -6,9 +6,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
-import javax.mail.Session;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,7 @@ import org.xu.swan.bean.EmailTemplate;
 import org.xu.swan.bean.Employee;
 import org.xu.swan.bean.Service;
 import org.xu.swan.bean.User;
+import org.xu.swan.service.MailService;
 import org.xu.swan.util.SendMailHelper;
 
 /**
@@ -35,7 +37,8 @@ public class BatchAppointmentServlet extends HttpServlet {
     private static String MONTHLY =  "monthly";
     private static String REMOVE =  "remove";
     private static String SEND_MAIL = "send_batch_appointment_email";
-	
+	private static String BATCH_TYPE = "batch_type";
+    
     public BatchAppointmentServlet() {
         super();
     }
@@ -62,7 +65,27 @@ public class BatchAppointmentServlet extends HttpServlet {
 				removeBatchAppointment(request, response);
 			}else if(action.equals(SEND_MAIL)){
 				sendBatchMail(request, response);
+			}else if(action.equals(BATCH_TYPE)){
+				getBatchType(request, response);
 			}
+		}
+	}
+	
+	private void getBatchType(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		try {
+			String appointmentID = StringUtils.defaultString(request.getParameter("appointmentID"), "");
+			appointmentID = appointmentID.replace("appoint_", "");
+			
+			Appointment app = Appointment.findById(Integer.parseInt(appointmentID));
+			String batchType = app.getBatchType();
+			if(batchType==null||batchType.equals(""))
+				batchType="";
+		
+			response.getWriter().write("{\"status\": true, \"batchType\": \""+batchType+"\"}");
+			
+		} catch (Exception e) {
+			response.getWriter().write("{\"status\": false, \"message\": \"end date must be more than from date\"}");
+			e.printStackTrace();
 		}
 	}
 	
@@ -74,49 +97,53 @@ public class BatchAppointmentServlet extends HttpServlet {
 	private void batchWeekly(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
 		String appointmentID = StringUtils.defaultString(request.getParameter("appointmentID"), "");
-		String endtime = StringUtils.defaultString(request.getParameter("endTime"), "");
+		String fromTime = StringUtils.defaultString(request.getParameter("fromTime"), "");
+		String toTime = StringUtils.defaultString(request.getParameter("toTime"), "");
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
 		appointmentID = appointmentID.replace("appoint_", "");
 		
 		try {
+			
 			Appointment appointment = Appointment.findById(Integer.parseInt(appointmentID));
-			
-			Calendar fromTime = Calendar.getInstance();
-			Calendar toTime = Calendar.getInstance();
-		
-			toTime.setTime(sdf.parse(endtime));
-			
-			String batchID = null;
-			if(appointment.getBatchId()!=null && "".equals(appointment.getBatchId())==false)
-				batchID = appointment.getBatchId();
-			else 
-				batchID = fromTime.getTimeInMillis() + "" + new Random().nextInt(999);
-			
-			boolean exist = false;
-			fromTime.add(Calendar.DAY_OF_WEEK, 7);
-			while (toTime.after(fromTime)) {
-				Appointment ap = (Appointment) appointment.clone();
-				ap.setId(0);
-				ap.setApp_dt(new java.sql.Date(fromTime.getTimeInMillis()));
-				ap.setBatchId(batchID);
-				
-				@SuppressWarnings("unchecked")
-				ArrayList<Appointment> existApsp = Appointment.
-						findByFilter(" where "+Appointment.APPDT+"='"+ap.getApp_dt()+
-								"' and "+Appointment.ST+"='"+ap.getSt_time()+
-								"' and "+Appointment.CUST+"="+ap.getCustomer_id()+
-								" and "+Appointment.SVC+"="+ap.getService_id()+
-								" and "+Appointment.ET+"='"+ap.getEt_time()+"'");
-				if(existApsp.size()>0){
-					exist = true;
-					continue;
-				}
-				Appointment.insert(ap);
-				fromTime.add(Calendar.DAY_OF_WEEK, 7);
+			if(appointment.getBatchType()!=null && "".equals(appointment.getBatchType())==false)
+			{
+				response.getWriter().write("{\"status\": false, \"message\": \"appointment is already exist, type is: "+appointment.getBatchType()+"\"}");
+				return ;
 			}
 			
-			if(!exist)
-				Appointment.updateBatchAppointment(appointment.getId(), batchID);
+			Calendar startDate = Calendar.getInstance();
+			startDate.setTime(appointment.getApp_dt());
+			
+			Calendar fromTimeCal = Calendar.getInstance();
+			Calendar toTimeCal = Calendar.getInstance();
+			
+			fromTimeCal.setTime(sdf.parse(fromTime));
+			toTimeCal.setTime(sdf.parse(toTime));
+			
+			if(fromTimeCal.after(toTimeCal)){
+				response.getWriter().write("{\"status\": false, \"message\": \"end date must be more than from date\"}");
+				return ;
+			}
+			
+			String batchID = System.currentTimeMillis() + "" + new Random().nextInt(999);
+			Appointment.updateBatchAppointment(batchID, WEEKLY, appointmentID);
+			startDate.add(Calendar.DAY_OF_WEEK, 7);
+			
+			while (startDate.before(toTimeCal)) {
+				
+				if(fromTimeCal.before(startDate) || fromTimeCal.equals(startDate)){
+					Appointment ap = (Appointment) appointment.clone();
+					
+					ap.setId(0);
+					ap.setApp_dt(new java.sql.Date(startDate.getTimeInMillis()));
+					ap.setBatchId(batchID);
+					ap.setBatchType(WEEKLY);
+					Appointment.insert(ap);
+				}
+				
+				startDate.add(Calendar.DAY_OF_WEEK, 7);
+			
+			}
 			
 			response.getWriter().write("{\"status\": true, \"message\": \"success\", \"batchId\":\""+batchID+"\", \"customerId\":\""+appointment.getCustomer_id()+"\"}");
 		} catch (ParseException e) {
@@ -138,51 +165,53 @@ public class BatchAppointmentServlet extends HttpServlet {
 	 */
 	private void batchMonthly(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		String appointmentID = StringUtils.defaultString(request.getParameter("appointmentID"), "");
-		String endtime = StringUtils.defaultString(request.getParameter("endTime"), "");
+		String fromTime = StringUtils.defaultString(request.getParameter("fromTime"), "");
+		String toTime = StringUtils.defaultString(request.getParameter("toTime"), "");
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-		
 		appointmentID = appointmentID.replace("appoint_", "");
 		
 		try {
+			
 			Appointment appointment = Appointment.findById(Integer.parseInt(appointmentID));
-			
-			Calendar fromTime = Calendar.getInstance();
-			Calendar toTime = Calendar.getInstance();
-		
-			toTime.setTime(sdf.parse(endtime));
-			
-			String batchID = null;
-			if(appointment.getBatchId()!=null && "".equals(appointment.getBatchId())==false)
-				batchID = appointment.getBatchId();
-			else 
-				batchID = fromTime.getTimeInMillis() + "" + new Random().nextInt(999);
-			
-			boolean exist = false;
-			fromTime.add(Calendar.MONTH, 1);
-			while (toTime.after(fromTime)) {
-				Appointment ap = (Appointment) appointment.clone();
-				ap.setId(0);
-				ap.setApp_dt(new java.sql.Date(fromTime.getTimeInMillis()));
-				ap.setBatchId(batchID);
-				
-				@SuppressWarnings("unchecked")
-				ArrayList<Appointment> existApsp = Appointment.
-						findByFilter(" where "+Appointment.APPDT+"='"+ap.getApp_dt()+
-								"' and "+Appointment.ST+"='"+ap.getSt_time()+
-								"' and "+Appointment.CUST+"="+ap.getCustomer_id()+
-								" and "+Appointment.SVC+"="+ap.getService_id()+
-								" and "+Appointment.ET+"='"+ap.getEt_time()+"'");
-				if(existApsp.size()>0){
-					exist = true;
-					continue;
-				}
-				Appointment.insert(ap);
-				fromTime.add(Calendar.MONTH, 1);
+			if(appointment.getBatchType()!=null && "".equals(appointment.getBatchType())==false)
+			{
+				response.getWriter().write("{\"status\": false, \"message\": \"appointment is already exist, type is: "+appointment.getBatchType()+"\"}");
+				return ;
 			}
 			
-			if(!exist)
-				Appointment.updateBatchAppointment(appointment.getId(), batchID);
+			Calendar startDate = Calendar.getInstance();
+			startDate.setTime(appointment.getApp_dt());
 			
+			Calendar fromTimeCal = Calendar.getInstance();
+			Calendar toTimeCal = Calendar.getInstance();
+			
+			fromTimeCal.setTime(sdf.parse(fromTime));
+			toTimeCal.setTime(sdf.parse(toTime));
+			
+			if(fromTimeCal.after(toTimeCal)){
+				response.getWriter().write("{\"status\": false, \"message\": \"end date must be more than from date\"}");
+				return ;
+			}
+			
+			String batchID = System.currentTimeMillis() + "" + new Random().nextInt(999);
+			Appointment.updateBatchAppointment(batchID, MONTHLY, appointmentID);
+			startDate.add(Calendar.MONTH, 1);
+			
+			while (startDate.before(toTimeCal)) {
+				
+				if(fromTimeCal.before(startDate) || fromTimeCal.equals(startDate)){
+					Appointment ap = (Appointment) appointment.clone();
+					
+					ap.setId(0);
+					ap.setApp_dt(new java.sql.Date(startDate.getTimeInMillis()));
+					ap.setBatchId(batchID);
+					ap.setBatchType(MONTHLY);
+					Appointment.insert(ap);
+				}
+				
+				startDate.add(Calendar.MONTH, 1);
+			
+			}
 			response.getWriter().write("{\"status\": true, \"message\": \"success\", \"batchId\":\""+batchID+"\", \"customerId\":\""+appointment.getCustomer_id()+"\"}");
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -224,45 +253,15 @@ public class BatchAppointmentServlet extends HttpServlet {
 			String customerId = StringUtils.defaultString(request.getParameter("customerId"), "");
 			String batchId = StringUtils.defaultString(request.getParameter("batchId"), "");
 			String email = StringUtils.defaultString(request.getParameter("email"), "");
-			
-			EmailTemplate template = EmailTemplate.findByType(103);  //
-			String text = template.getText();
-			
-			Customer customer = Customer.findById(Integer.parseInt(customerId));
-			
-			ArrayList<Appointment> apps = Appointment.findByBatchId(batchId);
-			
-			if(apps.size()>0){
-				String time = "";
-				String date = "";
-				SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
-				SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm:ss");
-				for (int index = 0; index<apps.size(); index++) {
-					Appointment app = apps.get(index);
-					
-					if("".equals(time))
-						time = sdfTime.format(app.getSt_time());
-					
-					date += sdfDate.format(app.getApp_dt())+" "+time;
-					if((index+1)<apps.size())
-						date +=", ";
-					
-				}
-				
-				Employee emp  = Employee.findById(apps.get(0).getEmployee_id());
-				String employeeName = emp.getFname()+" "+emp.getLname() + ", ";
-				
-				Service service = Service.findById(apps.get(0).getService_id());
-				
-				text = text.replace("{customerName}", customer.getFname()+" "+customer.getLname());
-				text = text.replace("{operator}", employeeName);
-				text = text.replace("{service}", service.getName());
-				text = text.replace("{dateTime}", date);
-				
-				boolean result = SendMailHelper.send(text, "Appointment Confirmation Email", email);
 
+			MailService mailService = new MailService();
+			boolean result = mailService.sendBatchAppointmentMail(customerId, batchId, email);
+
+			if(result)
 				response.getWriter().write("{\"status\": true, \"message\": \"success\"}");
-			}
+			else
+				response.getWriter().write("{\"status\": false, \"message\": \"failure\"}");
+			
 		} catch (Exception e) {
 			response.getWriter().write("{\"status\": false, \"message\": \""+e.getMessage()+"\"}");
 			e.printStackTrace();

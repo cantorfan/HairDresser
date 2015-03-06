@@ -81,6 +81,120 @@ function sendcomfrimEmail(appointmentID, idEmployee, idCustomer, isLater){
 	
 }
 
+//.x.m.
+/*
+var pop = new popup();
+jQuery.get("ScheduleManager", {"optype": "canceled_send_email", "appointmentID" : app_id, "timestamp" : new Date().getTime()}, 
+	function(data, textStatus, response){
+			pop.tip({message:response.responseText, "visiable" : false, "type": "warning", "showLocation" : "buttom"});
+		});
+*/
+function resendConfirmEmail(appID, hidden){
+	jQuery.get("customerData", {"getCustomerByAppID": appID, "timestamp" : new Date().getTime()}, 
+		function(data, textStatus, response){
+		
+			console.log(response.responseText);
+			var customer = null;
+			customer = jQuery.parseJSON(response.responseText);
+			
+			var email = null;
+			if(customer){
+				email = customer.email;
+			}
+			
+			var pop = new popup();
+			options = {
+				title: "Send Email Confirmation To: "+customer.fname+" "+customer.lname,
+				tip: "please check the e-mail address!",
+				form:[
+					{type:"text", label:"E-mail", value: email, placeholder:"e-amil address", className:"emailInput"}
+				],
+				btn1: {text:"Send", callback : function(form, close){
+					//pop.enter({message:"this tip message!","visiable" : true});
+										
+					if(form.length>0){
+						var emailVal = jQuery("."+form[0]).val();
+						if(emailVal.length==0){
+							pop.enter({message:"please enter the e-mail address!","visiable" : true, "type": "warning"});
+						}else{
+							pop.loading(function(closeloading){
+								jQuery.get("ScheduleManager", {"optype": "resend_confirm_email", "appointmentID" : appID, "email": email, "timestamp" : new Date().getTime()}, 
+									function(data, textStatus, response){
+										pop.tip({message:response.responseText, "visiable" : false, "type": "warning", "showLocation" : "buttom"});
+										closeloading();
+										hidden();
+										close();
+									});
+							});	
+							
+						}
+					}
+				}},
+				btn2: {text:"Cancel", callback: 
+					function(close){
+						close();
+					}
+				},
+				visiable: true
+			}
+			pop.form(options);
+		}
+	);
+}
+
+function deleteAppintmentSendMail(appID){
+	jQuery.get("customerData", {"getCustomerByAppID": appID, "timestamp" : new Date().getTime()}, 
+		function(data, textStatus, response){
+		
+			console.log(response.responseText);
+			var customer = null;
+			customer = jQuery.parseJSON(response.responseText);
+			
+			var email = null;
+			if(customer){
+				email = customer.email;
+			}
+			
+			var pop = new popup();
+			options = {
+				title: "Delete Appointment Send Email",
+				tip: "please check the e-mail address!",
+				form:[
+					{type:"text", label:"E-mail", value: email, placeholder:"e-amil address", className:"emailInput"}
+				],
+				btn1: {text:"Send", callback : function(form, close){
+					//pop.enter({message:"this tip message!","visiable" : true});
+										
+					if(form.length>0){
+						var emailVal = jQuery("."+form[0]).val();
+						if(emailVal.length==0){
+							pop.enter({message:"please enter the e-mail address!","visiable" : true, "type": "warning"});
+						}else{
+							pop.loading(function(closeloading){
+								jQuery.get("ScheduleManager", {"optype": "delete_send_mail", "appointmentID" : appID, "email": email, "timestamp" : new Date().getTime()}, 
+									function(data, textStatus, response){
+										pop.tip({message:response.responseText, "visiable" : false, "type": "warning", "showLocation" : "buttom"});
+										closeloading();
+										close();
+									});
+							});	
+							
+						}
+					}
+				}},
+				btn2: {text:"Cancel", callback: 
+					function(close){
+						close();
+					}
+				},
+				visiable: true
+			}
+			pop.form(options);
+		}
+	);
+}
+
+
 function sendCheckoutEmail(customerId, location, transactionCode, isprint, doOther){
 	console.log("Function:sendCheckoutEmail(customer id:"+customerId+", transactionCode:"+transactionCode+", location:"+location+", isprint:"+isprint+")");
 	

@@ -9,7 +9,7 @@ INSERT INTO `emailstemplate` VALUES (6, 1, 100, 'Dear {customerName},\r\n This i
 
 INSERT INTO `emailstemplate` VALUES (7, 1, 101, 'Dear {customerName},\r\n The Appointment at: {dataTime} has been canceled!', '');
 INSERT INTO `emailstemplate` VALUES (8, 1, 102, 'Dear {customerName},\nThanks for using iSalon. Hope you enjoy the time with us.\n\n{dateTime}\nIsalon\n', '');
-INSERT INTO `emailstemplate` VALUES (9, 1, 103, 'Dear {customerName}, \r\n\r\nYou booking has been accepted.\r\nOperator: {operator}\r\nService: {service}\r\nDate: {dateTime}\r\n\r\nSincerely, Administration https://isalon2you-soft.com/manhattanonline/', '');
+INSERT INTO `emailstemplate` VALUES (9, 1, 103, 'Dear {customerName}\r\n\r\nyou have booking {service}, at the {day} of every {weekly/monthly} {time}, from {from} - {to}\r\n\r\noperator:{operator}\r\n\r\nSincerely, Administration https://isalon2you-soft.com/manhattanonline/', '');
 
 
 --update emailstemplate set text='<h3>{customerName}</h3>\n<h4>CLIENT TICKCT</h4>\n<table border="1">\n<tr>\n<th>employee</th>\n<th>service/product</th>\n<th>quantity</th>\n<th>discount</th>\n<th>price</th>\n</tr>\n${employee}{service}{quantity}{discount}{price}$\n</table>\n<p>sub-total: {subtotal}</p>\n<p>tax: {taxe}</p>\n<p>total: {total}</p>\n<p>at {dateTime}</p>\n' where type=102;

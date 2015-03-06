@@ -1,142 +1,164 @@
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="java.util.HashMap" %>
-<%@ page import="java.io.Writer" %>
-<%@ page import="org.xu.swan.bean.*" %>
-<%@ page import="java.util.*" %>
-<%@ page import="org.apache.commons.lang.StringUtils" %>
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ page import="java.util.ArrayList"%>
+<%@ page import="java.util.HashMap"%>
+<%@ page import="java.io.Writer"%>
+<%@ page import="org.xu.swan.bean.*"%>
+<%@ page import="java.util.*"%>
+<%@ page import="org.apache.commons.lang.StringUtils"%>
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <%
-    User user_ses = (User) session.getAttribute("user");
-    if (user_ses == null){
-        response.sendRedirect("./error.jsp?ec=1");
-        return;
-    }
-//    else if ((user_ses.getPermission() != Role.R_ADMIN) && (user_ses.getPermission() != Role.R_RECEP) && (user_ses.getPermission() != Role.R_EMP)){
-//        response.sendRedirect("../index.jsp");
-//    }
-    ArrayList list_emp = Employee.findAllByLoc(1);
+	User user_ses = (User) session.getAttribute("user");
+	if (user_ses == null) {
+		response.sendRedirect("./error.jsp?ec=1");
+		return;
+	}
+	//    else if ((user_ses.getPermission() != Role.R_ADMIN) && (user_ses.getPermission() != Role.R_RECEP) && (user_ses.getPermission() != Role.R_EMP)){
+	//        response.sendRedirect("../index.jsp");
+	//    }
+	ArrayList list_emp = Employee.findAllByLoc(1);
 
-    Location loc = null;
-    String id = "1";
-    String dt = StringUtils.defaultString(request.getParameter("dt"), "");
-    String id_cust = StringUtils.defaultString(request.getParameter("idc"), "");
-    String reshedule = StringUtils.defaultString(request.getParameter("rshd"), "0");
-    String id_booking = StringUtils.defaultString(request.getParameter("idb"), "0");
-    int id_customer = 0;
-    Customer cust;
-    if(!id_cust.equals(""))
-    {
-        try{
-            id_customer = Integer.parseInt(id_cust);
-        }catch(Exception ex)
-        {
+	Location loc = null;
+	String id = "1";
+	String dt = StringUtils.defaultString(request.getParameter("dt"),
+			"");
+	String id_cust = StringUtils.defaultString(
+			request.getParameter("idc"), "");
+	String reshedule = StringUtils.defaultString(
+			request.getParameter("rshd"), "0");
+	String id_booking = StringUtils.defaultString(
+			request.getParameter("idb"), "0");
+	int id_customer = 0;
+	Customer cust;
+	if (!id_cust.equals("")) {
+		try {
+			id_customer = Integer.parseInt(id_cust);
+		} catch (Exception ex) {
 
-        }
-    }
-    cust = Customer.findById(id_customer);
-//    if(action.equalsIgnoreCase(ActionUtil.ACT_EDIT) && StringUtils.isNotEmpty(id))
-        loc = Location.findById(Integer.parseInt(id));
-//    else
-//        loc = (Location)request.getAttribute("OBJECT");
+		}
+	}
+	cust = Customer.findById(id_customer);
+	//    if(action.equalsIgnoreCase(ActionUtil.ACT_EDIT) && StringUtils.isNotEmpty(id))
+	loc = Location.findById(Integer.parseInt(id));
+	//    else
+	//        loc = (Location)request.getAttribute("OBJECT");
 
-    Calendar cal = new GregorianCalendar();
-    if(!dt.equals(""))
-        cal.setTime(new Date(dt));        
-    else{
-        cal.setTime(new Date());
-        //dt = (new Date()).toString();
-    }
-    int week_day = 0;    
-    if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY)
-        week_day = 0;
-    else if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY)
-        week_day = 1;
-    else if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY)
-        week_day = 2;
-    else if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY)
-        week_day = 3;
-    else if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY)
-        week_day = 4;
-    else if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
-        week_day = 5;
-    else if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
-        week_day = 6;
-    ArrayList _wtime = (loc != null ? WorkingtimeLoc.findAllByLocationId(loc.getId()) : null);
-    WorkingtimeLoc _wtemp = ((_wtime != null)&& (_wtime.size() != 0)? (WorkingtimeLoc)_wtime.get(week_day) : new WorkingtimeLoc());
-    float _from = _wtemp.getH_from().getHours();
-    float _to = _wtemp.getH_to().getHours() +  (_wtemp.getH_to().getMinutes() / 60.0f > 0 ? 1 : 0);
-    /*double _from = 24.0f;
-    double _to = 0.0f;
-    for(int i = 0; i < 7; i++)
-    {
-        WorkingtimeLoc wtemp = ((_wtime != null)&& (_wtime.size() != 0)? (WorkingtimeLoc)_wtime.get(i) : new WorkingtimeLoc());
+	Calendar cal = new GregorianCalendar();
+	if (!dt.equals(""))
+		cal.setTime(new Date(dt));
+	else {
+		cal.setTime(new Date());
+		//dt = (new Date()).toString();
+	}
+	int week_day = 0;
+	if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY)
+		week_day = 0;
+	else if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY)
+		week_day = 1;
+	else if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY)
+		week_day = 2;
+	else if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY)
+		week_day = 3;
+	else if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY)
+		week_day = 4;
+	else if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
+		week_day = 5;
+	else if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
+		week_day = 6;
+	ArrayList _wtime = (loc != null ? WorkingtimeLoc
+			.findAllByLocationId(loc.getId()) : null);
+	WorkingtimeLoc _wtemp = ((_wtime != null) && (_wtime.size() != 0)
+			? (WorkingtimeLoc) _wtime.get(week_day)
+			: new WorkingtimeLoc());
+	float _from = _wtemp.getH_from().getHours();
+	float _to = _wtemp.getH_to().getHours()
+			+ (_wtemp.getH_to().getMinutes() / 60.0f > 0 ? 1 : 0);
+	/*double _from = 24.0f;
+	double _to = 0.0f;
+	for(int i = 0; i < 7; i++)
+	{
+	    WorkingtimeLoc wtemp = ((_wtime != null)&& (_wtime.size() != 0)? (WorkingtimeLoc)_wtime.get(i) : new WorkingtimeLoc());
 
-        double __from = wtemp.getH_from().getHours();
-        _from = __from < _from ? __from : _from;
+	    double __from = wtemp.getH_from().getHours();
+	    _from = __from < _from ? __from : _from;
 
-        double min = wtemp.getH_to().getMinutes() / 60.0f;
-        min = min > 0 ? 1 : 0;
-        double __to = wtemp.getH_to().getHours() +  min;
-        _to = __to > _to ? __to : _to;
-    }*/
-
+	    double min = wtemp.getH_to().getMinutes() / 60.0f;
+	    min = min > 0 ? 1 : 0;
+	    double __to = wtemp.getH_to().getHours() +  min;
+	    _to = __to > _to ? __to : _to;
+	}*/
 %>
 <html>
 <head>
-<meta http-equiv = "X-UA-Compatible" content="IE=7" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
-    <META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
-    <title>Schedule</title>
-	  
-	<link rel="stylesheet" type="text/css" media="all" href="./jscalendar/calendar-hd.css" title="hd" />
-	<style type="text/css" media="all">
-		@import "css/hd.css";
-	</style>
-    <link rel="stylesheet" type="text/css" href="css/schedule1.css" media="all"/>
-    <style type="text/css">@import "./css/modalbox.css";</style>
-              <%
-                  if (user_ses != null){
-                      if(user_ses.getPermission() == Role.R_ADMIN){
-                          out.print("<script>var isAdmin = 1;</script>");
-                      }else{
-                          out.print("<script>var isAdmin = 0;</script>");
-                      }
-                  }
-              %>
-    <script type="text/javascript" src="./plugins/jQuery v1.7.2.js"></script>
-    <link rel='stylesheet' type='text/css' href='./plugins/popup/popup.css' />
-    <script type="text/javascript" src="./plugins/popup/popup.js"></script>
-    <script language="javascript" type="text/javascript" src="Js/sendEmail.js"></script>
-    <link rel='stylesheet' type='text/css' href='plugins/calendar/tcal.css' />
-    <script language="javascript" type="text/javascript" src="plugins/calendar/tcal.js"></script>
+<meta http-equiv="X-UA-Compatible" content="IE=7" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+<title>Schedule</title>
 
-    <script type="text/javascript" src="./Js/selectworker.js"></script>
-    <script type="text/javascript" src="./script/schedule.js"></script>
-	<script type="text/javascript" src="./jscalendar/calendar.js"></script>
-	<script type="text/javascript" src="./jscalendar/lang/calendar-en.js"></script>
-	<script type="text/javascript" src="./jscalendar/calendar-setup.js"></script>
+<link rel="stylesheet" type="text/css" media="all"
+	href="./jscalendar/calendar-hd.css" title="hd" />
+<style type="text/css" media="all">
+@import "css/hd.css";
+</style>
+<link rel="stylesheet" type="text/css" href="css/schedule1.css"
+	media="all" />
+<style type="text/css">
+@import "./css/modalbox.css";
+</style>
+<%
+	if (user_ses != null) {
+		if (user_ses.getPermission() == Role.R_ADMIN) {
+			out.print("<script>var isAdmin = 1;</script>");
+		} else {
+			out.print("<script>var isAdmin = 0;</script>");
+		}
+	}
+%>
+<script type="text/javascript" src="./plugins/jQuery v1.7.2.js"></script>
+<script language="javascript" type="text/javascript"
+	src="plugins/calendar/tcal.js"></script>
+<link rel='stylesheet' type='text/css' href='./plugins/popup/popup.css' />
+<link rel='stylesheet' type='text/css' href='plugins/calendar/tcal.css' />
+<script type="text/javascript" src="./plugins/popup/popup.js"></script>
+<script language="javascript" type="text/javascript"
+	src="Js/sendEmail.js"></script>
 
-    <script language="javascript" type="text/javascript" src="Js/DyveWeb.js"></script>
-    <script language="javascript" type="text/javascript" src="Js/Dyve.js"></script>        
-    <script language="javascript" type="text/javascript" src="Js/DyveBubble.js"></script>        
-    <script language="javascript" type="text/javascript" src="Js/DyveMenu.js"></script>        
-    <script language="javascript" type="text/javascript" src="Js/DyveCalendar.js"></script>
+<script type="text/javascript" src="./Js/selectworker.js"></script>
+<script type="text/javascript" src="./script/schedule.js"></script>
+<script type="text/javascript" src="./jscalendar/calendar.js"></script>
+<script type="text/javascript" src="./jscalendar/lang/calendar-en.js"></script>
+<script type="text/javascript" src="./jscalendar/calendar-setup.js"></script>
 
-    <script language="javascript" type="text/javascript" src="Js/includes/prototype.js"></script>
-    <script language="javascript" type="text/javascript" src="Js/scriptaculous/scriptaculous.js?load=builder,effects"></script>
-    <script language="javascript" type="text/javascript" src="Js/includes/modalbox.js"></script>
+<script language="javascript" type="text/javascript" src="Js/DyveWeb.js"></script>
+<script language="javascript" type="text/javascript" src="Js/Dyve.js"></script>
+<script language="javascript" type="text/javascript"
+	src="Js/DyveBubble.js"></script>
+<script language="javascript" type="text/javascript"
+	src="Js/DyveMenu.js"></script>
+<script language="javascript" type="text/javascript"
+	src="Js/DyveCalendar.js"></script>
 
-    <script language="javascript" type="text/javascript" src="Js/CustomerControl.js" ></script>       
-    <script language="javascript" type="text/javascript" src="Js/ServiceListControl.js" ></script>
-    <script language="javascript" type="text/javascript" src="Js/custom-form-elements.js" ></script>
-    
-    <script language="javascript" type="text/javascript" src="Js/batchAppointment.js"></script>
-        <%
-        //CashDrawing cd = CashDrawing.findByDate(Integer.parseInt(id), DateUtil.parseSqlDate(dt));
-        %>
-    <script type="text/javascript">  
+<script language="javascript" type="text/javascript"
+	src="Js/includes/prototype.js"></script>
+<script language="javascript" type="text/javascript"
+	src="Js/scriptaculous/scriptaculous.js?load=builder,effects"></script>
+<script language="javascript" type="text/javascript"
+	src="Js/includes/modalbox.js"></script>
+
+<script language="javascript" type="text/javascript"
+	src="Js/CustomerControl.js"></script>
+<script language="javascript" type="text/javascript"
+	src="Js/ServiceListControl.js"></script>
+<script language="javascript" type="text/javascript"
+	src="Js/custom-form-elements.js"></script>
+
+<script language="javascript" type="text/javascript"
+	src="Js/batchAppointment.js"></script>
+<%
+	//CashDrawing cd = CashDrawing.findByDate(Integer.parseInt(id), DateUtil.parseSqlDate(dt));
+%>
+<script type="text/javascript">  
         var _from = <%=Double.toString(_from)%>;
         var _to = <%=Double.toString(_to)%>;
         function deleteRow(id){
@@ -167,7 +189,7 @@
             }
         }
     </script>
-    <script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript">
         var isChoice = 0; //.x.m.
         function callYes(){
             if (document.getElementById("win2.delete").checked){
@@ -178,22 +200,17 @@
             }else if (document.getElementById("win2.canceled").checked){
                 isChoice = 8;
             }else if (document.getElementById("win2.confirm_email").checked){
-                isChoice = 9;
-            }else if(document.getElementById("win2.weekly").checked){  // batch appointment handler
+            	//hide_bar2();
+            	//win2.confirm_email
             	var app_id = document.getElementById("app_id").value;
-            	var batchApp = new batchAppointment();
-            	batchApp.batchOfWeekly(hide_bar2, app_id);
-            }else if(document.getElementById("win2.monthly").checked){
-            	var batchApp = new batchAppointment();
+            	resendConfirmEmail(app_id,hide_bar2);
+            }else if(document.getElementById("win2.standing_app").checked){  // batch appointment handler
             	var app_id = document.getElementById("app_id").value;
-            	batchApp.batchOfMonthly(hide_bar2, app_id);
-            }else if(document.getElementById("win2.remove.batch.app").checked){
-            	var app_id = document.getElementById("app_id").value;
-            	var batchApp = new batchAppointment();
-            	batchApp.remove(hide_bar2, app_id);	
+            	var batchApp = new batchAppointment(app_id);
+            	hide_bar2();
             }
             
-            if(isChoice > 6 && isChoice < 10){
+            if(isChoice > 5 && isChoice < 9){
             	var e=document.getElementById("event").value;
             	mainCalendar.eventDeleteCustom(e);
             	hide_bar2();
@@ -203,6 +220,7 @@
         function clear_data() {
             document.getElementById('cust_id').value = '';
             clear_data1();
+            
         }
 
         function clear_data1() {
@@ -245,144 +263,152 @@
 </script>
 
 <%
-    java.util.List work_time = new ArrayList();
-    for(double i = _from; i <= _to; i+=0.25){
-        int h = (int)i;
-        int m = (int)((i - h)*60);
-        String s = (h < 10 ? "0" : "") + Integer.toString(h) + ":" +
-                (m < 10 ? "0" : "") + Integer.toString(m) + ":00";
-        work_time.add(s);
-    }
-        /*work_time.add("08:00:00");
-        work_time.add("08:15:00");
-        work_time.add("08:30:00");
-        work_time.add("08:45:00");
-        work_time.add("09:00:00");
-        work_time.add("09:15:00");
-        work_time.add("09:30:00");
-        work_time.add("09:45:00");
-        work_time.add("10:00:00");
-        work_time.add("10:15:00");
-        work_time.add("10:30:00");
-        work_time.add("10:45:00");
-        work_time.add("11:00:00");
-        work_time.add("11:15:00");
-        work_time.add("11:30:00");
-        work_time.add("11:45:00");
-        work_time.add("12:00:00");
-        work_time.add("12:15:00");
-        work_time.add("12:30:00");
-        work_time.add("12:45:00");
-        work_time.add("13:00:00");
-        work_time.add("13:15:00");
-        work_time.add("13:30:00");
-        work_time.add("13:45:00");
-        work_time.add("14:00:00");
-        work_time.add("14:15:00");
-        work_time.add("14:30:00");
-        work_time.add("14:45:00");
-        work_time.add("15:00:00");
-        work_time.add("15:15:00");
-        work_time.add("15:30:00");
-        work_time.add("15:45:00");
-        work_time.add("16:00:00");
-        work_time.add("16:15:00");
-        work_time.add("16:30:00");
-        work_time.add("16:45:00");
-        work_time.add("17:00:00");
-        work_time.add("17:15:00");
-        work_time.add("17:30:00");
-        work_time.add("17:45:00");
-        work_time.add("18:00:00");
-        work_time.add("18:15:00");
-        work_time.add("18:30:00");
-        work_time.add("18:45:00");
-        work_time.add("19:00:00");
-        work_time.add("19:15:00");
-        work_time.add("19:30:00");
-        work_time.add("19:45:00");
-        work_time.add("20:00:00");
-        work_time.add("20:15:00");
-        work_time.add("20:30:00");
-        work_time.add("20:45:00");
-        work_time.add("21:00:00");  */
+	java.util.List work_time = new ArrayList();
+	for (double i = _from; i <= _to; i += 0.25) {
+		int h = (int) i;
+		int m = (int) ((i - h) * 60);
+		String s = (h < 10 ? "0" : "") + Integer.toString(h) + ":"
+				+ (m < 10 ? "0" : "") + Integer.toString(m) + ":00";
+		work_time.add(s);
+	}
+	/*work_time.add("08:00:00");
+	work_time.add("08:15:00");
+	work_time.add("08:30:00");
+	work_time.add("08:45:00");
+	work_time.add("09:00:00");
+	work_time.add("09:15:00");
+	work_time.add("09:30:00");
+	work_time.add("09:45:00");
+	work_time.add("10:00:00");
+	work_time.add("10:15:00");
+	work_time.add("10:30:00");
+	work_time.add("10:45:00");
+	work_time.add("11:00:00");
+	work_time.add("11:15:00");
+	work_time.add("11:30:00");
+	work_time.add("11:45:00");
+	work_time.add("12:00:00");
+	work_time.add("12:15:00");
+	work_time.add("12:30:00");
+	work_time.add("12:45:00");
+	work_time.add("13:00:00");
+	work_time.add("13:15:00");
+	work_time.add("13:30:00");
+	work_time.add("13:45:00");
+	work_time.add("14:00:00");
+	work_time.add("14:15:00");
+	work_time.add("14:30:00");
+	work_time.add("14:45:00");
+	work_time.add("15:00:00");
+	work_time.add("15:15:00");
+	work_time.add("15:30:00");
+	work_time.add("15:45:00");
+	work_time.add("16:00:00");
+	work_time.add("16:15:00");
+	work_time.add("16:30:00");
+	work_time.add("16:45:00");
+	work_time.add("17:00:00");
+	work_time.add("17:15:00");
+	work_time.add("17:30:00");
+	work_time.add("17:45:00");
+	work_time.add("18:00:00");
+	work_time.add("18:15:00");
+	work_time.add("18:30:00");
+	work_time.add("18:45:00");
+	work_time.add("19:00:00");
+	work_time.add("19:15:00");
+	work_time.add("19:30:00");
+	work_time.add("19:45:00");
+	work_time.add("20:00:00");
+	work_time.add("20:15:00");
+	work_time.add("20:30:00");
+	work_time.add("20:45:00");
+	work_time.add("21:00:00");  */
 %>
 </head>
 <body unselectable="on" onselectstart="return false;">
 	<div class="main">
-        <table width="100%">
-            <%
-                String activePage = "Schedule";
-                String rootPath = "";
-            %>
-        <%--<tr valign="top">--%>
-            <%--<td colspan="3">--%>
-                <%--<iframe src="http://rcm.amazon.com/e/cm?t=sdqnyc-20&o=1&p=48&l=ur1&category=beauty&banner=0Q2M96KTPZ1JX0G12SR2&f=ifr" width="728" height="90" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>--%>
-            <%--</td>--%>
-        <%--</tr>--%>
-        <tr valign="top">
-            <%@ include file="top_page.jsp" %>
-        </tr>
+		<table width="100%">
+			<%
+				String activePage = "Schedule";
+				String rootPath = "";
+			%>
+			<%--<tr valign="top">--%>
+			<%--<td colspan="3">--%>
+			<%--<iframe src="http://rcm.amazon.com/e/cm?t=sdqnyc-20&o=1&p=48&l=ur1&category=beauty&banner=0Q2M96KTPZ1JX0G12SR2&f=ifr" width="728" height="90" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>--%>
+			<%--</td>--%>
+			<%--</tr>--%>
+			<tr valign="top">
+				<%@ include file="top_page.jsp"%>
+			</tr>
 		</table>
-         <%@ include file="menu_main.jsp" %>
-        <%--<div style = "text-align: right;"><a style="color: white;" href = "./index.jsp"> Sign Out</a> </div>--%>
+		<%@ include file="menu_main.jsp"%>
+		<%--<div style = "text-align: right;"><a style="color: white;" href = "./index.jsp"> Sign Out</a> </div>--%>
 		<div class="container">
 			<div class="left">
-                <input id="reshedule" name="reshedule" type="hidden" value="<%=reshedule%>">
-                <input id="id_booking" name="id_booking" type="hidden" value="<%=id_booking%>">
-                <%--<div id="InfoDiv" style="text-align:center">--%>
-                    <%--<br  />--%>
-                    <%--<%--%>
-                        <%--String l;--%>
-                        <%--if(loc!=null){--%>
-                            <%--l = loc.getAddress();--%>
-                            <%--if (!l.equals("")){--%>
-                                <%--String end = l.substring(l.lastIndexOf(" "));--%>
-                            <%--String begin = l.substring(1, l.lastIndexOf(" "));--%>
-                            <%--out.print("<img src='image?t=" + response.encodeURL(begin) + "&fs=11&c=FFFFFF' />");--%>
-                            <%--out.print("<br /><b>");--%>
-                            <%--out.print("<img src='image?t=" + response.encodeURL(end) + "&fs=12&c=FFFFFF' />");--%>
-                            <%--out.print("</b>");--%>
-                            <%--}--%>
-                        <%--}--%>
+				<input id="reshedule" name="reshedule" type="hidden"
+					value="<%=reshedule%>"> <input id="id_booking"
+					name="id_booking" type="hidden" value="<%=id_booking%>">
+				<%--<div id="InfoDiv" style="text-align:center">--%>
+				<%--<br  />--%>
+				<%--<%--%>
+				<%--String l;--%>
+				<%--if(loc!=null){--%>
+				<%--l = loc.getAddress();--%>
+				<%--if (!l.equals("")){--%>
+				<%--String end = l.substring(l.lastIndexOf(" "));--%>
+				<%--String begin = l.substring(1, l.lastIndexOf(" "));--%>
+				<%--out.print("<img src='image?t=" + response.encodeURL(begin) + "&fs=11&c=FFFFFF' />");--%>
+				<%--out.print("<br /><b>");--%>
+				<%--out.print("<img src='image?t=" + response.encodeURL(end) + "&fs=12&c=FFFFFF' />");--%>
+				<%--out.print("</b>");--%>
+				<%--}--%>
+				<%--}--%>
 
-                    <%--%><br  />--%>
-                    <%--<br  />--%>
-                    <%--<div>Address</div>--%>
-                    <%--<textarea disabled rows="4" cols="23"><%=(loc!=null?loc.getAddress():"")%></textarea>--%>
-                    <%--<div>Business Hours</div>--%>
-                    <%--<textarea disabled rows="7" cols="23"><%=(loc!=null&loc.getBusinesshours()!=null?loc.getBusinesshours():"")%></textarea>--%>
-                <%--</div>--%>
-                <style>
-                    hr {
-                        margin: 4px 0px;
-                        width: 99%;
-                        color: #FFF;
-                    }
-                </style>				
-                <%--<hr style="margin-top: 0;" />--%>
+				<%--%><br  />--%>
+				<%--<br  />--%>
+				<%--<div>Address</div>--%>
+				<%--<textarea disabled rows="4" cols="23"><%=(loc!=null?loc.getAddress():"")%></textarea>--%>
+				<%--<div>Business Hours</div>--%>
+				<%--<textarea disabled rows="7" cols="23"><%=(loc!=null&loc.getBusinesshours()!=null?loc.getBusinesshours():"")%></textarea>--%>
+				<%--</div>--%>
+				<style>
+hr {
+	margin: 4px 0px;
+	width: 99%;
+	color: #FFF;
+}
+</style>
+				<%--<hr style="margin-top: 0;" />--%>
 				<div id="CalendarContainer"></div>
 				<hr />
-                <div id="service_id_0" title="break" unselectable="on" style="-moz-user-select: none;" align=center>
-                    <div id="content_service_id_0" class="name" unselectable="on" style="width:93px; height: 29px; background: transparent url(img/break_button.png) no-repeat; -moz-user-select: none;">
-                        <span style="visibility: hidden;">break</span>
-                    </div>
-                    <div class="cost" unselectable="on" style="-moz-user-select: none;" id="content_service_id_0">
-                    <div style="background: transparent url(image?t=&amp;fs=12&amp;c=FFFFFF) no-repeat scroll 0px 4px; float: right; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; width: 25px;" id="content_service_id_0">
-                        <span style="visibility: hidden;"></span>
-                    </div>
-                    <div style="background: transparent url(image?t=&amp;fs=10&amp;c=FFFFFF) no-repeat scroll 4px 0px; float: right; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; width: 10px;" id="content_service_id_0">
-                        <span style="visibility: hidden;"></span>
-                    </div>
-                    </div>
-                </div>
-                <!--div id="ServiceControl" style="position: relative;"></div>
+				<div id="service_id_0" title="break" unselectable="on"
+					style="-moz-user-select: none;" align=center>
+					<div id="content_service_id_0" class="name" unselectable="on"
+						style="width: 93px; height: 29px; background: transparent url(img/break_button.png) no-repeat; -moz-user-select: none;">
+						<span style="visibility: hidden;">break</span>
+					</div>
+					<div class="cost" unselectable="on" style="-moz-user-select: none;"
+						id="content_service_id_0">
+						<div
+							style="background: transparent url(image?t=&amp;fs=12&amp;c=FFFFFF) no-repeat scroll 0px 4px; float: right; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; width: 25px;"
+							id="content_service_id_0">
+							<span style="visibility: hidden;"></span>
+						</div>
+						<div
+							style="background: transparent url(image?t=&amp;fs=10&amp;c=FFFFFF) no-repeat scroll 4px 0px; float: right; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; width: 10px;"
+							id="content_service_id_0">
+							<span style="visibility: hidden;"></span>
+						</div>
+					</div>
+				</div>
+				<!--div id="ServiceControl" style="position: relative;"></div>
 				<div id="ServiceControlClone" style="display:block;"></div-->
 				<hr />
 				<div id="CustomerContainer"></div>
 				<hr />
-                <div>
-                    <!--table>
+				<div>
+					<!--table>
                 <tr/> <tr/>
 				<tr>
 					<td align="left" width="40" bgcolor="#66FF33"></td>
@@ -413,242 +439,332 @@
 				</tr>
                <tr/> <tr/>
 			</table-->
-                    <img src="img/legend.png"/>
-                </div>
+					<img src="img/legend.png" />
+				</div>
 			</div>
 
-			<div class="center" style="overflow: hidden; position: relative; height: 1500px;" align="center">
-				<div style="width:100%;" id="dyveDivScroll">
+			<div class="center"
+				style="overflow: hidden; position: relative; height: 1500px;"
+				align="center">
+				<div style="width: 100%;" id="dyveDivScroll">
 					<table border="0" cellpadding="0" cellspacing="0" width="100%">
-			            <tr>
-			                <td class="content" valign="top">
-			                    <div id="mainCalendar" style="width: 100%; position: relative; line-height: 1;">		                        		                       
-			                        <div style="border-left: 1px solid rgb(0, 0, 0); border-right: 1px solid rgb(0, 0, 0);">
-			                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
-			                                <tr id="schedule_header_control">
-                                              <td id="left_arrow_control"><a id="prev" href="#" onclick="MovePrev();"><img src="img/schedule_left_arrow.png" border="0"/></a></td>                                                        
-			                                    <td style="background-color: rgb(236, 233, 216);" valign="top" width="100%">
-			                                        <div style="position: relative; height: 1px; line-height: 1px; display: block; font-size: 1px; background-color: rgb(0, 0, 0);" ><!-- --></div>
-			                                        <table id="mainCalendar_header" style="border-left: 1px solid rgb(0, 0, 0);border-right: 1px solid rgb(0, 0, 0);" border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td></td></tr></table>
-			                                    </td>
-                                                <td id="right_arrow_control"><a id="next" href="#" onclick="MoveNext();"><img src="img/schedule_right_arrow.png" border="0"/></a></td>
-	<!-- 		                                <td><div id="right" class="header" unselectable="on" style="border-top: 1px solid rgb(0, 0, 0); background-color: rgb(236, 233, 216); width: 45px; height: 20px; -moz-user-select: none;"></div></td>  -->
-			                                </tr>
-                                            <tr id="schedule_comments_control">
-                                                <td class="header_left">
-                                                    <img src="img/comments_text.png" alt=""/>
-                                                </td>
-                                                <td>
-                                                    <table id="mainCalendar_header_bottom_comment" style="border-left: 1px solid rgb(0, 0, 0);border-right: 1px solid rgb(0, 0, 0);" border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td></td></tr></table>                                                    
-                                                </td>
-                                                <td class="header_right">
-                                                     <img src="img/comments_text.png" alt=""/>
-                                                </td>
-                                            </tr>
-			                            </table>
-			                        </div>                                               
-			                        
-	<!-- 	                        <div id="mainCalendar_scroll" style="border: 1px solid rgb(0, 0, 0); overflow: auto; height: 500px; position: relative; background-color: rgb(236, 233, 216);">
+						<tr>
+							<td class="content" valign="top">
+								<div id="mainCalendar"
+									style="width: 100%; position: relative; line-height: 1;">
+									<div
+										style="border-left: 1px solid rgb(0, 0, 0); border-right: 1px solid rgb(0, 0, 0);">
+										<table border="0" cellpadding="0" cellspacing="0" width="100%">
+											<tr id="schedule_header_control">
+												<td id="left_arrow_control"><a id="prev" href="#"
+													onclick="MovePrev();"><img
+														src="img/schedule_left_arrow.png" border="0" /></a></td>
+												<td style="background-color: rgb(236, 233, 216);"
+													valign="top" width="100%">
+													<div
+														style="position: relative; height: 1px; line-height: 1px; display: block; font-size: 1px; background-color: rgb(0, 0, 0);">
+														<!-- -->
+													</div>
+													<table id="mainCalendar_header"
+														style="border-left: 1px solid rgb(0, 0, 0); border-right: 1px solid rgb(0, 0, 0);"
+														border="0" cellpadding="0" cellspacing="0" width="100%">
+														<tr>
+															<td></td>
+														</tr>
+													</table>
+												</td>
+												<td id="right_arrow_control"><a id="next" href="#"
+													onclick="MoveNext();"><img
+														src="img/schedule_right_arrow.png" border="0" /></a></td>
+												<!-- 		                                <td><div id="right" class="header" unselectable="on" style="border-top: 1px solid rgb(0, 0, 0); background-color: rgb(236, 233, 216); width: 45px; height: 20px; -moz-user-select: none;"></div></td>  -->
+											</tr>
+											<tr id="schedule_comments_control">
+												<td class="header_left"><img
+													src="img/comments_text.png" alt="" /></td>
+												<td>
+													<table id="mainCalendar_header_bottom_comment"
+														style="border-left: 1px solid rgb(0, 0, 0); border-right: 1px solid rgb(0, 0, 0);"
+														border="0" cellpadding="0" cellspacing="0" width="100%">
+														<tr>
+															<td></td>
+														</tr>
+													</table>
+												</td>
+												<td class="header_right"><img
+													src="img/comments_text.png" alt="" /></td>
+											</tr>
+										</table>
+									</div>
+
+									<!-- 	                        <div id="mainCalendar_scroll" style="border: 1px solid rgb(0, 0, 0); overflow: auto; height: 500px; position: relative; background-color: rgb(236, 233, 216);">
 									<div id="mainCalendar_scroll" style="border: 1px solid rgb(0, 0, 0); overflow: hidden; position: relative; background-color: rgb(236, 233, 216);">
 	-->
 
-	 		                        <div id="mainCalendar_scroll" style="border: 1px solid rgb(0, 0, 0); overflow: none; position: relative; background-color: rgb(236, 233, 216);">
-			                            <div style="padding: 2px; position: absolute; background-color: orange; color: white; font-size: 10px; font-family: Tahoma; display: none;">&nbsp;</div>
-			                            <table style="" border="0" cellpadding="0" cellspacing="0">
-			                                <tr>
-			                                    <td valign="top" style="background: url(img/time_column/background.png);">
-                                                    <table border="0" cellpadding="0" cellspacing="0" width="45">
-                                                    <tr>
-                                                        <td class="time_column">
-                                                        <div id="time_column_left"></div>
-                                                        <!--
-                                                        <%
-                                                            double _i = _from;
-                                                            if((int)_i < _i) // 10 or 10.5 :)
-                                                                out.print("<div class=time_row_first><img alt=\""+Double.toString(_i)+"\" src=\"img/time_column/"+Double.toString(_i)+".png\" /></div>");
-                                                            else
-                                                                out.print("<div class=time_row_first><img alt=\""+Integer.toString((int)_i)+"\" src=\"img/time_column/"+Integer.toString((int)_i)+".png\" /></div>");
-                                                            for(double i = _from + 0.5; i < _to; i += 0.5){                                                 // for esalonsoft/vogue
-                                                                if((int)i < i) // 10 or 10.5 :)
-                                                                    out.print("<div class=time_row><img alt=\""+Double.toString(i)+"\" src=\"img/time_column/"+Double.toString(i)+".png\" /></div>");
-                                                                else
-                                                                    out.print("<div class=time_row><img alt=\""+Integer.toString((int)i)+"\" src=\"img/time_column/"+Integer.toString((int)i)+".png\" /></div>");
-                                                            }
-                                                        %>-->
-                                                        </td></tr>
-                                                    </table>
-			                                    </td>
+									<div id="mainCalendar_scroll"
+										style="border: 1px solid rgb(0, 0, 0); overflow: none; position: relative; background-color: rgb(236, 233, 216);">
+										<div
+											style="padding: 2px; position: absolute; background-color: orange; color: white; font-size: 10px; font-family: Tahoma; display: none;">&nbsp;</div>
+										<table style="" border="0" cellpadding="0" cellspacing="0">
+											<tr>
+												<td valign="top"
+													style="background: url(img/time_column/background.png);">
+													<table border="0" cellpadding="0" cellspacing="0"
+														width="45">
+														<tr>
+															<td class="time_column">
+																<div id="time_column_left"></div> <!--
+                                                        <%double _i = _from;
+			if ((int) _i < _i) // 10 or 10.5 :)
+				out.print("<div class=time_row_first><img alt=\""
+						+ Double.toString(_i) + "\" src=\"img/time_column/"
+						+ Double.toString(_i) + ".png\" /></div>");
+			else
+				out.print("<div class=time_row_first><img alt=\""
+						+ Integer.toString((int) _i)
+						+ "\" src=\"img/time_column/"
+						+ Integer.toString((int) _i) + ".png\" /></div>");
+			for (double i = _from + 0.5; i < _to; i += 0.5) { // for esalonsoft/vogue
+				if ((int) i < i) // 10 or 10.5 :)
+					out.print("<div class=time_row><img alt=\""
+							+ Double.toString(i) + "\" src=\"img/time_column/"
+							+ Double.toString(i) + ".png\" /></div>");
+				else
+					out.print("<div class=time_row><img alt=\""
+							+ Integer.toString((int) i)
+							+ "\" src=\"img/time_column/"
+							+ Integer.toString((int) i) + ".png\" /></div>");
+			}%>-->
+															</td>
+														</tr>
+													</table>
+												</td>
 
-			                                    <td valign="top" width="100%">
-				                                        <table id="mainCalendar_main" style="border-left: 1px solid rgb(0, 0, 0);" border="0" cellpadding="0" cellspacing="0" width="100%">
-				                                            <tr id="mainCalendar_events" style="background-color: white;">
-				                                                <!-- Events -->
-				                                                    <td dpcolumn="" dpcolumndate="August 24, 2008 00:00:00 +0000" style="height: 1px; text-align: left; width: 14%;">
+												<td valign="top" width="100%">
+													<table id="mainCalendar_main"
+														style="border-left: 1px solid rgb(0, 0, 0);" border="0"
+														cellpadding="0" cellspacing="0" width="100%">
+														<tr id="mainCalendar_events"
+															style="background-color: white;">
+															<!-- Events -->
+															<td dpcolumn=""
+																dpcolumndate="August 24, 2008 00:00:00 +0000"
+																style="height: 1px; text-align: left; width: 14%;">
 
-				                                                    </td>
-				                                                <!-- End Events -->
-				                                            </tr>
-				                                        </table>
-			                                    </td>
+															</td>
+															<!-- End Events -->
+														</tr>
+													</table>
+												</td>
 
-                                                <td valign="top" style="border-left: 1px solid #000; background: url(img/time_column/background.png);">
-                                                     <table border="0" cellpadding="0" cellspacing="0" width="45">
-                                                     <tr>
-                                                         <td class="time_column">
-                                                            <div id="time_column_right"></div>
-                                                             <!--<%
-//                                                            out.print("<div class=time_row_first><img src=\"img/time_column/9.png\" /></div>");
-//                                                            for(double i = 9.5; i<20; i += 0.5){
-                                                                 _i = _from;
-                                                                 if((int)_i < _i) // 10 or 10.5 :)
-                                                                     out.print("<div class=time_row_first><img alt=\""+Double.toString(_i)+"\" src=\"img/time_column/"+Double.toString(_i)+".png\" /></div>");
-                                                                 else
-                                                                     out.print("<div class=time_row_first><img alt=\""+Integer.toString((int)_i)+"\" src=\"img/time_column/"+Integer.toString((int)_i)+".png\" /></div>");
-                                                                 for(double i = _from + 0.5; i < _to; i += 0.5){                                                 // for esalonsoft/vogue
-                                                                     if((int)i < i) // 10 or 10.5 :)
-                                                                         out.print("<div class=time_row><img alt=\""+Double.toString(i)+"\" src=\"img/time_column/"+Double.toString(i)+".png\" /></div>");
-                                                                     else
-                                                                         out.print("<div class=time_row><img alt=\""+Integer.toString((int)i)+"\" src=\"img/time_column/"+Integer.toString((int)i)+".png\" /></div>");
-                                                                 }
-                                                             %>-->
-                                                         </td></tr>
-                                                     </table>
-			                                    </td>
-			                                </tr>
-			                            </table>
-			                        </div>
+												<td valign="top"
+													style="border-left: 1px solid #000; background: url(img/time_column/background.png);">
+													<table border="0" cellpadding="0" cellspacing="0"
+														width="45">
+														<tr>
+															<td class="time_column">
+																<div id="time_column_right"></div> <!--<%//                                                            out.print("<div class=time_row_first><img src=\"img/time_column/9.png\" /></div>");
+			//                                                            for(double i = 9.5; i<20; i += 0.5){
+			_i = _from;
+			if ((int) _i < _i) // 10 or 10.5 :)
+				out.print("<div class=time_row_first><img alt=\""
+						+ Double.toString(_i) + "\" src=\"img/time_column/"
+						+ Double.toString(_i) + ".png\" /></div>");
+			else
+				out.print("<div class=time_row_first><img alt=\""
+						+ Integer.toString((int) _i)
+						+ "\" src=\"img/time_column/"
+						+ Integer.toString((int) _i) + ".png\" /></div>");
+			for (double i = _from + 0.5; i < _to; i += 0.5) { // for esalonsoft/vogue
+				if ((int) i < i) // 10 or 10.5 :)
+					out.print("<div class=time_row><img alt=\""
+							+ Double.toString(i) + "\" src=\"img/time_column/"
+							+ Double.toString(i) + ".png\" /></div>");
+				else
+					out.print("<div class=time_row><img alt=\""
+							+ Integer.toString((int) i)
+							+ "\" src=\"img/time_column/"
+							+ Integer.toString((int) i) + ".png\" /></div>");
+			}%>-->
+															</td>
+														</tr>
+													</table>
+												</td>
+											</tr>
+										</table>
+									</div>
 
-   			                        <%--<div style="border-left: 1px solid rgb(0, 0, 0); border-right: 1px solid rgb(0, 0, 0);">--%>
-			                            <%--<table border="0" cellpadding="0" cellspacing="0" width="100%">--%>
-			                                <%--<tr>--%>
-			                                    <%--<td>--%>
-                                                    <%--<div class="header" unselectable="on" id="left2"
+									<%--<div style="border-left: 1px solid rgb(0, 0, 0); border-right: 1px solid rgb(0, 0, 0);">--%>
+									<%--<table border="0" cellpadding="0" cellspacing="0" width="100%">--%>
+									<%--<tr>--%>
+									<%--<td>--%>
+									<%--<div class="header" unselectable="on" id="left2"
                                                     style="border-top: 1px solid rgb(0, 0, 0); background-color:
                                                     rgb(236, 233, 216); width: 45px; height: 40px; -moz-user-select:
                                                     none;"><div style="padding: 2px; text-align: center; font-weight:
                                                     bold;"><a id="prev" href="#" onclick="MovePrev();"><img src="images/LEFTAR.jpg" width="40" height="40" border="0" alt="" class="banner" /></a><!--&nbsp--></div></div></td>--%>
 
-			                                    <%--<td style="background-color: rgb(236, 233, 216);" valign="top" width="100%">--%>
-			                                        <%--<div style="position: relative; height: 1px; line-height: 1px; display: block; font-size: 1px; background-color: rgb(0, 0, 0);" ><!-- --></div>--%>
-			                                        <%--<!--table id="mainCalendar_header_bottom" style="border-left: 1px solid rgb(0, 0, 0);border-right: 1px solid rgb(0, 0, 0);" border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td></td></tr></table-->--%>
-                                                    <%--<!--div id="mainCalendar_header_bottom"></div-->--%>
-			                                    <%--</td>--%>
-                                                <%--<td>--%>
-                                                    <%--<div class="header" unselectable="on" id="right2"--%>
-                                                         <%--style="border-top: 1px solid rgb(0, 0, 0);--%>
-                                                         <%--background-color: rgb(236, 233, 216); width: 45px; height: 40px;--%>
-                                                         <%---moz-user-select: none;">--%>
-                                                        <%--<div style="padding: 2px; text-align: center; font-weight: bold;">--%>
-                                                            <%--<a id="next" href="#" onclick="MoveNext();">--%>
-                                                                <%--<img src="images/RIGHTAR.jpg" width="40" height="40" border="0" alt="" class="banner" />--%>
-                                                            <%--</a><!--&nbsp-->--%>
-                                                        <%--</div>--%>
-                                                    <%--</div></td>--%>
-				                                <%--</tr>--%>
-                                            <%--<tr>--%>
-                                                <%--<td><div class="header" unselectable="on" style="border-top: 1px solid rgb(0, 0, 0); background-color: rgb(0, 0, 0); width: 45px; height: 40px; -moz-user-select: none;"></div></td>--%>
-                                                <%--<td style="background-color: rgb(236, 233, 216);" valign="top" width="100%">--%>
-                                                    <%--<div style="position: relative; height: 1px; line-height: 1px; display: block; font-size: 1px; background-color: rgb(0, 0, 0);" ><!-- --></div>--%>
-                                                <%--</td>--%>
-                                                <%--<td><div class="header" unselectable="on" style="border-top: 1px solid rgb(0, 0, 0); background-color: rgb(0, 0, 0); width: 45px; height: 40px; -moz-user-select: none;"></div></td>--%>
-                                            <%--</tr>--%>
-			                            <%--</table>--%>
-			                        <%--</div>--%>
-                                    <div>
-                                        <!--schedule footer-->
-                                        <table cellspacing="0" cellpadding="0" width="100%" >
-                                        <tr id="schedule_footer_control">
-                                            <td class="footer_left"><a id="prev" href="#" onclick="MovePrev();"><img src="img/schedule_footer_left_arrow.png" border="0" /></a></td>
-                                            <td>
-                                                <table id="mainCalendar_header_bottom" border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td></td></tr></table>                                                
-                                            </td>
-                                            <td class="footer_right"><a id="next" href="#" onclick="MoveNext();"><img src="img/schedule_footer_right_arrow.png" border="0"/></a></td>
-                                        </tr>
-                                        </table>
-                                        <!--end of schedule footer-->
+									<%--<td style="background-color: rgb(236, 233, 216);" valign="top" width="100%">--%>
+									<%--<div style="position: relative; height: 1px; line-height: 1px; display: block; font-size: 1px; background-color: rgb(0, 0, 0);" ><!-- --></div>--%>
+									<%--<!--table id="mainCalendar_header_bottom" style="border-left: 1px solid rgb(0, 0, 0);border-right: 1px solid rgb(0, 0, 0);" border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td></td></tr></table-->--%>
+									<%--<!--div id="mainCalendar_header_bottom"></div-->--%>
+									<%--</td>--%>
+									<%--<td>--%>
+									<%--<div class="header" unselectable="on" id="right2"--%>
+									<%--style="border-top: 1px solid rgb(0, 0, 0);--%>
+									<%--background-color: rgb(236, 233, 216); width: 45px; height: 40px;--%>
+									<%---moz-user-select: none;">--%>
+									<%--<div style="padding: 2px; text-align: center; font-weight: bold;">--%>
+									<%--<a id="next" href="#" onclick="MoveNext();">--%>
+									<%--<img src="images/RIGHTAR.jpg" width="40" height="40" border="0" alt="" class="banner" />--%>
+									<%--</a><!--&nbsp-->--%>
+									<%--</div>--%>
+									<%--</div></td>--%>
+									<%--</tr>--%>
+									<%--<tr>--%>
+									<%--<td><div class="header" unselectable="on" style="border-top: 1px solid rgb(0, 0, 0); background-color: rgb(0, 0, 0); width: 45px; height: 40px; -moz-user-select: none;"></div></td>--%>
+									<%--<td style="background-color: rgb(236, 233, 216);" valign="top" width="100%">--%>
+									<%--<div style="position: relative; height: 1px; line-height: 1px; display: block; font-size: 1px; background-color: rgb(0, 0, 0);" ><!-- --></div>--%>
+									<%--</td>--%>
+									<%--<td><div class="header" unselectable="on" style="border-top: 1px solid rgb(0, 0, 0); background-color: rgb(0, 0, 0); width: 45px; height: 40px; -moz-user-select: none;"></div></td>--%>
+									<%--</tr>--%>
+									<%--</table>--%>
+									<%--</div>--%>
+									<div>
+										<!--schedule footer-->
+										<table cellspacing="0" cellpadding="0" width="100%">
+											<tr id="schedule_footer_control">
+												<td class="footer_left"><a id="prev" href="#"
+													onclick="MovePrev();"><img
+														src="img/schedule_footer_left_arrow.png" border="0" /></a></td>
+												<td>
+													<table id="mainCalendar_header_bottom" border="0"
+														cellpadding="0" cellspacing="0" width="100%">
+														<tr>
+															<td></td>
+														</tr>
+													</table>
+												</td>
+												<td class="footer_right"><a id="next" href="#"
+													onclick="MoveNext();"><img
+														src="img/schedule_footer_right_arrow.png" border="0" /></a></td>
+											</tr>
+										</table>
+										<!--end of schedule footer-->
 
-                                    </div>
-			                    </div>
-			                </td>
-			            </tr>
-			        </table>		        
-			        <input type="hidden" id="mainCalendar_select" name="mainCalendar_select" value="" />
+									</div>
+								</div>
+							</td>
+						</tr>
+					</table>
+					<input type="hidden" id="mainCalendar_select"
+						name="mainCalendar_select" value="" />
 
-			        <div id="mainCalendar_idlocation" ></div>
-			        <input type="hidden" id="mainCalendar_datecurrent" value="" />
-                    <input type="hidden" id="mainCalendar_pagenum" value="" />
-                    <input type="hidden" id="mainCalendar_browser" value="" />
-                    <div id="mainCalendar_MainMenu" style="border:1px solid #ACA899;background-color:#FFFFFF;font-size:8pt;display:none;">
-				        <span style="font-weight:bold;display:block;background-color:#ECE9D8;padding:2px 20px 2px 10px;border-bottom:1px solid #ACA899;cursor:default;">Event</span>
-				        <a onclick="var e = this.parentNode.event || this.parentNode.selection; var command = ''; alert('Opening event (id {0})');; return false;" href="#" style="padding:2px 20px 2px 10px;display:block;cursor:pointer;color:#2859AB;text-decoration:none;white-space:nowrap;">Open</a>
-				        <a onclick="var e = this.parentNode.event || this.parentNode.selection; var command = ''; alert('Sending event (id {0})');; return false;" href="#" style="padding:2px 20px 2px 10px;display:block;cursor:pointer;color:#2859AB;text-decoration:none;white-space:nowrap;">Send</a>
-				        <a onclick="if (this.parentNode.event) { this.parentNode.event.root.eventMenuClick('Delete', this.parentNode.event, 'CallBack'); } else if (this.parentNode.selection) { this.parentNode.selection.root.timeRangeMenuClick('Delete', this.parentNode.selection, 'CallBack'); } return false;" href="#" style="padding:2px 20px 2px 10px;display:block;cursor:pointer;color:#2859AB;text-decoration:none;white-space:nowrap;border-top:1px solid #ACA899;">Delete (CallBack)</a>
-				        <a onclick="if (this.parentNode.event) { this.parentNode.event.root.eventMenuClick('Delete', this.parentNode.event, 'PostBack'); } else if (this.parentNode.selection) { this.parentNode.selection.root.timeRangeMenuClick('Delete', this.parentNode.selection, 'PostBack'); } return false;" href="#" style="padding:2px 20px 2px 10px;display:block;cursor:pointer;color:#2859AB;text-decoration:none;white-space:nowrap;">Delete (PostBack)</a>
-				        <a href="javascript:alert('Going somewhere else (id {0})');" style="padding:2px 20px 2px 10px;display:block;cursor:pointer;color:#2859AB;text-decoration:none;white-space:nowrap;">NavigateUrl test</a>
-			        </div>
-		        </div>
+					<div id="mainCalendar_idlocation"></div>
+					<input type="hidden" id="mainCalendar_datecurrent" value="" /> <input
+						type="hidden" id="mainCalendar_pagenum" value="" /> <input
+						type="hidden" id="mainCalendar_browser" value="" />
+					<div id="mainCalendar_MainMenu"
+						style="border: 1px solid #ACA899; background-color: #FFFFFF; font-size: 8pt; display: none;">
+						<span
+							style="font-weight: bold; display: block; background-color: #ECE9D8; padding: 2px 20px 2px 10px; border-bottom: 1px solid #ACA899; cursor: default;">Event</span>
+						<a
+							onclick="var e = this.parentNode.event || this.parentNode.selection; var command = ''; alert('Opening event (id {0})');; return false;"
+							href="#"
+							style="padding: 2px 20px 2px 10px; display: block; cursor: pointer; color: #2859AB; text-decoration: none; white-space: nowrap;">Open</a>
+						<a
+							onclick="var e = this.parentNode.event || this.parentNode.selection; var command = ''; alert('Sending event (id {0})');; return false;"
+							href="#"
+							style="padding: 2px 20px 2px 10px; display: block; cursor: pointer; color: #2859AB; text-decoration: none; white-space: nowrap;">Send</a>
+						<a
+							onclick="if (this.parentNode.event) { this.parentNode.event.root.eventMenuClick('Delete', this.parentNode.event, 'CallBack'); } else if (this.parentNode.selection) { this.parentNode.selection.root.timeRangeMenuClick('Delete', this.parentNode.selection, 'CallBack'); } return false;"
+							href="#"
+							style="padding: 2px 20px 2px 10px; display: block; cursor: pointer; color: #2859AB; text-decoration: none; white-space: nowrap; border-top: 1px solid #ACA899;">Delete
+							(CallBack)</a> <a
+							onclick="if (this.parentNode.event) { this.parentNode.event.root.eventMenuClick('Delete', this.parentNode.event, 'PostBack'); } else if (this.parentNode.selection) { this.parentNode.selection.root.timeRangeMenuClick('Delete', this.parentNode.selection, 'PostBack'); } return false;"
+							href="#"
+							style="padding: 2px 20px 2px 10px; display: block; cursor: pointer; color: #2859AB; text-decoration: none; white-space: nowrap;">Delete
+							(PostBack)</a> <a
+							href="javascript:alert('Going somewhere else (id {0})');"
+							style="padding: 2px 20px 2px 10px; display: block; cursor: pointer; color: #2859AB; text-decoration: none; white-space: nowrap;">NavigateUrl
+							test</a>
+					</div>
+				</div>
 			</div>
-        <div class="right"> <!--style="overflow: auto; position: relative;" align="center"-->
-			<!--business hours-->
-            <%
-                ArrayList wtime = (loc != null? WorkingtimeLoc.findAllByLocationId(loc.getId()) : null) ;
-                String from[] = new String[7];
-                String to[] = new String[7];
-                for(int i = 0; i < 7; i++)
-                {
-                    WorkingtimeLoc wtemp = ((wtime != null)&& (wtime.size() != 0)? (WorkingtimeLoc)wtime.get(i) : new WorkingtimeLoc());
-                    from[i] = wtemp.getH_from().getHours() + ":"  + (wtemp.getH_from().getMinutes()<10 ? "0" : "") +  wtemp.getH_from().getMinutes();
-                    to[i] = wtemp.getH_to().getHours() + ":"  + (wtemp.getH_to().getMinutes()<10 ? "0" : "") +  wtemp.getH_to().getMinutes();
-                }
-              %>                                   
+			<div class="right">
+				<!--style="overflow: auto; position: relative;" align="center"-->
+				<!--business hours-->
+				<%
+					ArrayList wtime = (loc != null ? WorkingtimeLoc
+							.findAllByLocationId(loc.getId()) : null);
+					String from[] = new String[7];
+					String to[] = new String[7];
+					for (int i = 0; i < 7; i++) {
+						WorkingtimeLoc wtemp = ((wtime != null) && (wtime.size() != 0)
+								? (WorkingtimeLoc) wtime.get(i)
+								: new WorkingtimeLoc());
+						from[i] = wtemp.getH_from().getHours() + ":"
+								+ (wtemp.getH_from().getMinutes() < 10 ? "0" : "")
+								+ wtemp.getH_from().getMinutes();
+						to[i] = wtemp.getH_to().getHours() + ":"
+								+ (wtemp.getH_to().getMinutes() < 10 ? "0" : "")
+								+ wtemp.getH_to().getMinutes();
+					}
+				%>
 
-			<div class="services_header"><img src="image?t=business%20hours&fs=13&c=FF6800" style="clear: right"/></div>
-			<br /> 
-			<table cellspacing="0" cellpadding=0 width="245" class="business_hours">
-				<tr>
-					<th align="center">mon.</th>
-					<th align="center">tues.</th>
-					<th align="center">wed.</th>
-					<th align="center">thurs.</th>
-					<th align="center">friday</th>
-					<th align="center">sat.</th>
-					<th align="center">sun.</th>
-				</tr>
-				<tr>
-					<td class="business_hours_input"><%=from[0]%></td>
-					<td class="business_hours_input"><%=from[1]%></td>
-					<td class="business_hours_input"><%=from[2]%></td>
-					<td class="business_hours_input"><%=from[3]%></td>
-					<td class="business_hours_input"><%=from[4]%></td>
-					<td class="business_hours_input"><%=from[5]%></td>
-					<td class="business_hours_input"><%=from[6]%></td>
-				</tr>
-				<tr>
-					<th align="center">to</th>
-					<th align="center">to</th>
-					<th align="center">to</th>
-					<th align="center">to</th>
-					<th align="center">to</th>
-					<th align="center">to</th>
-					<th align="center">to</th>
-				</tr>
-				<tr>
-                    <td class="business_hours_input"><%=to[0]%></td>
-                    <td class="business_hours_input"><%=to[1]%></td>
-                    <td class="business_hours_input"><%=to[2]%></td>
-                    <td class="business_hours_input"><%=to[3]%></td>
-                    <td class="business_hours_input"><%=to[4]%></td>
-                    <td class="business_hours_input"><%=to[5]%></td>
-                    <td class="business_hours_input"><%=to[6]%></td>
-				</tr>
-			</table>
-			<!--end of business hours-->
-            <div id="ServiceControl" style="position: relative; display: block; width: 200px; height:1000px"></div>
-			<div id="ServiceControlClone" style="display:block;"></div>
-        </div>
+				<div class="services_header">
+					<img src="image?t=business%20hours&fs=13&c=FF6800"
+						style="clear: right" />
+				</div>
+				<br />
+				<table cellspacing="0" cellpadding=0 width="245"
+					class="business_hours">
+					<tr>
+						<th align="center">mon.</th>
+						<th align="center">tues.</th>
+						<th align="center">wed.</th>
+						<th align="center">thurs.</th>
+						<th align="center">friday</th>
+						<th align="center">sat.</th>
+						<th align="center">sun.</th>
+					</tr>
+					<tr>
+						<td class="business_hours_input"><%=from[0]%></td>
+						<td class="business_hours_input"><%=from[1]%></td>
+						<td class="business_hours_input"><%=from[2]%></td>
+						<td class="business_hours_input"><%=from[3]%></td>
+						<td class="business_hours_input"><%=from[4]%></td>
+						<td class="business_hours_input"><%=from[5]%></td>
+						<td class="business_hours_input"><%=from[6]%></td>
+					</tr>
+					<tr>
+						<th align="center">to</th>
+						<th align="center">to</th>
+						<th align="center">to</th>
+						<th align="center">to</th>
+						<th align="center">to</th>
+						<th align="center">to</th>
+						<th align="center">to</th>
+					</tr>
+					<tr>
+						<td class="business_hours_input"><%=to[0]%></td>
+						<td class="business_hours_input"><%=to[1]%></td>
+						<td class="business_hours_input"><%=to[2]%></td>
+						<td class="business_hours_input"><%=to[3]%></td>
+						<td class="business_hours_input"><%=to[4]%></td>
+						<td class="business_hours_input"><%=to[5]%></td>
+						<td class="business_hours_input"><%=to[6]%></td>
+					</tr>
+				</table>
+				<!--end of business hours-->
+				<div id="ServiceControl"
+					style="position: relative; display: block; width: 200px; height: 1000px"></div>
+				<div id="ServiceControlClone" style="display: block;"></div>
+			</div>
 		</div>
-    <div id="win" style="position: absolute;border: 1px solid;width: 250px;height: 370px;visibility: hidden;background-color: #000000; z-index: 4;" align="center">
-        <!--table>
+		<div id="win"
+			style="position: absolute; border: 1px solid; width: 250px; height: 370px; visibility: hidden; background-color: #000000; z-index: 4;"
+			align="center">
+			<!--table>
                 <tr/> <tr/>
 				<tr>
 					<td align="left" style="font-family: Tahoma; font-size: 8pt;">First Name</td>
@@ -678,9 +794,8 @@
                     <td align="left" class="STYLE20">Employee</td>
                     <td align="left" class="STYLE18">
                         <select id="txtEmp" name="txtEmp" class="wickEnabled" autocomplete="OFF" style="width: 100%">
-                            <%for(int i = 0; i < list_emp.size(); i++){
-                                Employee emp = (Employee)list_emp.get(i);
-                            %>
+                            <%for (int i = 0; i < list_emp.size(); i++) {
+				Employee emp = (Employee) list_emp.get(i);%>
                             <option value="<%=emp.getId()%>"><%=emp.getFname() + " " + emp.getLname()%></option>
                             <%}%>
                         </select>
@@ -720,219 +835,212 @@
 				</tr>
                <tr/> <tr/>
 			</table-->
-           <table class="form">
-               <tr>
-                   <td colspan="2">
-                       <div class="hd1">Single appointment only</div>
-                   </td>
-               </tr>
-            <tr>
-            <th valign="center"><img width="51" height="14" src="./img/form_first_name.png" /></th>
-            	<td>
-            		<input type="text"  id="txtFN" name="txtFN" class="input_text wickEnabled" autocomplete="OFF" />
-            	</td>
-            </tr>
-            <tr>
-            	<th><img width="51" height="14" src="./img/form_last_name.png" /></th>
-            	<td>
-            		<input type="text" id="txtLN" name="txtLN" class="input_text wickEnabled" autocomplete="OFF" />
-            	</td>
-            </tr>
-            <tr>
-            	<th style="letter-spacing: 6px;"><img width="51" height="14" src="./img/form_phone.png" /></th>
-            	<td>
-            		<input type="text" id="txtPh" name="txtPh" class="input_text wickEnabled" autocomplete="OFF" value="1-()"/>
-            	</td>
-            </tr>
-            <tr>
-            	<th style="letter-spacing: 0px;"><img width="51" height="14" src="./img/form_cell_phone.png" /></th>
-            	<td>
-            		<input type="text" id="txtCPh" name="txtCPh" class="input_text wickEnabled" autocomplete="OFF" value="1-()"/>
-            	</td>
-            </tr>
-            <tr>
-            	<th style="letter-spacing: 0px;"><img width="51" height="14" src="./img/form_email.png" /></th>
-            	<td>
-            		<input type="text" id="txtEm" name="txtEm" class="input_text wickEnabled" autocomplete="OFF"/>
-            	</td>
-            </tr>
-           <tr>
-              <th style="letter-spacing: 0px;"><img width="51" height="14" src="./img/form_request.png" /></th>
-               <td align=left>
-                   <script>
+			<table class="form">
+				<tr>
+					<td colspan="2">
+						<div class="hd1">Single appointment only</div>
+					</td>
+				</tr>
+				<tr>
+					<th valign="center"><img width="51" height="14"
+						src="./img/form_first_name.png" /></th>
+					<td><input type="text" id="txtFN" name="txtFN"
+						class="input_text wickEnabled" autocomplete="OFF" /></td>
+				</tr>
+				<tr>
+					<th><img width="51" height="14" src="./img/form_last_name.png" /></th>
+					<td><input type="text" id="txtLN" name="txtLN"
+						class="input_text wickEnabled" autocomplete="OFF" /></td>
+				</tr>
+				<tr>
+					<th style="letter-spacing: 6px;"><img width="51" height="14"
+						src="./img/form_phone.png" /></th>
+					<td><input type="text" id="txtPh" name="txtPh"
+						class="input_text wickEnabled" autocomplete="OFF" value="1-()" />
+					</td>
+				</tr>
+				<tr>
+					<th style="letter-spacing: 0px;"><img width="51" height="14"
+						src="./img/form_cell_phone.png" /></th>
+					<td><input type="text" id="txtCPh" name="txtCPh"
+						class="input_text wickEnabled" autocomplete="OFF" value="1-()" />
+					</td>
+				</tr>
+				<tr>
+					<th style="letter-spacing: 0px;"><img width="51" height="14"
+						src="./img/form_email.png" /></th>
+					<td><input type="text" id="txtEm" name="txtEm"
+						class="input_text wickEnabled" autocomplete="OFF" /></td>
+				</tr>
+				<tr>
+					<th style="letter-spacing: 0px;"><img width="51" height="14"
+						src="./img/form_request.png" /></th>
+					<td align=left><script>
                            document.write(drawCheckbox('txtR', false, 'autocomplete="OFF"'));
-                   </script>
-               </td>
-           </tr>
+                   </script></td>
+				</tr>
 
-           <tr style="display:none;">
-           <td align="left" class="STYLE20"><img src="./img/form_employees.png" /></td>
-           <td align="left" class="STYLE18">
-               <select id="txtEmp" name="txtEmp" class="styled wickEnabled" autocomplete="OFF">
-                   <%for(int i = 0; i < list_emp.size(); i++){
-                       Employee emp = (Employee)list_emp.get(i);
-                   %>
-                   <option value="<%=emp.getId()%>"><%=emp.getFname() + " " + emp.getLname()%></option>
-                   <%}%>
-               </select>
-           </td>
-           </tr>
-            <tr>
-            	<th style="letter-spacing: 0px;"><img width="51" height="14" src="./img/form_comment.png" /></th>
-            	<td>
-            		<textarea class="input_textarea" scroll=none  id="com" name="com" autocomplete="OFF"></textarea>
-            	</td>
-            </tr>
-            <tr>
-            	<th style="letter-spacing: 0px;"><img width="51" height="28" src="./img/form_customer_comment.png" /></th>
-            	<td>
-            		<textarea class="input_textarea" scroll=none id="custcom" name="custcom" autocomplete="OFF"></textarea>
-            	</td>
-            </tr>
-            <tr style="display:none;">
-            	<th style="letter-spacing: 0px;"><img width="51" height="14" src="./img/form_reminder.png" /></th>
-            	<td align=left>
-                <script>
+				<tr style="display: none;">
+					<td align="left" class="STYLE20"><img
+						src="./img/form_employees.png" /></td>
+					<td align="left" class="STYLE18"><select id="txtEmp"
+						name="txtEmp" class="styled wickEnabled" autocomplete="OFF">
+							<%
+								for (int i = 0; i < list_emp.size(); i++) {
+									Employee emp = (Employee) list_emp.get(i);
+							%>
+							<option value="<%=emp.getId()%>"><%=emp.getFname() + " " + emp.getLname()%></option>
+							<%
+								}
+							%>
+					</select></td>
+				</tr>
+				<tr>
+					<th style="letter-spacing: 0px;"><img width="51" height="14"
+						src="./img/form_comment.png" /></th>
+					<td><textarea class="input_textarea" scroll=none id="com"
+							name="com" autocomplete="OFF"></textarea></td>
+				</tr>
+				<tr>
+					<th style="letter-spacing: 0px;"><img width="51" height="28"
+						src="./img/form_customer_comment.png" /></th>
+					<td><textarea class="input_textarea" scroll=none id="custcom"
+							name="custcom" autocomplete="OFF"></textarea></td>
+				</tr>
+				<tr style="display: none;">
+					<th style="letter-spacing: 0px;"><img width="51" height="14"
+						src="./img/form_reminder.png" /></th>
+					<td align=left><script>
                         document.write(drawCheckbox('txtRm', false, 'autocomplete="OFF"'));
-                   </script>
-            	</td>
-            </tr>
-            <tr style="display:none;">
-            	<th style="letter-spacing: 0px;"><img width="51" height="14" src="./img/form_days.png" /></th>
-            	<td>
-            		<input type="text" class="input_text" id="txtRmDays" name="txtRmDays" autocomplete="OFF"/>
-            	</td>
-            </tr>
-           <tr>
-               <td colspan=2 align=center>
-                   <input id="cust_id" name="cust_id" type="hidden" value="">
-                   <input id="dr_start" name="dr_start" type="hidden" value="">
-                   <input id="dr_end" name="dr_end" type="hidden" value="">
-                   <input id="dr_column" name="dr_column" type="hidden" value="">
-                   <input id="underEND" name="underEND" type="hidden" value="0">
-               <input id="app_id" name="app_id" type="hidden" value="">
-                   <input type="image" src="img/button_fast_appointment.png" onclick="fastApp();" width="87" height="25"/>
-                   <!--<input type="image" src="img/button_history.png" width="86" height="26" onclick="showHistory();"/>-->
-                   <input type="image" src="img/button_cancel.png" onclick="hide_bar();"/>
-               </td>
-           </tr>
-           <tr>
-               <td colspan=2>
-                   <input type="image" src="img/button_clear.png" width="55" height="26" onclick="clear_data();"/>
-                   <input type="image" src="img/button_insert.png" width="55" height="26" onclick="saveCust();"/>
-                   <input type="image" src="img/button_update.png" width="55" height="26" onclick="saveCust();"/>
-               </td>
-           </tr>
-           </table>
-        <div id="customerDiv" style="position:absolute;z-index:5;">
-				<table id="smartInputFloater" class="floater" cellpadding="0" cellspacing="0">
-					<tr><td id="smartInputFloaterContent" nowrap="nowrap"></td></tr>
+                   </script></td>
+				</tr>
+				<tr style="display: none;">
+					<th style="letter-spacing: 0px;"><img width="51" height="14"
+						src="./img/form_days.png" /></th>
+					<td><input type="text" class="input_text" id="txtRmDays"
+						name="txtRmDays" autocomplete="OFF" /></td>
+				</tr>
+				<tr>
+					<td colspan=2 align=center><input id="cust_id" name="cust_id"
+						type="hidden" value=""> <input id="dr_start"
+						name="dr_start" type="hidden" value=""> <input id="dr_end"
+						name="dr_end" type="hidden" value=""> <input
+						id="dr_column" name="dr_column" type="hidden" value=""> <input
+						id="underEND" name="underEND" type="hidden" value="0"> <input
+						id="app_id" name="app_id" type="hidden" value=""> <input
+						type="image" src="img/button_fast_appointment.png"
+						onclick="fastApp();" width="87" height="25" /> <!--<input type="image" src="img/button_history.png" width="86" height="26" onclick="showHistory();"/>-->
+						<input type="image" src="img/button_cancel.png"
+						onclick="hide_bar();" /></td>
+				</tr>
+				<tr>
+					<td colspan=2><input type="image" src="img/button_clear.png"
+						width="55" height="26" onclick="clear_data();" /> <input
+						type="image" src="img/button_insert.png" width="55" height="26"
+						onclick="saveCust();" /> <input type="image"
+						src="img/button_update.png" width="55" height="26"
+						onclick="saveCust();" /></td>
+				</tr>
+			</table>
+			<div id="customerDiv" style="position: absolute; z-index: 5;">
+				<table id="smartInputFloater" class="floater" cellpadding="0"
+					cellspacing="0">
+					<tr>
+						<td id="smartInputFloaterContent" nowrap="nowrap"></td>
+					</tr>
 				</table>
 			</div>
 		</div>
-    <div id="win1" style="position: absolute;border: 1px solid;width: 240px;height: 170px;visibility: hidden;background-color: #000000;z-index: 1000;" align="center">
-        <table>
+		<div id="win1"
+			style="position: absolute; border: 1px solid; width: 240px; height: 170px; visibility: hidden; background-color: #000000; z-index: 1000;"
+			align="center">
+			<table>
 				<tr>
-					<td align="left" width="30" style="font-family: Tahoma; font-size: 9pt;">Break from</td>
-                    <td>
-                        <table>
-                            <tr>
-                               <td>
-                                    <select name="w_from" id="w_from" class="styled">
-                                        <%for(int i=0; i<work_time.size(); i++){
-                                        %>
-                                            <option value="<%=i%>"><%=work_time.get(i)%></option>
-                                        <%}%>
-                                   </select>
-                                   <!--input name="hfrom" id="hfrom" type="text" class="ctrl" style="HEIGHT:15px" size="5"></td>
+					<td align="left" width="30"
+						style="font-family: Tahoma; font-size: 9pt;">Break from</td>
+					<td>
+						<table>
+							<tr>
+								<td><select name="w_from" id="w_from" class="styled">
+										<%
+											for (int i = 0; i < work_time.size(); i++) {
+										%>
+										<option value="<%=i%>"><%=work_time.get(i)%></option>
+										<%
+											}
+										%>
+								</select> <!--input name="hfrom" id="hfrom" type="text" class="ctrl" style="HEIGHT:15px" size="5"></td>
                                <td>:</td>
                                <td><input name="mfrom" id="mfrom" type="text" class="ctrl" style="HEIGHT:15px" size="5"-->
-                               </td>
-                           </tr>
-                        </table>
-                    </td>
-                </tr>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
 				<tr>
-					<td align="left" width="30" style="font-family: Tahoma; font-size: 9pt;">Break to</td>
+					<td align="left" width="30"
+						style="font-family: Tahoma; font-size: 9pt;">Break to</td>
 					<td>
-                        <table>
-                            <tr><td>
-                                <select name="w_to" id="w_to" class="styled">
-                                        <%for(int j=0; j<work_time.size(); j++){%>
-                                            <option value="<%=j%>"><%=work_time.get(j)%></option>
-                                        <%}%>
-                                     </select>
-                                <!--input name="hto" id="hto" type="text" class="ctrl" style="HEIGHT:15px" size="5"></td>
+						<table>
+							<tr>
+								<td><select name="w_to" id="w_to" class="styled">
+										<%
+											for (int j = 0; j < work_time.size(); j++) {
+										%>
+										<option value="<%=j%>"><%=work_time.get(j)%></option>
+										<%
+											}
+										%>
+								</select> <!--input name="hto" id="hto" type="text" class="ctrl" style="HEIGHT:15px" size="5"></td>
                                  <td>:</td>
                                  <td><input name="mto" id="mto" type="text" class="ctrl" style="HEIGHT:15px" size="5"-->
-                                </td>
-                            </tr>
-                       </table></td>
-				</tr>
-                <tr>
-					<td align="left"  width="30" style="font-family: Tahoma; font-size: 9pt;">Comment</td>
-					<td align="left"><textarea class="input_textarea" id="wt_com" name="com"></textarea></td>
+								</td>
+							</tr>
+						</table>
+					</td>
 				</tr>
 				<tr>
-					<td colspan="2" align="center">
-                        <input type="image" src="img/button_approve.png" onclick="saveWT();"/>
-                        <input type="image" src="img/button_cancel.png" onclick="hide_bar1();"/>
-                        <%--<input type="button" value="Cancel" onclick="hide_bar1();"/>--%>
-                        <%--<input type="button" value="Ok" onclick="saveWT();"/>--%>
-                        <input id="emp_id" name="emp_id" type="hidden" value="">
-                    </td>
+					<td align="left" width="30"
+						style="font-family: Tahoma; font-size: 9pt;">Comment</td>
+					<td align="left"><textarea class="input_textarea" id="wt_com"
+							name="com"></textarea></td>
 				</tr>
-               <tr/> <tr/>
+				<tr>
+					<td colspan="2" align="center"><input type="image"
+						src="img/button_approve.png" onclick="saveWT();" /> <input
+						type="image" src="img/button_cancel.png" onclick="hide_bar1();" />
+						<%--<input type="button" value="Cancel" onclick="hide_bar1();"/>--%>
+						<%--<input type="button" value="Ok" onclick="saveWT();"/>--%> <input
+						id="emp_id" name="emp_id" type="hidden" value=""></td>
+				</tr>
+				<tr />
+				<tr />
 			</table>
 		</div>
-    <div id="win2" style="position: absolute;width: 322px; visibility: hidden;background:black; border:5px solid white;border-radius: 15px; z-index: 1000;" align="center">
-        <br/>
-        <table style="height:190px">
-            <tr/>
-            <tr/>
-            <tr>
-                <td align="left" style="font-family: Tahoma; font-size: 8pt;">
-                    <!-- .x.m. <input type="radio" name="delete" id="win2.noshow" value="6" class="styled" checked><img src="img/win_customer_no_show_bak.png" alt="" /><br/><br/> -->
-                    <input type="radio" name="delete" id="win2.noshow" value="6" class="styled" checked><img src="img/win_customer_no_show.png" alt="" /><br/><br/>
-                    <input type="radio" name="delete" id="win2.confirm_email" value="9" class="styled" checked><img src="img/win_send_confirm_email.png" alt="" /><br/><br/>
-                    <input type="radio" name="delete" id="win2.canceled" value="6" class="styled"><img src="img/win_canceled_by_customer.png" alt="" /><br/><br/>
-                    <input type="radio" name="delete" id="win2.delete" value="7" class="styled"><img src="img/win_deleted.png" alt="" /><br/><br/>
-                    <table border=0><!-- .x.m. -->
-                    	<tr>
-                    		<th colspan="3">Appointment Options</th>
-                    	</tr>
-                    	<tr>
-                    		<td>
-                    			<input type="radio" name="delete" id="win2.weekly" value="10" class="styled"/>Weekly
-                    		</td>
-                    		<td>
-                    			<input type="radio" name="delete" id="win2.monthly" value="11" class="styled"/>Monthly
-                    		</td>
-                    		<td>
-                    			<input type="radio" name="delete" id="win2.remove.batch.app" value="12" class="styled"/>Remove
-                    		</td>
-                    	</tr>
-                    	<tr>
-                    		<td colspan="3">
-                    			END APP TIME: <input name="endAppintmentTime" class="tcal" id="endAppointmentTime" />
-                    		</td>
-                    	</tr>
-                    </table>
-                    <input type="hidden" name="event" id="event" value="">
-                </td>
-            </tr>
-            <tr/>
-            <tr/>
-            <tr>
-                <td align="right">
-                    <input type="image" src="img/button_approve.png" onclick="callYes();"/>
-                    <input type="image" src="img/button_cancel.png" onclick="hide_bar2();"/>
-                </td>
-            </tr>
-            <tr/>
-            <tr/>
-        </table>
-    </div>
+		<div id="win2" align="center">
+			<div class="win2_title">OPTION</div>
+			<table>
+				<tr>
+					<td align="left" class="app_items">
+						<!-- .x.m. <input type="radio" name="delete" id="win2.noshow" value="6" class="styled" checked><img src="img/win_customer_no_show_bak.png" alt="" /><br/><br/> -->
+						<p><input type="radio" name="delete" id="win2.noshow" value="6" class="styled">Delete By Client</p> 
+						<p><input type="radio" class="styled" id="win2.delete" value="7"  name="delete">Delete Appointment</p>
+						<p><input type="radio" name="delete" id="win2.canceled" value="8" class="styled">Delete Send Email</p>
+						<p><input type="radio" name="delete" id="win2.confirm_email" value="9" class="styled">Resend Email Confirmation</p>
+						<p><input type="radio" name="delete" id="win2.standing_app" value="10" class="styled">Standing Appointment</p>
+						
+						<input type="hidden" name="event" id="event" value="">
+				</td>
+			</tr>
+			<tr/>
+			<tr>
+				<td align="right" id="app_option_btn">
+					<input type="button" value="approve" onclick="callYes();"/>
+					<input type="button" value="cancel" onclick="hide_bar2();"/>
+				</td>
+			</tr>
+		</table>
+	</div>
     <div id="win3" style="position: absolute;border: 1px solid; width: 140px;height: 60px;visibility: hidden;background-color: #000000;z-index: 1000;" align="center">
          <table>
          <tr/> <tr/>
@@ -1004,20 +1112,28 @@
            try{
                var employeeId = document.getElementById('emp_id').value;
                var fill		= true;
-               var i;
+               var i;  //x.m.  index: (10:00-21:00)hours*60/15=44
                var j;
                i = document.getElementById('w_from').value;
                j = document.getElementById('w_to').value;
-               if (i>=j){
-                   alert("\"Break from\" time must be less than \"Break to\" time. Please, insert correct time interval!");
+               
+               if ((i/1)>=(j/1)){
+                   //alert("i:"+i+", j:"+j)
+            	   alert("\"Break from\" time must be less than \"Break to\" time. Please, insert correct time interval!");
                    document.getElementById('w_from').value = 0;
                    document.getElementById('w_to').value = /*44*/(_to-_from)*4; // vogue
                    fill = false;
                    return;
                }
                if (fill){
-                    var bfrom = document.getElementById('w_from').options[document.getElementById('w_from').value].text;//document.getElementById('hfrom').value+":"+fminutes;
-                    var bto = document.getElementById('w_to').options[document.getElementById('w_to').value].text;//document.getElementById('hto').value+":"+tminutes;
+                   var fromSelector = document.getElementById('w_from');
+                   var toSelector = document.getElementById('w_to');
+                   
+            	   var bfrom = fromSelector.options[fromSelector.value].text;//document.getElementById('hfrom').value+":"+fminutes;
+                    var bto = toSelector.options[toSelector.value].text;//document.getElementById('hto').value+":"+tminutes;
+                    
+                    //alert("from: index="+fromSelector.value+", value="+bfrom+"\n to: index="+toSelector.value+", value="+bto);
+                    
                     var wt_comment = document.getElementById('wt_com').value.replace(/\"/g," ");
                     var currentDate = new Date(document.getElementById("mainCalendar_datecurrent").value);
                     var newCurrentDate 	= currentDate.getUTCFullYear() + "/" + (currentDate.getUTCMonth() + 1) + "/" + currentDate.getUTCDate()+ " " + currentDate.getUTCHours()+":"+currentDate.getUTCMinutes();
@@ -1032,38 +1148,34 @@
         							'&comment=' + wt_comment +
                                     '&w_date=' + newCurrentDate;
                     request.open("GET", strURL, true);
-			        request.onreadystatechange = function(){
-				        if (request.readyState == 4){
-                            var req2 = request.responseText;
-            				if (request.status == 200){
-                                if ((req2!=null) && (req2.indexOf("REDIRECT") != -1)){
-                                    var arr = req2.split(":");
-//                                alert(arr[2].toString());
-                                    document.location.href = arr[1].toString();
-                                } else  {
-
-                                document.getElementById('w_from').value = 0;
-                                document.getElementById('w_to').value = /*44*/(_to-_from)*4; // vogue
-                                document.getElementById('wt_com').value = '';
-                                var xmlDoc = request.responseXML;
-                                /*if (xmlDoc.getElementsByTagName("alert"))
-                                    alert("This employee has appointment at this time!");
-                                else{*/
-                                    var items = xmlDoc.getElementsByTagName("employee");
-                                    if(items.length == 1){
-                                        if(items[0].getAttribute("ID") != '0'){
-                				    		var currentDate = document.getElementById("mainCalendar_datecurrent").value;
-                                            mainCalendar.date = new Date(currentDate);
-                                            mainCalendar.date.setMinutes(mainCalendar.date.getTimezoneOffset()*(1));
-                                            document.getElementById("win1").style.visibility="hidden";
-                                            reinitScheduler(mainCalendar,false);
-                						}
-            	    				//}
-                                }
-                            }}
-        	            }
-                    }
-		            request.send('');
+				        request.onreadystatechange = function(){
+						if (request.readyState == 4){
+							var req2 = request.responseText;
+							if (request.status == 200){
+								if ((req2!=null) && (req2.indexOf("REDIRECT") != -1)){
+									var arr = req2.split(":");
+	//                                alert(arr[2].toString());
+									document.location.href = arr[1].toString();
+								} else  {
+									document.getElementById('w_from').value = 0;
+									document.getElementById('w_to').value = /*44*/(_to-_from)*4; // vogue
+									document.getElementById('wt_com').value = '';
+									var xmlDoc = request.responseXML;
+									var items = xmlDoc.getElementsByTagName("employee");
+									if(items.length == 1){
+										if(items[0].getAttribute("ID") != '0'){
+											var currentDate = document.getElementById("mainCalendar_datecurrent").value;
+											mainCalendar.date = new Date(currentDate);
+											mainCalendar.date.setMinutes(mainCalendar.date.getTimezoneOffset()*(1));
+											document.getElementById("win1").style.visibility="hidden";
+											reinitScheduler(mainCalendar,false);
+										}
+									}
+								}
+	        	            }
+	                    }
+					}
+				    request.send('');
                 }
            }catch(e){
                alert("Please, fill time correctly!!!");
@@ -1509,9 +1621,12 @@
                 if (isChoice == 6) del = "delcust";
                 else if (isChoice == 7) del = "delok";
                 else if (isChoice == 8) del = "delcancel";
-                else if (isChoice == 9) del = "send_confirm_email";
                 else del = "";
+                
+                alert("isChoice=="+isChoice+", del=="+del);
                 isChoice = 0;
+                
+                
                 var xmlRequest;
 				
 				var dateUtc = c.startDate.getUTCFullYear() + "/" + (c.startDate.getUTCMonth() + 1) + "/" + c.startDate.getUTCDate();
@@ -1546,18 +1661,13 @@
                             } else if (req2.indexOf("DELETEAPP") != -1){
                                 var arr = req2.split("^");
 								//alert(arr[1].toString());
+								
                                 document.getElementById(arr[1].toString()).innerHTML = "";
                                 drawAroundEvents(arr[2]);
                             } else{
-                            	
-                                drawAroundEvents(req2);
-                                //.x.m.
-								var pop = new popup();
-                                jQuery.get("ScheduleManager", {"optype": "canceled_send_email", "appointmentID" : app_id, "timestamp" : new Date().getTime()}, 
-    								function(data, textStatus, response){
-   										pop.tip({message:response.responseText, "visiable" : false, "type": "warning", "showLocation" : "buttom"});
-     								});
-                                
+                            	if(del=="delcancel")
+									deleteAppintmentSendMail(app_id);
+                            	drawAroundEvents(req2);
                             }
                         }
                     }
@@ -2026,7 +2136,8 @@
       	};
 			               
 		//mainCalendar = mainCalendar_Init(new Date(new Date().toUTCString()));
-		var newDate = new Date(/*new Date().toDateString()*/<%=dt.equals("")? "new Date().toDateString()" : "'"+dt+"'"%>);
+		var newDate = new Date(/*new Date().toDateString()*/<%=dt.equals("") ? "new Date().toDateString()" : "'" + dt
+					+ "'"%>);
         //alert("newDate = " + newDate);
 		newDate.setMinutes(newDate.getTimezoneOffset()*(-1));
 		
@@ -2054,19 +2165,19 @@
 
         function init_customer()
         {
-            <%if(id_customer>0){%>
-                document.getElementById('cust_id').value = '<%=cust!=null?cust.getId():0%>';
-                document.getElementById('txtFirstName').value = '<%=cust!=null?cust.getFname():""%>';
-                document.getElementById('txtLastName').value = '<%=cust!=null?cust.getLname():""%>';
-                document.getElementById('txtPhone').value = '<%=cust!=null?cust.getPhone():""%>';
-                document.getElementById('txtCellPhone').value = '<%=cust!=null?cust.getCell_phone():""%>';
-                document.getElementById('txtEmail').value = '<%=cust!=null?cust.getEmail():""%>';
-                document.getElementById('custcomm').value = '<%=cust!=null?cust.getComment():""%>';
+            <%if (id_customer > 0) {%>
+                document.getElementById('cust_id').value = '<%=cust != null ? cust.getId() : 0%>';
+                document.getElementById('txtFirstName').value = '<%=cust != null ? cust.getFname() : ""%>';
+                document.getElementById('txtLastName').value = '<%=cust != null ? cust.getLname() : ""%>';
+                document.getElementById('txtPhone').value = '<%=cust != null ? cust.getPhone() : ""%>';
+                document.getElementById('txtCellPhone').value = '<%=cust != null ? cust.getCell_phone() : ""%>';
+                document.getElementById('txtEmail').value = '<%=cust != null ? cust.getEmail() : ""%>';
+                document.getElementById('custcomm').value = '<%=cust != null ? cust.getComment() : ""%>';
             <%}%>
         }
         
 		function progress_stop() {
-		    /*clearTimeout(progressTimer);  */
+		    /*clearTimeout(progressTimer); */
 		    progress_clear();
 		    document.getElementById('showbar').style.visibility = 'hidden';
             init_customer();
@@ -2081,7 +2192,8 @@
             progress_update();
             Calendar.setup(
       			{
-	          		date : new Date(<%=dt.equals("")? "new Date().toDateString()" : "'"+dt+"'"%>),
+	          		date : new Date(<%=dt.equals("") ? "new Date().toDateString()" : "'" + dt
+					+ "'"%>),
                     pageNum : 0,
 	          		flat : "CalendarContainer", 
 	          		flatCallback : changeDay 
@@ -2105,7 +2217,8 @@
                 progress_update();
                 Calendar.setup(
 		          	{
-	             		date : new Date(<%=dt.equals("")? "new Date().toDateString()" : "'"+dt+"'"%>),
+	             		date : new Date(<%=dt.equals("") ? "new Date().toDateString()" : "'" + dt
+					+ "'"%>),
                         pageNum : 0,
 	             		flat : "CalendarContainer", 
 	             		flatCallback : changeDay 
@@ -2293,16 +2406,11 @@
         }
 
         employees = [
-                <%for(int i = 0; i < list_emp.size(); i++) {
-                    Employee emp = (Employee)list_emp.get(i);
-                %>
+                <%for (int i = 0; i < list_emp.size(); i++) {
+				Employee emp = (Employee) list_emp.get(i);%>
                 ["<%=emp.getId()%>", "<%=emp.getFname() + " " + emp.getLname()%>"]
-                <%
-                if (i != list_emp.size() - 1) {
-                %>,<%
-                }
-                }
-                %>
+                <%if (i != list_emp.size() - 1) {%>,<%}
+			}%>
         ];
 
      </script>

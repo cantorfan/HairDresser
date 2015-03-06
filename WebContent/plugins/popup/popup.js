@@ -294,14 +294,29 @@ popup.prototype.form = function(options){
 		var input = options.form[i];
 		var className = "pop-input-"+i;
 		inputClasses.push(className);
-		var labelLen = input.label.length;
-		console.log("input length:"+labelLen);
-		size = 28-((labelLen > 10 ? 10 : labelLen)-3);
 		
-		html+="			<li class=\"pop-form-item\">\n";
-		html+="				<span class=\"pop-form-label\" >"+input.label+" :</span>\n";
-		html+="				<input type=\""+input.type+"\" value=\""+input.value+"\" size=\""+size+"\" name=\""+className+"\" class=\""+input.className+" "+className+"\" placeholder=\""+input.placeholder+"\"/>\n";
-		html+="			</li>\n";
+		if(input.type=="radio"){
+			html+="			<li class=\"pop-form-item\" style=\"padding: 12px 0px; color: #999;\">\n";
+			for(var j=0; j<input.value.length; j++){
+				html+="				<input style=\"margin-left:20px;\" value=\""+input.value[j]+"\" type=\""+input.type+"\" name=\""+input.name+"\" class=\""+className+" "+input.className+"\"/>"+input.value[j]+"\n";
+			}
+			html+="			</li>\n";
+			
+		}else{
+			var labelLen = input.label.length;
+			console.log("input length:"+labelLen);
+			size = 34-((labelLen > 10 ? 10 : labelLen)-3);
+			
+			var value = "";
+			if(input.value)
+				value = input.value;
+
+			html+="			<li class=\"pop-form-item\">\n";
+			html+="				<span class=\"pop-form-label\" >"+input.label+" :</span>\n";
+			html+="				<input type=\""+input.type+"\" value=\""+value+"\" size=\""+size+"\" name=\""+className+"\" class=\""+input.className+" "+className+"\" placeholder=\""+input.placeholder+"\"/>\n";
+			html+="			</li>\n";
+		}
+		
 	}
 	html+="		</ul>\n";
 	html+="		<ul class=\"pop-hr\">\n";
@@ -319,6 +334,11 @@ popup.prototype.form = function(options){
 	html+="</div>\n";
 	
 	box.append(html);
+	
+	//before
+	if(options.before != null && typeof(options.before)=="function"){
+		options.before();	
+	}
 	
 	if(options.btn3){
 		jQuery("."+boxClassName+ " .pop-btn-area a").css("padding", "10px 15px");

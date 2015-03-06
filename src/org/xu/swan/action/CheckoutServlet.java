@@ -41,6 +41,7 @@ import org.xu.swan.bean.Ticket;
 import org.xu.swan.bean.Transaction;
 import org.xu.swan.bean.User;
 import org.xu.swan.db.DBManager;
+import org.xu.swan.service.MailService;
 import org.xu.swan.util.ActionUtil;
 import org.xu.swan.util.DateUtil;
 import org.xu.swan.util.SendMailHelper;
@@ -662,7 +663,8 @@ public class CheckoutServlet extends HttpServlet {
 	            	
 	            	logger.debug("send check out email to: "+email+"\n content:\n"+text);
 	            	
-	            	SendMailHelper.sendAttatchment(text, "Check Out Notification", email, file);
+	            	MailService mailService = new MailService();
+	            	mailService.sendCheckMail(customer, email, file);
 	            	
 	            	response.getWriter().write("send mail successed!");
 	            	

@@ -446,3 +446,38 @@ span.select {
     font-family: Calibri;
     text-align: center;
 }
+
+
+#win2{
+	font-family: Tahoma;
+	position: absolute;width: 322px; 
+	visibility: hidden;
+	/*
+	border:5px solid white;border-radius: 15px; 
+	*/
+	background:white; 
+	color: black;
+	box-shadow: 2px 2px 3px #666;
+	z-index: 1000;
+	padding-bottom:20px;
+}
+.win2_title{
+	font-size:24px; font-weight: bold; text-align: center; background:#3498dc; color: #fff;
+	padding: 10px 0px; border-bottom: 5px solid #2675ab;
+}
+#win2 > table{font-size: 20px; font-weight:500; }
+
+#win2 .app_items{padding-top: 10px; padding-bottom: 10px; }
+#win2 .app_items p{padding-top: 8px; padding-bottom: 8px; margin:0px;}
+
+#app_option_btn input{
+	color: #fff; font-size: 20px; font-family: inherit;
+	background: #3498dc; border: none; border-bottom: solid 5px #287cb3;
+	padding: 5px 20px;
+	cursor: pointer;
+}
+
+#app_option_btn input:hover{
+	background: #287cb3;
+}
+
