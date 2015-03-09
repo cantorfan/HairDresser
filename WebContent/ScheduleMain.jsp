@@ -1623,7 +1623,7 @@ hr {
                 else if (isChoice == 8) del = "delcancel";
                 else del = "";
                 
-                alert("isChoice=="+isChoice+", del=="+del);
+               // alert("isChoice=="+isChoice+", del=="+del);
                 isChoice = 0;
                 
                 

@@ -129,7 +129,7 @@ public class BatchAppointmentServlet extends HttpServlet {
 			Appointment.updateBatchAppointment(batchID, WEEKLY, appointmentID);
 			startDate.add(Calendar.DAY_OF_WEEK, 7);
 			
-			while (startDate.before(toTimeCal)) {
+			while (startDate.before(toTimeCal) || startDate.equals(toTimeCal)) {
 				
 				if(fromTimeCal.before(startDate) || fromTimeCal.equals(startDate)){
 					Appointment ap = (Appointment) appointment.clone();
@@ -197,7 +197,7 @@ public class BatchAppointmentServlet extends HttpServlet {
 			Appointment.updateBatchAppointment(batchID, MONTHLY, appointmentID);
 			startDate.add(Calendar.MONTH, 1);
 			
-			while (startDate.before(toTimeCal)) {
+			while (startDate.before(toTimeCal) || startDate.equals(toTimeCal)) {
 				
 				if(fromTimeCal.before(startDate) || fromTimeCal.equals(startDate)){
 					Appointment ap = (Appointment) appointment.clone();
