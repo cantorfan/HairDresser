@@ -73,7 +73,8 @@ var batchAppointment = function(appID){
 				var jsonData = jQuery.parseJSON(response.responseText);
 				if(jsonData.status){
 					pop.tip({message: jsonData.message, "visiable" : false, "type": "success", "showLocation" : "center"});
-					sendMail(jsonData.customerId, jsonData.batchId, closePop);
+					sendMail(jsonData.customerId, jsonData.batchId);
+					closePop();;
 				}else{
 					pop.tip({message: jsonData.message, "visiable" : false, "type": "error", "showLocation" : "center"});
 				}
@@ -86,7 +87,8 @@ var batchAppointment = function(appID){
 				var jsonData = jQuery.parseJSON(response.responseText);
 				if(jsonData.status){
 					pop.tip({message: jsonData.message, "visiable" : false, "type": "success", "showLocation" : "center"});
-					sendMail(jsonData.customerId, jsonData.batchId, closePop);
+					sendMail(jsonData.customerId, jsonData.batchId);
+					closePop();
 				}else{
 					pop.tip({message: jsonData.message, "visiable" : false, "type": "error", "showLocation" : "center"});
 				}
@@ -108,7 +110,7 @@ var batchAppointment = function(appID){
 		);
 	}
 	
-	var sendMail = function(customerId, batchId,closePop){
+	var sendMail = function(customerId, batchId){
 		jQuery.get("customerData", {"getCustomer": customerId, "timestamp" : new Date().getTime()}, 
 			function(data, textStatus, response){
 			
@@ -144,14 +146,12 @@ var batchAppointment = function(appID){
 											closeloading();
 											pop.tip({message:jsonResult.message,"visiable" : false, "type": "warning", "showLocation" : "buttom"});
 											close();
-											closePop();
 										});
 								});	
 							}
 						}
 					}},
-					btn2: {text:"Cancel", callback: function(closePop){
-						closePop();
+					btn2: {text:"Cancel", callback: function(close){
 						close();
 					}},
 					visiable: true

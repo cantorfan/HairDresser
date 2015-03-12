@@ -60,7 +60,18 @@ public class Employee {
     private Date hiredate;
     private Date termdate;
 
-    public int getId() {
+    //user login see:LoginEmpConfigServlet
+    private boolean checked;
+    
+    public boolean isChecked() {
+		return checked;
+	}
+
+	public void setChecked(boolean checked) {
+		this.checked = checked;
+	}
+
+	public int getId() {
         return id;
     }
 

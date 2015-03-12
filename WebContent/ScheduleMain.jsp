@@ -795,7 +795,7 @@ hr {
                     <td align="left" class="STYLE18">
                         <select id="txtEmp" name="txtEmp" class="wickEnabled" autocomplete="OFF" style="width: 100%">
                             <%for (int i = 0; i < list_emp.size(); i++) {
-				Employee emp = (Employee) list_emp.get(i);%>
+								Employee emp = (Employee) list_emp.get(i);%>
                             <option value="<%=emp.getId()%>"><%=emp.getFname() + " " + emp.getLname()%></option>
                             <%}%>
                         </select>
@@ -1395,28 +1395,32 @@ hr {
                                 document.location.href = arr[1].toString();
                             } else {
 //                                drawNewEvents(xmlRequestAppointment.responseText);
-                                drawAroundEvents(xmlRequestAppointment.responseText);
-                                
-//                                drawEvents(xmlRequestAppointment.responseText);
-			                  	//TODO: .x.m. send comfirm Email
-			                  	//alert(xmlRequestAppointment.responseText);
-			                  	//{"ServerId":"appoint_70272","BarStart":0,"EventStatus":0,
-			                  	//"ToolTip":"Xm Xm","PartStart":"一月 29, 2015 14:15:00 +0000",
-			                  	//"Box":true,"Left":300,"Tag":"","InnerHTML":"Xm Xm - Ombre",
-			                  	//"Width":100,"ResizeEnabled":true,"Start":"一月 29, 2015 14:15:00 +0000",
-			                  	//"RightClickEnabled":true,"Value":"3","Height":66,"End":"一月 29, 2015 15:00:00 +0000",
-			                  	//"ClickEnabled":false,"BarColor":"#FF5B01","BarLength":66,"PartEnd":"一月 29, 2015 15:00:00 +0000",
-			                  	//"DeleteEnabled":true,"Text":"Event #1","MoveEnabled":true,"ContextMenu":null,
-			                  	//"idappt":70272,"ide":75,"idc":11287,"ids":73,"dt":"2015/1/29","BackgroundColor":"#FFF57A",
-			                  	//"Top":374,"DayIndex":0}
-			                  	if(xmlRequestAppointment.responseText){
-			                  		console.log(xmlRequestAppointment.responseText);
-			                  		
-			                  		var data = "["+xmlRequestAppointment.responseText+"]"
-				                  	
-				                    var appointments = jQuery.parseJSON(data);
-				                    sendcomfrimEmail(appointments[0].ServerId, idEmployee, idCustomer, false);
-			                  	}
+								if(req2==null || req2==""){
+									var pop = new popup();
+									pop.tip({message:"not permission","visiable" : false, "type": "warning", "showLocation" : "buttom"});
+									
+								}else{
+									drawAroundEvents(xmlRequestAppointment.responseText);
+				                  	//TODO: .x.m. send comfirm Email
+				                  	//alert(xmlRequestAppointment.responseText);
+				                  	//{"ServerId":"appoint_70272","BarStart":0,"EventStatus":0,
+				                  	//"ToolTip":"Xm Xm","PartStart":"一月 29, 2015 14:15:00 +0000",
+				                  	//"Box":true,"Left":300,"Tag":"","InnerHTML":"Xm Xm - Ombre",
+				                  	//"Width":100,"ResizeEnabled":true,"Start":"一月 29, 2015 14:15:00 +0000",
+				                  	//"RightClickEnabled":true,"Value":"3","Height":66,"End":"一月 29, 2015 15:00:00 +0000",
+				                  	//"ClickEnabled":false,"BarColor":"#FF5B01","BarLength":66,"PartEnd":"一月 29, 2015 15:00:00 +0000",
+				                  	//"DeleteEnabled":true,"Text":"Event #1","MoveEnabled":true,"ContextMenu":null,
+				                  	//"idappt":70272,"ide":75,"idc":11287,"ids":73,"dt":"2015/1/29","BackgroundColor":"#FFF57A",
+				                  	//"Top":374,"DayIndex":0}
+				                  	if(xmlRequestAppointment.responseText){
+				                  		console.log(xmlRequestAppointment.responseText);
+				                  		
+				                  		var data = "["+xmlRequestAppointment.responseText+"]"
+					                  	
+					                    var appointments = jQuery.parseJSON(data);
+					                    sendcomfrimEmail(appointments[0].ServerId, idEmployee, idCustomer, false);
+				                  	}
+								}
                             }
                         }
                     };

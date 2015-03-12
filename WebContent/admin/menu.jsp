@@ -84,6 +84,7 @@
                         <li><a href="./edit_user.jsp?action=add">Add user</a></li>
                         <li><a href="./list_user.jsp">Manage users</a></li>
                         <li><a href="./loginConfig.do">Manage IP</a></li>
+                        <li><a href="./LoginEmpConfig.jsp">Manage Emp Access</a></li>
 
                     </ul>
                 </li>

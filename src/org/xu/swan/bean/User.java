@@ -28,7 +28,8 @@ public class User {
     public static final String PERM = "permission";
     public static final String Send_EMAIL = "send_email";
     public static final String IPS="ips";
-
+    public static final String EMPLOYEES = "employees";
+    
     private int id;
     private String fname;
     private String lname;
@@ -38,12 +39,12 @@ public class User {
     private String ips;
     private int permission;
     private int send_email;
-
+    private String employees;
     
     @Override
 	public String toString() {
 		return "User [id=" + id + ", user=" + user + ", pwd=" + pwd + ", ips="
-				+ ips + "]";
+				+ ips+ ", employees=" + employees + "]";
 	}
 
 	public int getId() {
@@ -116,6 +117,14 @@ public class User {
 
 	public void setIps(String ips) {
 		this.ips = ips;
+	}
+	
+	public String getEmployees() {
+		return employees;
+	}
+
+	public void setEmployees(String employees) {
+		this.employees = employees;
 	}
 
 	public static User insertUser(String fname,String lname, String user, String pwd, String email, int perm, int send_email){
@@ -265,7 +274,7 @@ public class User {
         try{
             dbm = new DBManager();
             PreparedStatement pst = dbm.getPreparedStatement("SELECT " + ID + "," + FNAME + ", " + LNAME + ", " + USER + ", " + PWD + ", " + EMAIL
-                    + ", "  + PERM + "," + Send_EMAIL + ", "+IPS+ " FROM login WHERE " + ID + "=?");
+                    + ", "  + PERM + "," + Send_EMAIL + ", "+IPS+ ", "+EMPLOYEES+ " FROM login WHERE " + ID + "=?");
             pst.setInt(1,id);
             ResultSet rs = pst.executeQuery();
             if(rs.next()){
@@ -279,6 +288,7 @@ public class User {
                 u.setPermission(rs.getInt(7));
                 u.setSend_email(rs.getInt(8));
                 u.setIps(rs.getString(9));
+                u.setEmployees(rs.getString(10));
             }
             rs.close();
             pst.close();
@@ -297,7 +307,7 @@ public class User {
         try{
             dbm = new DBManager();
             PreparedStatement pst = dbm.getPreparedStatement("SELECT " + ID + "," + FNAME + ", " + LNAME + ", " + USER + ", " + PWD + ", " + EMAIL
-                    + ", "  + PERM + "," + Send_EMAIL + ", "+IPS+ " FROM login WHERE " + USER + "=? AND " + PWD + "=?");
+                    + ", "  + PERM + "," + Send_EMAIL + ", "+IPS+ ", "+EMPLOYEES+ " FROM login WHERE " + USER + "=? AND " + PWD + "=?");
             pst.setString(1,u);
             pst.setString(2,p);
             ResultSet rs = pst.executeQuery();
@@ -312,6 +322,7 @@ public class User {
                 user.setPermission(rs.getInt(7));
                 user.setSend_email(rs.getInt(8));
                 user.setIps(rs.getString(9));
+                user.setEmployees(rs.getString(10));
             }
             rs.close();
             pst.close();
@@ -331,7 +342,7 @@ public class User {
             dbm = new DBManager();
             Statement st = dbm.getStatement();
             ResultSet rs = st.executeQuery("SELECT " + ID + "," + FNAME + ", " + LNAME + ", " + USER + ", " + PWD + ", " + EMAIL
-                    + ", "  + PERM + "," + Send_EMAIL+ ", " + IPS +  " FROM login");
+                    + ", "  + PERM + "," + Send_EMAIL+ ", " + IPS+ ", " + EMPLOYEES +  " FROM login");
             while(rs.next()){
                 User u = new User();
                 list.add(u);
@@ -344,6 +355,7 @@ public class User {
                 u.setPermission(rs.getInt(7));
                 u.setSend_email(rs.getInt(8));
                 u.setIps(rs.getString(9));
+                u.setEmployees(rs.getString(10));
             }
             rs.close();
             st.close();
@@ -385,7 +397,7 @@ public class User {
             dbm = new DBManager();
             Statement st = dbm.getStatement();
             ResultSet rs = st.executeQuery("SELECT " + ID + "," + FNAME + ", " + LNAME + ", " + USER + ", " + PWD + ", " + EMAIL
-                    + ", "  + PERM + "," + Send_EMAIL +   " FROM login WHERE " + filter);
+                    + ", "  + PERM + "," + Send_EMAIL + ", " + IPS+ ", " + EMPLOYEES +   " FROM login WHERE " + filter);
             while(rs.next()){
                 User u = new User();
                 list.add(u);
@@ -397,6 +409,8 @@ public class User {
                 u.setEmail(rs.getString(6));
                 u.setPermission(rs.getInt(7));
                 u.setSend_email(rs.getInt(8));
+                u.setIps(rs.getString(9));
+                u.setEmail(rs.getString(10));
             }
             rs.close();
             st.close();
@@ -589,4 +603,24 @@ public class User {
         sendEmail(pwd, email);
         return pwd;
     }
+    
+    public static boolean updateEmployees(int id, String employees) {
+        DBManager dbm = null;
+        try{
+            dbm = new DBManager();
+            PreparedStatement pst = dbm.getPreparedStatement("UPDATE login SET " + EMPLOYEES + "=? WHERE " + ID + "=?");
+            pst.setString(1, employees);
+            pst.setInt(2, id);
+            int rows = pst.executeUpdate();
+            pst.close();
+            return true;
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            if(dbm!=null)
+                dbm.close();
+        }
+        return false;
+    }
+    
 }

@@ -7,12 +7,15 @@ import java.sql.Date;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -47,7 +50,6 @@ import org.xu.swan.service.MailService;
 import org.xu.swan.util.DateUtil;
 import org.xu.swan.util.Html2Text;
 import org.xu.swan.util.ResourcesManager;
-import org.xu.swan.util.SendMailHelper;
 
 public class ScheduleManager extends HttpServlet {
 
@@ -60,6 +62,9 @@ public class ScheduleManager extends HttpServlet {
 
     private static String browser = "Microsoft Internet Explorer";
 
+    private HttpServletRequest request;
+    private HttpServletResponse response;
+    
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         doPost(request, response);
@@ -68,6 +73,8 @@ public class ScheduleManager extends HttpServlet {
     @SuppressWarnings("static-access")
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
+    	this.request = request;
+    	this.response = response;
         HttpSession session = request.getSession(true);
 //        if (session != null){
 //            response.setContentType("text/html");
@@ -493,10 +500,25 @@ public class ScheduleManager extends HttpServlet {
               */
               if (operation.equals("NEW") && startDate != null && endDate != null && idNewEmployee != -1 && idService != -1)
               {
-                  if (user_ses.getPermission() != Role.R_VIEW && user_ses.getPermission() != Role.R_SHD_CHK){
-                  try {
-                      idCustomer = Integer.parseInt(request.getParameter("idcustomer"));
-                  } catch (Exception ex) {
+            	  
+//            	  User user = User.findById(user_ses.getId());
+//            	  String employees = user.getEmployees();
+//            	  Set<Integer> empPermissionSet = new HashSet<Integer>();
+//            	  if(employees!=null && "".equals(employees)==false){
+//            		  String[] emps = employees.split(",");
+//            		  for (String emp : emps) {
+//						empPermissionSet.add(Integer.parseInt(emp));
+//					}
+//            	  }
+            	  
+            	  @SuppressWarnings("unchecked")
+            	  Set<Integer> empPermissionSet = (HashSet<Integer>)request.getSession().getAttribute("empPermission");
+                  if (user_ses.getPermission() != Role.R_VIEW 
+                		  && user_ses.getPermission() != Role.R_SHD_CHK
+                		  && empPermissionSet.contains(idNewEmployee)){
+	                  try {
+	                      idCustomer = Integer.parseInt(request.getParameter("idcustomer"));
+	                  } catch (Exception ex) {
                   }
 
                   Appointment ap = new Appointment();
@@ -566,7 +588,8 @@ public class ScheduleManager extends HttpServlet {
                       app_new_id = ap_new.getId();
                       added = true;
                   }
-                  }
+                  }else
+                	  added = false;
               }
 
 
@@ -783,7 +806,7 @@ public class ScheduleManager extends HttpServlet {
         return generateAroundEventsArray(idLocation, currentDate, pageNum, st, et, employee_id, st_old, et_old, emp_old);
     }
 
-    public static String generateEventsArray(int idLocation, Date currentDate, int pageNum) {
+    public  String generateEventsArray(int idLocation, Date currentDate, int pageNum) {
         String responseAll = " ";
 
         SimpleDateFormat formatter = new SimpleDateFormat("MMMM d, yyyy HH:mm:ss");
@@ -832,6 +855,19 @@ public class ScheduleManager extends HttpServlet {
 
             generateIndexes(idLocation, currentDate, pageNum);
 
+            User user_ses = (User) request.getSession().getAttribute("user");
+            User user = User.findById(user_ses.getId());
+            Set<Integer> empids = new HashSet<Integer>();
+            
+            boolean filter = false;
+            if(user.getEmployees()!=null){
+            	String[] ids = user.getEmployees().split(",");
+            	for(int i = 0; i < ids.length; i++){
+            		empids.add(Integer.parseInt(ids[i]));
+            	}
+            }else
+            	filter = true;  //new user's employee field is null. 
+            
             while (it.hasNext()) {
                 ArrayList tempList = (ArrayList) it.next();
                 for (int i = 0; i < tempList.size(); i++) {
@@ -839,6 +875,13 @@ public class ScheduleManager extends HttpServlet {
                     try {
                         int width = 100;
                         Appointment temp = (Appointment) tempList.get(i);
+                        if(!filter && empids.size()==0)
+                        	continue;
+                        
+                    	if(!empids.contains(temp.getEmployee_id())){
+                    		continue;
+                    	}
+
 //                        int startIndex = (temp.getSt_time().getHours() * 60 + temp.getSt_time().getMinutes()) / 15 - 36;
 //                        int endIndex = (temp.getEt_time().getHours() * 60 + temp.getEt_time().getMinutes()) / 15 - 36;
                         int startIndex = (temp.getSt_time().getHours() * 60 + temp.getSt_time().getMinutes()) / 15 - _from*4;//32; // for esalonsoft/vogue

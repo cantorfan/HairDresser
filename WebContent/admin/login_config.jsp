@@ -17,6 +17,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Login Config</title>
 <LINK href="../css/style.css" type=text/css rel=stylesheet>
+<script src="../Js/menu.js" type="text/javascript"></script>
 </head>
 <body>
 	<table width="1040" border="0" cellpadding="0" cellspacing="0" bgcolor="#000000">

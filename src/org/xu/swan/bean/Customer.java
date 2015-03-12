@@ -504,9 +504,9 @@ public class Customer {
                     cust.setId(rs.getInt(1));
                 rs.close();
             }
-            if (cust!=null && !cust.getEmail().equals("")){
-                sendEmail(cust);
-            }
+//            if (cust!=null && !cust.getEmail().equals("")){
+//                sendEmail(cust);
+//            }
             pst.close();
         } catch (Exception e) {
             e.printStackTrace();

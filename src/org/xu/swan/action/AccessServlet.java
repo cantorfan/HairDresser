@@ -1,20 +1,21 @@
 package org.xu.swan.action;
 
-import org.apache.commons.lang.StringUtils;
-import org.xu.swan.bean.Location;
-import org.xu.swan.bean.User;
-import org.xu.swan.bean.Role;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.ServletException;
-import java.io.IOException;
-import java.util.TimeZone;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.xu.swan.bean.Location;
+import org.xu.swan.bean.Role;
+import org.xu.swan.bean.User;
 
 public class AccessServlet  extends HttpServlet {
     protected Logger logger = LogManager.getLogger(getClass());
@@ -103,6 +104,18 @@ public class AccessServlet  extends HttpServlet {
                 request.getSession(true).setAttribute("user", user);
                 request.getSession(true).setAttribute("location", loc);
                 request.getSession(true).setAttribute("ipuser", UserIP);
+                
+                Set<Integer> empPermission = new HashSet<Integer>();
+                String employees = user.getEmployees();
+      	  		if(employees!=null && "".equals(employees)==false){
+      	  			String[] emps = employees.split(",");
+      	  			for (String emp : emps) {
+      	  				empPermission.add(Integer.parseInt(emp));
+      	  			}
+      	  		}
+	          	  
+                request.getSession(true).setAttribute("ipuser", UserIP);
+                request.getSession(true).setAttribute("empPermission", empPermission);
 //                String timezone = Location.getTimezoneForLocation(1);
 //                TimeZone asd = TimeZone.getTimeZone(timezone);
 //                TimeZone.setDefault(asd);

@@ -611,10 +611,10 @@ Please wait...
     }
 
     function AddReconciliation(status_){
-        AddReconciliation2(status_, true, false, false);
+        AddReconciliation2(status_, true, false);
     }
 
-    function AddReconciliation2(status_, redirect, isprint, isRedirect){
+    function AddReconciliation2(status_, redirect, isprint){
         if(transIDs.length == 0){
             alert('Cannot do any modifications on empty transaction');
             return;
@@ -784,9 +784,6 @@ Please wait...
                                 } else if(redirect){
                                     document.location.href = "./checkout.do?dt=<%=dt%>&rnd=" + Math.random();
                                 }else {
-                                	if(isRedirect)
-                                		document.location.href = "./checkout.do?dt=<%=dt%>&rnd=" + Math.random();
-                                	
                                 	document.getElementById("overlay").style.display = "none";
                                 }
                             });
@@ -3079,13 +3076,13 @@ Custom2.init();
                     onclick="var _t=document.getElementById('total').value; Modalbox.show('./pay_options.jsp?total='+_t+'&ct=<%=code_trans%>&dt=<%=dt%>&idc=<%=id_cust%>&rnd=' + Math.random() * 99999, {width: 600});"/>
                 -->
                 <%if(PrintVisible){%>
-                    <input type="image" src="img/checkout_ti_final_form1_29.png" onclick="if(document.getElementById('chb_gift') != null)AddReconciliation2(2, false, true, false); document.location.href='./report?query=invoice&varNameTran=<%=code_trans%>'" />
+                    <input type="image" src="img/checkout_ti_final_form1_29.png" onclick="if(document.getElementById('chb_gift') != null)AddReconciliation2(2, false, true); document.location.href='./report?query=invoice&varNameTran=<%=code_trans%>'" />
                 <%}%>
                 <%if(DeleteVisible){%>
                 <input type="image" src="img/checkout_ti_final_form1_21.png"  onclick="AddReconciliation(6);" />
                 <%}%>
                 <%if(SaveVisible){%>
-                <input type="image" src="img/checkout_ti_final_form1_34.png"  onclick="AddReconciliation2(2, false, true, true);" />
+                <input type="image" src="img/checkout_ti_final_form1_34.png"  onclick="AddReconciliation2(2, true, true);" />
                 <%}%>
                 <%if(RefundVisible){%>
                 <input type="image" src="img/checkout_ti_final_form1_28.png"
