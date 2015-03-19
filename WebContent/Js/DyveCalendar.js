@@ -191,14 +191,14 @@ DayPilotCalendar.saveAppointment = function (start, end, column, event) {
 			                  		var data = "["+xmlRequestAppointment.responseText+"]"
 				                  	
 				                    var appointments = jQuery.parseJSON(data);
-				                    sendcomfrimEmail(appointments[0].ServerId, idEmployee, idCustomer, false);
+				                    sendcomfrimEmail(appointments[0].ServerId, idEmployee, idCustomer, true);
 			                  	}
 							}
                         }
                     };
                    
-                    
-                    xmlRequestAppointment.open("POST", "ScheduleManager?optype=NEW&start=" + newStartUTC + "&end=" + newEndUTC + "&idnewemployee=" + idEmployee + "&idcustomer=" + idCustomer + "&idservice=" + idService + "&idlocation=" + idLocation + "&dateutc=" + newCurrentDate + "&pageNum=" + pageNum + "&comment=" + comment+ "&req=" + req + "&browser=" + browser_name + "&underEND=" + underEND + "&reshedule=" + reshedule + "&idb=" + id_booking);
+                    var datetime = new Date().getTime();
+                    xmlRequestAppointment.open("POST", "ScheduleManager?optype=NEW&start=" + newStartUTC + "&end=" + newEndUTC +"&datetime="+datetime+ "&idnewemployee=" + idEmployee + "&idcustomer=" + idCustomer + "&idservice=" + idService + "&idlocation=" + idLocation + "&dateutc=" + newCurrentDate + "&pageNum=" + pageNum + "&comment=" + comment+ "&req=" + req + "&browser=" + browser_name + "&underEND=" + underEND + "&reshedule=" + reshedule + "&idb=" + id_booking);
                     xmlRequestAppointment.setRequestHeader("Accept-Encoding", "text/html; charset=utf-8");
                     xmlRequestAppointment.send('');
                 }

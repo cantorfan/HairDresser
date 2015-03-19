@@ -8,7 +8,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.xu.swan.bean.Appointment;
 import org.xu.swan.bean.Customer;
@@ -43,92 +45,88 @@ public class MailService {
 			String time = null;
 			String employeeName = "";
 			String serviceItem = "";
-			for(int i=0; i<appointments.size(); i++){
-
-				Appointment appointment = appointments.get(i);
-
-				Service service = Service.findById(appointment.getService_id());
-				Employee employee = Employee.findById(appointment.getEmployee_id());
-
-				if(employeeName.indexOf(employee.getFname()+" "+employee.getLname()) == -1)
-					employeeName += employee.getFname()+" "+employee.getLname() + ", ";
-
-
-				serviceItem += service.getName();
-				if((i+1)<appointments.size())
-				serviceItem +=",  ";
-
-				if(date==null){
-					date = sdf.format(appointment.getApp_dt());
+			log.debug("appointments:\n"+appointments);
+			if(appointments.size()>0){
+				for(int i=0; i<appointments.size(); i++){
+	
+					Appointment appointment = appointments.get(i);
+	
+					Service service = Service.findById(appointment.getService_id());
+					Employee employee = Employee.findById(appointment.getEmployee_id());
+	
+					if(employeeName.indexOf(employee.getFname()+" "+employee.getLname()) == -1)
+						employeeName += employee.getFname()+" "+employee.getLname() + ", ";
+	
+					serviceItem += service.getName();
+					if((i+1)<appointments.size())
+					serviceItem +=",  ";
+	
+					if(date==null){
+						date = sdf.format(appointment.getApp_dt());
+					}
+					if(time==null){
+						time = timeSdf.format(appointment.getSt_time());
+					}
 				}
-				if(time==null){
-					time = timeSdf.format(appointment.getSt_time());
+	
+				
+				content = content.replace("{customerName}", customer.getFname()+" "+customer.getLname());
+				content = content.replace("{operator}", employeeName);
+				content = content.replace("{service}", serviceItem);
+				content = content.replace("{dateTime}", date+" "+time);
+				
+				
+				
+				int locId = appointments.get(0).getLocation_id();
+				content = this.locationInfo(content, locId);
+				/*
+				String rows = "";
+				for(int i=0; i<appointments.size(); i++){
+	
+					Appointment appointment = appointments.get(i);
+	
+					Service service = Service.findById(appointment.getService_id());
+					Employee employee = Employee.findById(appointment.getEmployee_id());
+	
+					rows +="<tr>";
+					rows +="<td>"+employee.getFname()+" "+employee.getLname()+"</td>";
+					rows +="<td>"+service.getName()+"</td>";
+	
+					String date = null;
+					String time = null;
+					if(date==null){
+						date = sdf.format(appointment.getApp_dt());
+					}
+					if(time==null){
+						time = timeSdf.format(appointment.getSt_time());
+					}
+					rows +="<td>"+date+" "+time+"</td>";
+					rows +="</tr>";
 				}
+				content = content.replaceAll("\\$.+\\$", rows);
+				content = content.replace("{customerName}", customer.getFname()+" "+customer.getLname());
+				*/
+				log.debug("appointment confirmation email to:"+email+", content:"+content);
+	
+				Customer.updateCustomerEmail(customerId, email);
+	
+				//send email
+				//Boolean result = SendMailHelper.sendHTML(content, "Appointment Confirmation Email", email);
+				Boolean result = SendMailHelper.send(content, "Appointment Confirmation Email", email);
+	
+				for(int i=0; i<appointments.size()&&result; i++){
+					Appointment appointment = appointments.get(i);
+					try {
+						Appointment.updateChangeSendMailStatus(appointment.getId(), 1, true);
+					} catch (Exception e) {
+						e.printStackTrace();
+						log.error(e.getMessage(), e);
+						throw new Exception(e.getMessage()+", appointment ID:"+appointment.getId());
+					}
+				}
+				return result.toString();
 			}
-
-			if(employeeName.length() > 0)
-				employeeName = employeeName.substring(0, employeeName.length() -2);
-
-			content = content.replace("{customerName}", customer.getFname()+" "+customer.getLname());
-			content = content.replace("{operator}", employeeName);
-			content = content.replace("{service}", serviceItem);
-			content = content.replace("{dateTime}", date+" "+time);
-
-			int locId = customer.getLocation_id();
-			content = this.locationInfo(content, locId);
-			
-			/*
-			String rows = "";
-			for(int i=0; i<appointments.size(); i++){
-
-				Appointment appointment = appointments.get(i);
-
-				Service service = Service.findById(appointment.getService_id());
-				Employee employee = Employee.findById(appointment.getEmployee_id());
-
-				rows +="<tr>";
-				rows +="<td>"+employee.getFname()+" "+employee.getLname()+"</td>";
-				rows +="<td>"+service.getName()+"</td>";
-
-				String date = null;
-				String time = null;
-				if(date==null){
-					date = sdf.format(appointment.getApp_dt());
-				}
-				if(time==null){
-					time = timeSdf.format(appointment.getSt_time());
-				}
-				rows +="<td>"+date+" "+time+"</td>";
-				rows +="</tr>";
-			}
-			content = content.replaceAll("\\$.+\\$", rows);
-			content = content.replace("{customerName}", customer.getFname()+" "+customer.getLname());
-			*/
-
-			log.debug("appointment confirmation email to:"+email+", content:"+content);
-
-			customer.updateCustomer(customer.getId(), customer.getFname(), customer.getLname(), email,
-				customer.getPhone(), customer.getCell_phone(), customer.getType(), customer.getLocation_id(), 
-				customer.getReq(), customer.getRem(), customer.getRemdays(), customer.getComment(), customer.getEmployee_id(),
-				customer.getWork_phone_ext(), customer.getMale_female(), customer.getAddress(), customer.getCity(), 
-				customer.getState(), customer.getZip_code(), customer.getPicture(), customer.getDate_of_birth(), customer.getCountry());
-
-			//send email
-			//Boolean result = SendMailHelper.sendHTML(content, "Appointment Confirmation Email", email);
-			Boolean result = SendMailHelper.send(content, "Appointment Confirmation Email", email);
-
-			for(int i=0; i<appointments.size()&&result; i++){
-				Appointment appointment = appointments.get(i);
-				try {
-					Appointment.updateChangeSendMailStatus(appointment.getId(), 1, true);
-				} catch (Exception e) {
-					e.printStackTrace();
-					log.error(e.getMessage(), e);
-					throw new Exception(e.getMessage()+", appointment ID:"+appointment.getId());
-				}
-			}
-
-			return result.toString();
+			return "appointments size is: 0";
 		} catch (Exception e) {
 			throw new Exception(e.getMessage());
 		}
@@ -168,14 +166,14 @@ public class MailService {
 			content = content.replace("{service}", serviceItem);
 			content = content.replace("{dateTime}", date+" "+time);
       	  
-			int locId = customer.getLocation_id();
+			int locId = appointment.getLocation_id();
 			content = this.locationInfo(content, locId);
 			
 			log.debug("appointment confirmation email to:"+email+", content:"+content);
       	  
 			//send email
 			Boolean result = SendMailHelper.send(content, "Appointment Confirmation Email", email);
-      	  
+			Customer.updateCustomerEmail(appointment.getCustomer_id(), email);
 			return result.toString();
 		} catch (Exception e) {
 			log.debug(e.getMessage(), e);
@@ -210,6 +208,7 @@ public class MailService {
 	                text = this.locationInfo(text, locId);
 	                
 	                SendMailHelper.send(text, "Appointment Canceled", email);
+	                Customer.updateCustomerEmail(customer.getId(), email);
 				}
 				return "send mail successed!";
 			}else{
@@ -221,11 +220,17 @@ public class MailService {
 	}
 	
 	public void sendMailRemindeAppointment(){
-		Date date = new Date();
+		//Date date = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat timeSdf = new SimpleDateFormat("HH:mm:ss");
 		
-		Calendar fromDate = Calendar.getInstance();
+		String timezoneID = Location.getTimezoneForLocation(1);
+		
+		Calendar date = Calendar.getInstance();
+		if(timezoneID != null && "".equals(timezoneID)==false)
+			date.setTimeZone(TimeZone.getTimeZone(timezoneID));
+		
+		Calendar fromDate = (Calendar) date.clone();
 		fromDate.add(Calendar.HOUR_OF_DAY, 3);
 		
 		String filter = " where "+Appointment.IS_SEND_REMINDER_MAIL+"=false and " + 
@@ -241,7 +246,7 @@ public class MailService {
 			for (Appointment appointment : as) {
 				
 				int customerID = appointment.getCustomer_id();
-				String content =  sdf.format(date)+" "+timeSdf.format(appointment.getSt_time());
+				String content =  sdf.format(date.getTime())+" "+timeSdf.format(appointment.getSt_time());
 				
 				ContentInfo info = new ContentInfo();
 				info.appt = appointment;
@@ -346,7 +351,7 @@ public class MailService {
 				text = text.replace("{to}", to);
 				text = text.replace("{day}", day);
 				
-				int locId = customer.getLocation_id();
+				int locId = app.getLocation_id();
 				text = this.locationInfo(text, locId);
 				
 				log.debug("send batch app email \nemail:"+email+"\ncontent:\n"+text);
@@ -372,10 +377,13 @@ public class MailService {
 	    	text = text.replace("{customerName}", customer.getFname()+" "+customer.getLname());
 	    	text = text.replace("{dateTime}", sdf.format(new Date()));
 	    	
-	    	int locId = customer.getLocation_id();
+	    	int locId = 1;//customer.getLocation_id();
 			text = this.locationInfo(text, locId);
 	    	
 	    	log.debug("send check out email to: "+email+"\n content:\n"+text);
+	    	
+	    	
+	    	Customer.updateCustomerEmail(customer.getId(), email);
 	    	
 	    	return SendMailHelper.sendAttatchment(text, "Check Out Notification", email, file);
 		} catch (Exception e) {
@@ -403,19 +411,19 @@ public class MailService {
 	private String locationInfo(String text, int locationId){
 		Location loc = Location.findById(locationId);
 		
-		text = text.replace("{address}", loc.getAddress());
-		text = text.replace("{address2}", loc.getAddress2());
-		text = text.replace("{blogger}", loc.getBlogger());
-		text = text.replace("{city}", loc.getCity());
-		text = text.replace("{country}", loc.getCountry());
-		text = text.replace("{currency}", loc.getCurrency());
-		text = text.replace("{locEmail}", loc.getEmail());
-		text = text.replace("{fax}", loc.getFax());
-		text = text.replace("{locName}", loc.getName());
-		text = text.replace("{phone}", loc.getPhone());
-		text = text.replace("{state}", loc.getState());
-		text = text.replace("{timezone}", loc.getTimezone());
-		text = text.replace("{twitter}", loc.getTwitter());
+		text = text.replace("{address}", StringUtils.defaultString(loc.getAddress(), ""));
+		text = text.replace("{address2}", StringUtils.defaultString(loc.getAddress2(), ""));
+		text = text.replace("{blogger}", StringUtils.defaultString(loc.getBlogger(), ""));
+		text = text.replace("{city}", StringUtils.defaultString(loc.getCity(), ""));
+		text = text.replace("{country}", StringUtils.defaultString(loc.getCountry(), ""));
+		text = text.replace("{currency}", StringUtils.defaultString(loc.getCurrency(), ""));
+		text = text.replace("{locEmail}", StringUtils.defaultString(loc.getEmail(), ""));
+		text = text.replace("{fax}", StringUtils.defaultString(loc.getFax(), ""));
+		text = text.replace("{locName}", StringUtils.defaultString(loc.getName(), ""));
+		text = text.replace("{phone}", StringUtils.defaultString(loc.getPhone(), ""));
+		text = text.replace("{state}", StringUtils.defaultString(loc.getState(), ""));
+		text = text.replace("{timezone}", StringUtils.defaultString(loc.getTimezone(), ""));
+		text = text.replace("{twitter}", StringUtils.defaultString(loc.getTwitter(), ""));
 		
 		return text;
 	}

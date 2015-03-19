@@ -336,123 +336,124 @@
             if (show){
                 if (div.style.display == "none"){
                     div.style.display = "";
-//                    var listidemp = "";
-//                    if (!document.getElementById("empckb").checked){
-//                        var chkEmp = document.getElementById("checkEmployee").getElementsByTagName("input");
-//                        var chk = false;
-//                        for (var i in chkEmp){
-//                            if (chkEmp[i].checked){
-//                                if (chk){
-//                                    listidemp = listidemp + "," + chkEmp[i].id;
-//                                } else {
-//                                    listidemp = listidemp + chkEmp[i].id;
-//                                    chk = true;
-//                                }
-//                            }
-//                        }
-//                    document.getElementById("savelistemp").value = listidemp;
-//                    }
-//                    var listidserv = "";
-//                    if (!document.getElementById("servckb").checked){
-//                        var chkSvc = document.getElementById("checkService").getElementsByTagName("input");
-//                        var chk2 = false;
-//                        for (var i in chkSvc){
-//                            if (chkSvc[i].checked){
-//                                if (chk2){
-//                                    listidserv = listidserv + "," + chkSvc[i].id;
-//                                } else {
-//                                    listidserv = listidserv + chkSvc[i].id;
-//                                    chk2 = true;
-//                                }
-//                            }
-//                        }
-//                    document.getElementById("savelistsvc").value = listidserv;
-//                    }
-//                    var listidprod = "";
-//                    if (!document.getElementById("prodckb").checked){
-//                        var chkPrd = document.getElementById("checkProduct").getElementsByTagName("input");
-//                        var chk3 = false;
-//                        for (var i in chkPrd){
-//                            if (chkPrd[i].checked){
-//                                if (chk3){
-//                                    listidprod = listidprod + "," + chkPrd[i].id;
-//                                } else {
-//                                    listidprod = listidprod + chkPrd[i].id;
-//                                    chk3 = true;
-//                                }
-//                            }
-//                        }
-//                    document.getElementById("savelistprod").value = listidprod;
-//                    }
-
-//                    alert('prod'+document.getElementById("savelistprod").value);
-//                    alert('svc'+document.getElementById("savelistsvc").value);
-//                    alert('emp'+document.getElementById("savelistemp").value);
+                    var listidemp = "";
+                    if (!document.getElementById("empckb").checked){
+                        var chkEmp = document.getElementById("checkEmployee").getElementsByTagName("input");
+                        var chk = false;
+                        for (var i in chkEmp){
+                            if (chkEmp[i].checked){
+                                if (chk){
+                                    listidemp = listidemp + "," + chkEmp[i].id;
+                                } else {
+                                    listidemp = listidemp + chkEmp[i].id;
+                                    chk = true;
+                                }
+                            }
+                        }
+                    document.getElementById("savelistemp").value = listidemp;
+                    }
+                    var listidserv = "";
+                    if (!document.getElementById("servckb").checked){
+                        var chkSvc = document.getElementById("checkService").getElementsByTagName("input");
+                        var chk2 = false;
+                        for (var i in chkSvc){
+                            if (chkSvc[i].checked){
+                                if (chk2){
+                                    listidserv = listidserv + "," + chkSvc[i].id;
+                                } else {
+                                    listidserv = listidserv + chkSvc[i].id;
+                                    chk2 = true;
+                                }
+                            }
+                        }
+                    document.getElementById("savelistsvc").value = listidserv;
+                    }
+                    var listidprod = "";
+                    if (!document.getElementById("prodckb").checked){
+                        var chkPrd = document.getElementById("checkProduct").getElementsByTagName("input");
+                        var chk3 = false;
+                        for (var i in chkPrd){
+                            if (chkPrd[i].checked){
+                                if (chk3){
+                                    listidprod = listidprod + "," + chkPrd[i].id;
+                                } else {
+                                    listidprod = listidprod + chkPrd[i].id;
+                                    chk3 = true;
+                                }
+                            }
+                        }
+                    document.getElementById("savelistprod").value = listidprod;
+                    }
+					/*
+                    alert('prod'+document.getElementById("savelistprod").value);
+                    alert('svc'+document.getElementById("savelistsvc").value);
+                    alert('emp'+document.getElementById("savelistemp").value);
+                    */
                 } else {
-//                    var refresh= false;
-//                    var listidemp = "";
-//                    if (!document.getElementById("empckb").checked){
-//                        var chkEmp = document.getElementById("checkEmployee").getElementsByTagName("input");
-//                        var chk = false;
-//                        for (var i in chkEmp){
-//                            if (chkEmp[i].checked){
-//                                if (chk){
-//                                    listidemp = listidemp + "," + chkEmp[i].id;
-//                                } else {
-//                                    listidemp = listidemp + chkEmp[i].id;
-//                                    chk = true;
-//                                }
-//                            }
-//                        }
-//                    if ((document.getElementById("savelistemp").value!='' || listidemp!='') && document.getElementById("savelistemp").value != listidemp){
-//                        refresh = true;
-//                    }
-//                    }
-//                    var listidserv = "";
-//                    if (!document.getElementById("servckb").checked && !refresh){
-//                        var chkSvc = document.getElementById("checkService").getElementsByTagName("input");
-//                        var chk2 = false;
-//                        for (var i in chkSvc){
-//                            if (chkSvc[i].checked){
-//                                if (chk2){
-//                                    listidserv = listidserv + "," + chkSvc[i].id;
-//                                } else {
-//                                    listidserv = listidserv + chkSvc[i].id;
-//                                    chk2 = true;
-//                                }
-//                            }
-//                        }
-//                        if ((document.getElementById("savelistsvc").value!= '' || listidserv!='') && document.getElementById("savelistsvc").value != listidserv){
-//                            refresh = true;
-//                        }
-//                    }
-//                    var listidprod = "";
-//                    if (!document.getElementById("prodckb").checked && !refresh){
-//                        var chkPrd = document.getElementById("checkProduct").getElementsByTagName("input");
-//                        var chk3 = false;
-//                        for (var i in chkPrd){
-//                            if (chkPrd[i].checked){
-//                                if (chk3){
-//                                    listidprod = listidprod + "," + chkPrd[i].id;
-//                                } else {
-//                                    listidprod = listidprod + chkPrd[i].id;
-//                                    chk3 = true;
-//                                }
-//                            }
-//                        }
-//                        if ((document.getElementById("savelistprod").value!= '' || listidprod!='') && document.getElementById("savelistprod").value != listidprod){
-//                            refresh = true;
-//                        }
-//                    }
+                    var refresh= false;
+                    var listidemp = "";
+                    if (!document.getElementById("empckb").checked){
+                        var chkEmp = document.getElementById("checkEmployee").getElementsByTagName("input");
+                        var chk = false;
+                        for (var i in chkEmp){
+                            if (chkEmp[i].checked){
+                                if (chk){
+                                    listidemp = listidemp + "," + chkEmp[i].id;
+                                } else {
+                                    listidemp = listidemp + chkEmp[i].id;
+                                    chk = true;
+                                }
+                            }
+                        }
+                    if ((document.getElementById("savelistemp").value!='' || listidemp!='') && document.getElementById("savelistemp").value != listidemp){
+                        refresh = true;
+                    }
+                    }
+                    var listidserv = "";
+                    if (!document.getElementById("servckb").checked && !refresh){
+                        var chkSvc = document.getElementById("checkService").getElementsByTagName("input");
+                        var chk2 = false;
+                        for (var i in chkSvc){
+                            if (chkSvc[i].checked){
+                                if (chk2){
+                                    listidserv = listidserv + "," + chkSvc[i].id;
+                                } else {
+                                    listidserv = listidserv + chkSvc[i].id;
+                                    chk2 = true;
+                                }
+                            }
+                        }
+                        if ((document.getElementById("savelistsvc").value!= '' || listidserv!='') && document.getElementById("savelistsvc").value != listidserv){
+                            refresh = true;
+                        }
+                    }
+                    var listidprod = "";
+                    if (!document.getElementById("prodckb").checked && !refresh){
+                        var chkPrd = document.getElementById("checkProduct").getElementsByTagName("input");
+                        var chk3 = false;
+                        for (var i in chkPrd){
+                            if (chkPrd[i].checked){
+                                if (chk3){
+                                    listidprod = listidprod + "," + chkPrd[i].id;
+                                } else {
+                                    listidprod = listidprod + chkPrd[i].id;
+                                    chk3 = true;
+                                }
+                            }
+                        }
+                        if ((document.getElementById("savelistprod").value!= '' || listidprod!='') && document.getElementById("savelistprod").value != listidprod){
+                            refresh = true;
+                        }
+                    }
 
 //                    alert('prod'+document.getElementById("savelistprod").value+"---"+listidprod);
 //                    alert('svc'+document.getElementById("savelistsvc").value+"---"+listidserv);
 //                    alert('emp'+document.getElementById("savelistemp").value+"---"+listidemp);
 
                     div.style.display = "none";
-//                    if (refresh){
-//                        dataload('0','0');
-//                    }
+                    if (refresh){
+                        dataload('0','0');
+                    }
                 }
             }else {
                 div.style.display = "none";

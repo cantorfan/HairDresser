@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.TimeZone;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -22,6 +23,7 @@ import org.xu.swan.bean.Appointment;
 import org.xu.swan.bean.Customer;
 import org.xu.swan.bean.EmailTemplate;
 import org.xu.swan.bean.Employee;
+import org.xu.swan.bean.Location;
 import org.xu.swan.bean.Service;
 import org.xu.swan.bean.User;
 import org.xu.swan.service.MailService;
@@ -117,6 +119,12 @@ public class BatchAppointmentServlet extends HttpServlet {
 			Calendar fromTimeCal = Calendar.getInstance();
 			Calendar toTimeCal = Calendar.getInstance();
 			
+			String timezoneID = Location.getTimezoneForLocation(1);
+			if(timezoneID != null && "".equals(timezoneID)==false){
+				fromTimeCal.setTimeZone(TimeZone.getTimeZone(timezoneID));
+				toTimeCal.setTimeZone(TimeZone.getTimeZone(timezoneID));
+			}
+			
 			fromTimeCal.setTime(sdf.parse(fromTime));
 			toTimeCal.setTime(sdf.parse(toTime));
 			
@@ -184,6 +192,12 @@ public class BatchAppointmentServlet extends HttpServlet {
 			
 			Calendar fromTimeCal = Calendar.getInstance();
 			Calendar toTimeCal = Calendar.getInstance();
+			
+			String timezoneID = Location.getTimezoneForLocation(1);
+			if(timezoneID != null && "".equals(timezoneID)==false){
+				fromTimeCal.setTimeZone(TimeZone.getTimeZone(timezoneID));
+				toTimeCal.setTimeZone(TimeZone.getTimeZone(timezoneID));
+			}
 			
 			fromTimeCal.setTime(sdf.parse(fromTime));
 			toTimeCal.setTime(sdf.parse(toTime));

@@ -137,6 +137,7 @@ public class CustomerData extends HttpServlet {
             String cust_comm = request.getParameter("custcomm");
             String cust_id = request.getParameter("cust_id");
             String comment = request.getParameter("comment");
+            String datetimeStr = request.getParameter("datetime");
             Boolean reminder = false;
             int reminderDays = 0;
             int idLocation = -1;
@@ -148,6 +149,12 @@ public class CustomerData extends HttpServlet {
             java.util.Date currentDate = null;
             try {
                 idLocation = Integer.parseInt(request.getParameter("idlocation"));
+            } catch (Exception ex) {
+            }
+            Date today = null;
+            try {
+            	today = new java.util.Date();
+           	  	today.setTime(Long.parseLong(datetimeStr));
             } catch (Exception ex) {
             }
             try {
@@ -204,7 +211,7 @@ public class CustomerData extends HttpServlet {
             catch (Exception ex) {
             }
 
-            responseXML = ScheduleManager.eventsArrayIfUpdate(idLocation, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, null, null, 0);
+            responseXML = ScheduleManager.eventsArrayIfUpdate(idLocation, today, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, null, null, 0);
             //System.out.println(responseXML);
             }
         }

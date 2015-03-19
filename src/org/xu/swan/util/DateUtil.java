@@ -70,6 +70,12 @@ public final class DateUtil {
     }
 
     public static java.sql.Date toSqlDate(Date date){
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+    	try {
+			date = sdf.parse(sdf.format(date));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
         return new java.sql.Date(date.getTime());
     }
 

@@ -8,6 +8,10 @@ var batchAppointment = function(appID){
 	jQuery.get("batchAppointment", {"action": "batch_type", "appointmentID": appID, "timestamp" : new Date().getTime()}, 
 		function(data, textStatus, response){
 			var jsonData = jQuery.parseJSON(response.responseText);
+			
+			var date = new Date();
+			var from = (date.getMonth()+1)+"/"+date.getDate()+"/"+date.getFullYear();
+			
 			if(jsonData.status){
 				
 				var batchType = jsonData.batchType;
@@ -16,22 +20,22 @@ var batchAppointment = function(appID){
 					tip: "select a item & date not null",
 					visiable: true,
 					form:[
-					    {type:"radio", name: "standing_app_item", className:"standing_app_item", "value": ["Weekly", "Monthly", "Remove"]},
-						{type:"text", label:"from", placeholder:"from date time", className:"standing_app_from tcal"},
+					    {type:"radio",name: "standing_app_item", className:"standing_app_item", "value": ["Weekly", "Monthly", "Remove"]},
+						//{type:"text", label:"from", placeholder:"from date time", className:"standing_app_from tcal"},
 						{type:"text", label:"to", placeholder:"to date time", className:"standing_app_to tcal"}
 					],
 					btn1: {text:"Approve", callback : function(form, close){
 						//pop.enter({message:"this tip message!","visiable" : true});
 						if(form.length>0){
 							var select = jQuery('input:radio[name="standing_app_item"]:checked').val();
-							var from = jQuery(".standing_app_from").val();
+							//var from = jQuery(".standing_app_from").val();
 							var to = jQuery(".standing_app_to").val();
 							if(!select){
 								pop.enter({message:"please select a item!","visiable" : true, "type": "warning"});
 							}else if(select=="Remove"){
 								remove(close);
-							}else if(!from){
-								pop.enter({message:"from is null","visiable" : true, "type": "warning"});
+							//}else if(!from){
+							//	pop.enter({message:"from is null","visiable" : true, "type": "warning"});
 							}else if(!to){
 								pop.enter({message:"to is null","visiable" : true, "type": "warning"});
 							}else {
@@ -55,6 +59,11 @@ var batchAppointment = function(appID){
 						}else{
 							jQuery('input:radio[value="Remove"]').attr("disabled", "disabled");
 						}
+						
+						jQuery("input:radio").live("change", function(){
+							jQuery(".standing_app_to").val("");
+						});
+						
 					}
 				}
 				pop.form(batchOptions);

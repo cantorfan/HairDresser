@@ -77,6 +77,9 @@ function f_tcalGetHTML (d_date) {
 
 	// print calendar table
 	var n_date, n_month, d_current = new Date(d_firstDay);
+	
+	 var type = jQuery('input:radio[name="standing_app_item"]:checked').val();
+	 var currDate = new Date();
 	while (d_current.getMonth() == d_date.getMonth() ||
 		d_current.getMonth() == d_firstDay.getMonth()) {
 
@@ -96,7 +99,18 @@ function f_tcalGetHTML (d_date) {
 			if (d_current.valueOf() == d_selected.valueOf())
 				a_class[a_class.length] = s_pfx + 'Selected';
 
-			s_html += '<td' + f_tcalRelDate(d_current) + (a_class.length ? ' class="' + a_class.join(' ') + '">' : '>') + n_date + '</td>';
+			if(type=="Weekly"){
+				if(d_current.getDay()==currDate.getDay())
+					s_html += '<td' + f_tcalRelDate(d_current) + (a_class.length ? ' class="' + a_class.join(' ') + '">' : '>') + n_date + '</td>';
+				else
+					s_html += '<td style="color:silver; cursor:default;">' + n_date + '</td>';
+			}else if(type == "Monthly")
+				if(d_current.getDate() == currDate.getDate() )
+					s_html += '<td' + f_tcalRelDate(d_current) + (a_class.length ? ' class="' + a_class.join(' ') + '">' : '>') + n_date + '</td>';
+				else
+					s_html += '<td style="color:silver; cursor:default;">' + n_date + '</td>';
+			else
+				s_html += '<td' + f_tcalRelDate(d_current) + (a_class.length ? ' class="' + a_class.join(' ') + '">' : '>') + n_date + '</td>';
 			d_current.setDate(++n_date);
 		}
 		s_html +='</tr>';

@@ -587,6 +587,22 @@ public class Customer {
         }
         return cust;
     }
+    
+    public static void updateCustomerEmail(int customerId, String email) throws Exception{
+        DBManager dbm = null;
+
+        dbm = new DBManager();
+        PreparedStatement pst = dbm.getPreparedStatement("UPDATE customer SET " +  EMAIL +"=? WHERE " + ID + "=?");
+        pst.setString(1, email);
+        pst.setInt(2, customerId);
+
+        int rows = pst.executeUpdate();
+       
+        pst.close();
+        if (dbm != null)
+            dbm.close();
+    }
+    
     public static Customer updateCustomerFromQuickSchedulePopup(int id, String fname, String lname, String email, String phone, String cell, int loc_id, int emp_id, String work_phone_ext, int male_female, String address, String city, String state, String zip_code, Date b_date, int country) {
         Customer cust = null;
         DBManager dbm = null;

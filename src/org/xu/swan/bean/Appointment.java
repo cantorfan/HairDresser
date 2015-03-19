@@ -1384,4 +1384,18 @@ public class Appointment implements Cloneable{
         return hm;
     }
 
+	@Override
+	public String toString() {
+		return "Appointment [id=" + id + ", customer_id=" + customer_id
+				+ ", employee_id=" + employee_id + ", location_id="
+				+ location_id + ", service_id=" + service_id + ", category_id="
+				+ category_id + ", ticket_id=" + ticket_id + ", price=" + price
+				+ ", app_dt=" + app_dt + ", st_time=" + st_time + ", et_time="
+				+ et_time + ", state=" + state + ", comment=" + comment
+				+ ", isSendAppointmentMail=" + isSendAppointmentMail
+				+ ", isSendReminderMail=" + isSendReminderMail + ", batchId="
+				+ batchId + ", batchType=" + batchType + ", request=" + request
+				+ "]";
+	}
+
 }

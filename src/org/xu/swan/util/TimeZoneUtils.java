@@ -59,9 +59,12 @@ public class TimeZoneUtils {
     }
     
     public static String getSalonTimezone() {
-        if (salonTimeZone == null){
-            salonTimeZone = Location.getTimezoneForLocation(1);
-        }
+    	String timezone = Location.getTimezoneForLocation(1);
+        if (salonTimeZone == null && timezone!=null && "".equals(timezone)==false){
+        	salonTimeZone = timezone;
+        }else
+        	salonTimeZone = getLocalTimeZone();
+        
         return salonTimeZone;
     }
 

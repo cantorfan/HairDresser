@@ -124,7 +124,9 @@ public class ScheduleManager extends HttpServlet {
               int employee_id = 0;
               int customer_id = 0;
               int app_new_id = 0;
-
+              
+              java.util.Date today = null;
+              
               if(request.getParameter("idlocation") != null)
                   idLocation = Integer.parseInt(request.getParameter("idlocation"));
 
@@ -135,6 +137,13 @@ public class ScheduleManager extends HttpServlet {
                   if(request.getParameter("dateutc") != null)
                   currentDate = (new SimpleDateFormat("yyyy/MM/dd")).parse(request.getParameter("dateutc"));
 
+                  if(request.getParameter("datetime")!=null){
+                	  //System.out.println(request.getParameter("datetime"));
+                	  today = new java.util.Date();
+                	  today.setTime(Long.parseLong(request.getParameter("datetime")));
+                	  //currentDate = (new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")).parse(request.getParameter("dateutc"));
+                  }
+                  
                   if(request.getParameter("pageNum") != null)
                   pageNum = Integer.parseInt(request.getParameter("pageNum"));
 
@@ -615,31 +624,31 @@ public class ScheduleManager extends HttpServlet {
               response.setCharacterEncoding("UTF-8");
 
               if (operation.equals("MOV") || operation.equals("REZ")){
-                  response.getWriter().write(generateAroundEventsArray(idLocation, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, st_old, et_old, emp_old));
+                  response.getWriter().write(generateAroundEventsArray(idLocation,  today, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, st_old, et_old, emp_old));
               }
               else if (operation.equals("NEW")){
                   if (added)
-                  response.getWriter().write(generateAroundEventsArray(idLocation, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, st_old, et_old, emp_old));
+                  response.getWriter().write(generateAroundEventsArray(idLocation,  today, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, st_old, et_old, emp_old));
               }
               else if (operation.equals("FLAG")){
                   if (customer_id == 0){
-                      response.getWriter().write(generateAroundEventsArray(idLocation, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, st_old, et_old, emp_old));
+                      response.getWriter().write(generateAroundEventsArray(idLocation,  today, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, st_old, et_old, emp_old));
                   }
                   else {
-                      response.getWriter().write(generateAroundEventsArrayFlag(idLocation, DateUtil.toSqlDate(currentDate), pageNum, st, et, customer_id));
+                      response.getWriter().write(generateAroundEventsArrayFlag(idLocation,  today, DateUtil.toSqlDate(currentDate), pageNum, st, et, customer_id));
                   }
               }
               else if (operation.equals("DEL")){
                   if (delete)
-                          response.getWriter().write("DELETEAPP^appoint_"+idAppointment+"^"+generateAroundEventsArray(idLocation, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, st_old, et_old, emp_old));
+                          response.getWriter().write("DELETEAPP^appoint_"+idAppointment+"^"+generateAroundEventsArray(idLocation,  today, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, st_old, et_old, emp_old));
 //                      response.getWriter().write("DELETEAPP:appoint_"+idAppointment);
                   if (delcust)
-                      response.getWriter().write(generateAroundEventsArray(idLocation, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, st_old, et_old, emp_old));
+                      response.getWriter().write(generateAroundEventsArray(idLocation,  today, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, st_old, et_old, emp_old));
 //                      response.getWriter().write(generateEventByIdApp(idLocation, DateUtil.toSqlDate(currentDate), pageNum, idAppointment));
               }  else if (operation.equals("REFRESHALL")){
                   response.getWriter().write("REFRESHALL");
               }  else {
-                  response.getWriter().write(generateEventsArray(idLocation, DateUtil.toSqlDate(currentDate), pageNum));
+                  response.getWriter().write(generateEventsArray(idLocation,  today, DateUtil.toSqlDate(currentDate), pageNum));
               }
           }
 //          }
@@ -784,7 +793,7 @@ public class ScheduleManager extends HttpServlet {
         return rez;
     }
 
-    public static String eventsArrayIfUpdate(int idLocation, Date currentDate, int pageNum, Time st, Time et, int employee_id, Time st_old, Time et_old, int emp_old) {
+    public static String eventsArrayIfUpdate(int idLocation, java.util.Date today, Date currentDate, int pageNum, Time st, Time et, int employee_id, Time st_old, Time et_old, int emp_old) {
         scheduleArrayLeftOcuppied.clear();
         employeeListOrder.clear();
         maxWidthPerCell.clear();
@@ -803,10 +812,10 @@ public class ScheduleManager extends HttpServlet {
         catch (Exception ex) {
             System.out.println("error eventsArrayIfUpdate");
         }
-        return generateAroundEventsArray(idLocation, currentDate, pageNum, st, et, employee_id, st_old, et_old, emp_old);
+        return generateAroundEventsArray(idLocation, today, currentDate, pageNum, st, et, employee_id, st_old, et_old, emp_old);
     }
 
-    public  String generateEventsArray(int idLocation, Date currentDate, int pageNum) {
+    public  String generateEventsArray(int idLocation, java.util.Date today, Date currentDate, int pageNum) {
         String responseAll = " ";
 
         SimpleDateFormat formatter = new SimpleDateFormat("MMMM d, yyyy HH:mm:ss");
@@ -1005,12 +1014,11 @@ public class ScheduleManager extends HttpServlet {
 //                            tzint = 0;
 //                        }
 
-                        java.util.Date date = Calendar.getInstance().getTime();
-                        int curTime = date.getHours() * 60 + date.getMinutes();
+                        int curTime = today.getHours() * 60 + today.getMinutes();
 //                        int curTime = date.getHours() * 60 + date.getMinutes() - tzint;
                         int schTimt = temp.getSt_time().getHours() * 60 + temp.getSt_time().getMinutes();
                         java.util.Date schDate = new Date(temp.getApp_dt().getTime());
-                        java.util.Date curDate = new Date(date.getTime());
+                        java.util.Date curDate = new Date(today.getTime());
                         Calendar calSql = Calendar.getInstance();
                         Calendar calUtil = Calendar.getInstance();
                         calSql.setTime(schDate);
@@ -1087,7 +1095,7 @@ public class ScheduleManager extends HttpServlet {
         }
         return responseAll.substring(0, responseAll.length() - 1);
     }
-    public static String generateAroundEventsArray(int idLocation, Date currentDate, int pageNum, Time st, Time et, int employee_id, Time st_old, Time et_old, int emp_old) {
+    public static String generateAroundEventsArray(int idLocation, java.util.Date today, Date currentDate, int pageNum, Time st, Time et, int employee_id, Time st_old, Time et_old, int emp_old) {
         String responseAll = " ";
 
         SimpleDateFormat formatter = new SimpleDateFormat("MMMM d, yyyy HH:mm:ss");
@@ -1280,12 +1288,11 @@ public class ScheduleManager extends HttpServlet {
 //                            e.printStackTrace();
 //                            tzint = 0;
 //                        }
-                        java.util.Date date = Calendar.getInstance().getTime();
-                        int curTime = date.getHours() * 60 + date.getMinutes();
+                        int curTime = today.getHours() * 60 + today.getMinutes();
 //                        int curTime = date.getHours() * 60 + date.getMinutes()-tzint;
                         int schTimt = temp.getSt_time().getHours() * 60 + temp.getSt_time().getMinutes();
                         java.util.Date schDate = new Date(temp.getApp_dt().getTime());
-                        java.util.Date curDate = new Date(date.getTime());
+                        java.util.Date curDate = new Date(today.getTime());
                         Calendar calSql = Calendar.getInstance();
                         Calendar calUtil = Calendar.getInstance();
                         calSql.setTime(schDate);
@@ -1352,7 +1359,7 @@ public class ScheduleManager extends HttpServlet {
         return responseAll.substring(0, responseAll.length() - 1);
     }
 
-    public static String generateAroundEventsArrayFlag(int idLocation, Date currentDate, int pageNum, Time st, Time et, int customer_id) {
+    public static String generateAroundEventsArrayFlag(int idLocation, java.util.Date today, Date currentDate, int pageNum, Time st, Time et, int customer_id) {
         String responseAll = " ";
 
         SimpleDateFormat formatter = new SimpleDateFormat("MMMM d, yyyy HH:mm:ss");
@@ -1554,12 +1561,11 @@ public class ScheduleManager extends HttpServlet {
 //                            e.printStackTrace();
 //                            tzint = 0;
 //                        }
-                        java.util.Date date = Calendar.getInstance().getTime();
-                        int curTime = date.getHours() * 60 + date.getMinutes();
+                        int curTime = today.getHours() * 60 + today.getMinutes();
 //                        int curTime = date.getHours() * 60 + date.getMinutes()-tzint;
                         int schTimt = temp.getSt_time().getHours() * 60 + temp.getSt_time().getMinutes();
                         java.util.Date schDate = new Date(temp.getApp_dt().getTime());
-                        java.util.Date curDate = new Date(date.getTime());
+                        java.util.Date curDate = new Date(today.getTime());
                         Calendar calSql = Calendar.getInstance();
                         Calendar calUtil = Calendar.getInstance();
                         calSql.setTime(schDate);
@@ -1626,7 +1632,7 @@ public class ScheduleManager extends HttpServlet {
         return responseAll.substring(0, responseAll.length() - 1);
     }
 
-    public static String generateEventByIdApp(int idLocation, Date currentDate, int pageNum, int app_id) {
+    public static String generateEventByIdApp(int idLocation, java.util.Date today, Date currentDate, int pageNum, int app_id) {
         String responseAll = " ";
 
         SimpleDateFormat formatter = new SimpleDateFormat("MMMM d, yyyy HH:mm:ss");
@@ -1810,12 +1816,11 @@ public class ScheduleManager extends HttpServlet {
 //                            e.printStackTrace();
 //                            tzint = 0;
 //                        }
-                        java.util.Date date = Calendar.getInstance().getTime();
-                        int curTime = date.getHours() * 60 + date.getMinutes();
+                        int curTime = today.getHours() * 60 + today.getMinutes();
 //                        int curTime = date.getHours() * 60 + date.getMinutes()-tzint;
                         int schTimt = temp.getSt_time().getHours() * 60 + temp.getSt_time().getMinutes();
                         java.util.Date schDate = new Date(temp.getApp_dt().getTime());
-                        java.util.Date curDate = new Date(date.getTime());
+                        java.util.Date curDate = new Date(today.getTime());
                         Calendar calSql = Calendar.getInstance();
                         Calendar calUtil = Calendar.getInstance();
                         calSql.setTime(schDate);
@@ -1882,7 +1887,7 @@ public class ScheduleManager extends HttpServlet {
         return responseAll.substring(0, responseAll.length() - 1);
     }
 
-    public static String generateEmployeeEventsArray(int idLocation, Date currentDate, int pageNum, int employee_id) {
+    public static String generateEmployeeEventsArray(int idLocation, java.util.Date today, Date currentDate, int pageNum, int employee_id) {
         String responseAll = " ";
 
         SimpleDateFormat formatter = new SimpleDateFormat("MMMM d, yyyy HH:mm:ss");
@@ -2061,12 +2066,11 @@ public class ScheduleManager extends HttpServlet {
 //                            e.printStackTrace();
 //                            tzint = 0;
 //                        }
-                        java.util.Date date = Calendar.getInstance().getTime();
-                        int curTime = date.getHours() * 60 + date.getMinutes();
+                        int curTime = today.getHours() * 60 + today.getMinutes();
 //                        int curTime = date.getHours() * 60 + date.getMinutes()-tzint;
                         int schTimt = temp.getSt_time().getHours() * 60 + temp.getSt_time().getMinutes();
                         java.util.Date schDate = new Date(temp.getApp_dt().getTime());
-                        java.util.Date curDate = new Date(date.getTime());
+                        java.util.Date curDate = new Date(today.getTime());
                         Calendar calSql = Calendar.getInstance();
                         Calendar calUtil = Calendar.getInstance();
                         calSql.setTime(schDate);

@@ -1266,6 +1266,7 @@ hr {
                 var newCurrentDate = currentDate.getUTCFullYear() + "/" + (currentDate.getUTCMonth() + 1) + "/" + currentDate.getUTCDate() + " " + currentDate.getUTCHours() + ":" + currentDate.getUTCMinutes();
                 var strURL = null;
                 var req = false;
+                var datetime = new Date().getTime();
                 if (document.getElementById('txtFN').value != "") {
                     if (customerId.value != "") {
                         var randomnumber = Math.floor(Math.random() * 11);
@@ -1287,6 +1288,7 @@ hr {
                                  "&rnd=" + randomnumber +
                                  "&idlocation=" + document.getElementById('locationId').value +
                                  "&dateutc=" + newCurrentDate +
+                                 "&datetime="+datetime +
 //                                 "&req=" + document.getElementById('txtReq').checked +
                                  "&pageNum=" + pageNum;
                         //alert(strURL);
@@ -1425,7 +1427,8 @@ hr {
                         }
                     };
                     
-                    xmlRequestAppointment.open("POST", "ScheduleManager?optype=NEW&start=" + newStartUTC + "&end=" + newEndUTC + "&idnewemployee=" + idEmployee + "&idcustomer=" + idCustomer + "&idservice=" + idService + "&idlocation=" + idLocation + "&dateutc=" + newCurrentDate + "&pageNum=" + pageNum + "&comment=" + comment +"&req=" + _req + "&browser=" + browser_name + "&underEND=" + underEND + "&reshedule=" + reshedule + "&idb=" + id_booking);
+                    var datetime = new Date().getTime();
+                    xmlRequestAppointment.open("POST", "ScheduleManager?optype=NEW&start=" + newStartUTC + "&end=" + newEndUTC +"&datetime="+datetime+'&datetime='+datetime + "&idnewemployee=" + idEmployee + "&idcustomer=" + idCustomer + "&idservice=" + idService + "&idlocation=" + idLocation + "&dateutc=" + newCurrentDate + "&pageNum=" + pageNum + "&comment=" + comment +"&req=" + _req + "&browser=" + browser_name + "&underEND=" + underEND + "&reshedule=" + reshedule + "&idb=" + id_booking);
                     xmlRequestAppointment.setRequestHeader("Accept-Encoding", "text/html; charset=utf-8");
                     xmlRequestAppointment.send('');
                     document.getElementById('com').value = '';
@@ -1677,7 +1680,8 @@ hr {
                     }
 				};
                 
-                xmlRequest.open("POST", "ScheduleManager?optype=DEL&idappointment="+app_id+ "&idlocation="+c.LocationId+"&dateutc="+dateUtc + "&pageNum=" + c.pageNum + "&delParam=" + del + "&browser=" + browser_name);
+				var datetime = new Date().getTime();
+                xmlRequest.open("POST", "ScheduleManager?optype=DEL&idappointment="+app_id +'&datetime='+datetime+ "&idlocation="+c.LocationId+"&dateutc="+dateUtc + "&pageNum=" + c.pageNum + "&delParam=" + del + "&browser=" + browser_name);
                 xmlRequest.send('');
                 document.getElementById("app_id").value = null;
             };
@@ -1725,8 +1729,9 @@ hr {
 //                        drawEvents(xmlRequest.responseText);
                     }
 				};
-															
-				xmlRequest.open("POST", "ScheduleManager?optype=REZ&start="+newStartUTC+"&end="+newEndUTC +"&idappointment="+e.div.data.ServerId+ "&idlocation="+c.LocationId+"&dateutc="+dateUtc + "&pageNum=" + c.pageNum + "&browser=" + browser_name);
+				
+				var datetime = new Date().getTime();
+				xmlRequest.open("POST", "ScheduleManager?optype=REZ&start="+newStartUTC+"&datetime="+datetime+"&end="+newEndUTC +"&idappointment="+e.div.data.ServerId+ "&idlocation="+c.LocationId+"&dateutc="+dateUtc + "&pageNum=" + c.pageNum + "&browser=" + browser_name);
 				xmlRequest.send('');
 			};
 			c.eventMoveHandling = 'JavaScript';
@@ -1774,8 +1779,9 @@ hr {
 //                             drawEvents(xmlRequest.responseText);
                         }
     				};
-			
-	    			xmlRequest.open("POST", "ScheduleManager?optype=MOV&start="+newStartUTC+"&end="+newEndUTC +"&idappointment="+e.div.data.ServerId+"&idoldemployee="+oldColumn+"&idnewemployee="+newColumn+ "&idlocation=" + c.LocationId + "&dateutc=" + dateUtc + "&pageNum=" + c.pageNum + "&browser=" + browser_name);
+    				
+    				var datetime = new Date().getTime();
+	    			xmlRequest.open("POST", "ScheduleManager?optype=MOV&start="+newStartUTC+"&datetime="+datetime+"&end="+newEndUTC +"&idappointment="+e.div.data.ServerId+"&idoldemployee="+oldColumn+"&idnewemployee="+newColumn+ "&idlocation=" + c.LocationId + "&dateutc=" + dateUtc + "&pageNum=" + c.pageNum + "&browser=" + browser_name);
     				xmlRequest.send('');
                 }
 			};
@@ -2068,8 +2074,9 @@ hr {
                     //elm.appendChild(t);
 				}
 			};
-
-			xmlRequestEvents.open("POST", "ScheduleManager?optype=ALL&idlocation=" + c.LocationId + "&dateutc=" + dateUtc + '&pageNum=' + c.pageNum + "&browser=" + browser_name);
+	
+			var datetime = new Date().getTime();
+			xmlRequestEvents.open("POST", "ScheduleManager?optype=ALL&idlocation=" + c.LocationId +"&datetime="+datetime+ "&dateutc=" + dateUtc + '&pageNum=' + c.pageNum + "&browser=" + browser_name);
 			xmlRequestEvents.setRequestHeader("Accept-Encoding","text/html; charset=utf-8");
 			xmlRequestEvents.send('');
             //alert('123');
@@ -2310,7 +2317,8 @@ hr {
             };
             var browser_name = document.getElementById("mainCalendar_browser").value;
             var pageNum = document.getElementById("mainCalendar_pagenum").value;
-            xmlRequestEvents.open("POST", "ScheduleManager?optype=ALL&idlocation=1" + "&dateutc=" + dateUtc + '&pageNum=' +pageNum + "&browser=" + browser_name);
+            var datetime = new Date().getTime();
+            xmlRequestEvents.open("POST", "ScheduleManager?optype=ALL&idlocation=1" +"&datetime="+datetime+ "&dateutc=" + dateUtc + '&pageNum=' +pageNum + "&browser=" + browser_name);
             xmlRequestEvents.setRequestHeader("Accept-Encoding","text/html; charset=utf-8");
             xmlRequestEvents.send('');
 
