@@ -1737,7 +1737,7 @@ hr {
 			c.eventMoveHandling = 'JavaScript';
 			c.eventMoveCustom = function(e, newStart, newEnd, oldColumn, newColumn, external) 
 			{
-				if (newColumn > 0){
+				if (newColumn > 0 && newColumn!=oldColumn){
                     var dateUtc = c.startDate.getUTCFullYear() + "/" + (c.startDate.getUTCMonth() + 1) + "/" + c.startDate.getUTCDate();
 				    //.x.m.
                     //alert(newStart);

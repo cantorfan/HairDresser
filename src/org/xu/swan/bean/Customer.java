@@ -1088,4 +1088,20 @@ public class Customer {
         }
         return list;
     }
+
+	@Override
+	public String toString() {
+		return "Customer [id=" + id + ", fname=" + fname + ", lname=" + lname
+				+ ", email=" + email + ", phone=" + phone + ", cell_phone="
+				+ cell_phone + ", type=" + type + ", location_id="
+				+ location_id + ", req=" + req + ", rem=" + rem + ", remdays="
+				+ remdays + ", comment=" + comment + ", employee_id="
+				+ employee_id + ", work_phone_ext=" + work_phone_ext
+				+ ", male_female=" + male_female + ", address=" + address
+				+ ", city=" + city + ", state=" + state + ", zip_code="
+				+ zip_code + ", picture=" + picture + ", date_of_birth="
+				+ date_of_birth + ", login=" + login + ", password=" + password
+				+ ", employeeName=" + employeeName + ", country=" + country
+				+ "]";
+	}
 }

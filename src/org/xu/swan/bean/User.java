@@ -127,13 +127,13 @@ public class User {
 		this.employees = employees;
 	}
 
-	public static User insertUser(String fname,String lname, String user, String pwd, String email, int perm, int send_email){
+	public static User insertUser(String fname,String lname, String user, String pwd, String email, int perm, int send_email, String ips, String employees){
         User u = null;
         DBManager dbm = null;
         try{
             dbm = new DBManager();
             PreparedStatement pst = dbm.getPreparedStatement("INSERT login (" + FNAME + ", " + LNAME + ", " + USER + ", " + PWD + ", " + EMAIL
-                    + ", "  + PERM + ","+ Send_EMAIL +") VALUES (?,?,?,?,?,?,?)");
+                    + ", "  + PERM + ","+ Send_EMAIL + ","+ IPS + ","+ EMPLOYEES +") VALUES (?,?,?,?,?,?,?,?,?)");
             pst.setString(1,fname);
             pst.setString(2,lname);
             pst.setString(3,user);
@@ -141,6 +141,8 @@ public class User {
             pst.setString(5,email);
             pst.setInt(6, perm);
             pst.setInt(7, send_email);
+            pst.setString(8, ips);
+            pst.setString(9, employees);
             int rows = pst.executeUpdate();
             if(rows>=0){
                 u = new User();
@@ -151,6 +153,8 @@ public class User {
                 u.setEmail(email);
                 u.setPermission(perm);
                 u.setSend_email(send_email);
+                u.setEmployees(employees);
+                u.setIps(ips);
                 ResultSet rs = pst.getGeneratedKeys();
                 if(rs.next())
                     u.setId(rs.getInt(1));
@@ -207,13 +211,13 @@ public class User {
         return u;
     }
 
-    public static User updateUser(int id, String fname,String lname, String user, String pwd, String email, int perm, int send_email){
+    public static User updateUser(int id, String fname,String lname, String user, String pwd, String email, int perm, int send_email, String ips, String employees){
         User u = null;
         DBManager dbm = null;
         try{
             dbm = new DBManager();
             String sql ="UPDATE login SET " + FNAME + "=?, " + LNAME +"=?, " + USER + "=?, "
-                    + PWD + "=?, " + EMAIL + "=?,"  + PERM + "=?,"  + Send_EMAIL + "=? WHERE " + ID + "=?";
+                    + PWD + "=?, " + EMAIL + "=?,"  + PERM + "=?," + Send_EMAIL + "=?,"  + IPS + "=?,"  + EMPLOYEES + "=? WHERE " + ID + "=?";
             
             PreparedStatement pst = dbm.getPreparedStatement(sql);
             pst.setString(1,fname);
@@ -223,7 +227,9 @@ public class User {
             pst.setString(5,email);
             pst.setInt(6, perm);
             pst.setInt(7, send_email);
-            pst.setInt(8,id);
+            pst.setString(8,ips);
+            pst.setString(9,employees);
+            pst.setInt(10,id);
             int rows = pst.executeUpdate();
             if(rows>=0){
                 u = new User();
@@ -235,6 +241,8 @@ public class User {
                 u.setEmail(email);
                 u.setPermission(perm);
                 u.setSend_email(send_email);
+                u.setEmployees(employees);
+                u.setIps(ips);
             }
             pst.close();
         }catch(Exception e){
@@ -410,7 +418,7 @@ public class User {
                 u.setPermission(rs.getInt(7));
                 u.setSend_email(rs.getInt(8));
                 u.setIps(rs.getString(9));
-                u.setEmail(rs.getString(10));
+                u.setEmployees(rs.getString(10));
             }
             rs.close();
             st.close();
