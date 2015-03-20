@@ -2,6 +2,7 @@
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.*" %>
 <%@ page import="java.util.*" %>
+<%@ page import="org.apache.commons.lang.*" %>
 <%@ page import="org.xu.swan.util.DateUtil" %>
 <%@ page import="org.xu.swan.db.DBManager" %>
 <style>

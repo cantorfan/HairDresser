@@ -2,6 +2,7 @@
 <%@ page import="org.xu.swan.bean.Employee" %>
 <%@ page import="org.xu.swan.bean.Service" %>
 <%@ page import="org.xu.swan.bean.Inventory" %>
+<%@ page import="org.xu.swan.bean.User" %>
 <%@ page import="java.util.*" %>
 
 <%
@@ -10,7 +11,7 @@
     HashMap mapEmployee = Employee.findAllMapWithDeleted();
     HashMap mapService = Service.findAllMapByCode();
     HashMap mapProduct = Inventory.findAllMap();
-    ArrayList listEmployee = Employee.findWorkingEmp(dt, dt);
+    ArrayList listEmployee = Employee.findWorkingEmp(dt, dt, (User) session.getAttribute("user"));
     ArrayList listService= Service.findBuyingSvc(dt, dt);
     ArrayList listProduct = Inventory.findBuyingProd(dt, dt);
 %>

@@ -2567,7 +2567,7 @@ public class DashBoardServlet extends HttpServlet {
                 }  else if (type.equals("CALCVALUES")){
                     String fromdt =  StringUtils.defaultString(request.getParameter("fromdt"),"");
                     String todt =  StringUtils.defaultString(request.getParameter("todt"),"");
-                    ArrayList listEmployee = Employee.findWorkingEmp(fromdt, todt);
+                    ArrayList listEmployee = Employee.findWorkingEmp(fromdt, todt, (User)request.getSession().getAttribute("user"));
                     ArrayList listService= Service.findBuyingSvc(fromdt, todt);
                     ArrayList listProduct = Inventory.findBuyingProd(fromdt, todt);
                     String returnDiv = "";

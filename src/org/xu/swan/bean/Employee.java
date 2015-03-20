@@ -1,15 +1,25 @@
 package org.xu.swan.bean;
 
+import java.math.BigDecimal;
+import java.sql.Blob;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.xu.swan.db.DBManager;
 import org.xu.swan.util.DateUtil;
-import org.apache.commons.lang.StringUtils;
-
-import java.math.BigDecimal;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Employee {
+	private static Logger log = Logger.getLogger(Employee.class);
+	
     public static final String ID = "id";
     public static final String FNAME = "fname";
     public static final String LNAME = "lname";
@@ -1034,23 +1044,35 @@ public class Employee {
         return list;
     }
 
-    public static ArrayList findWorkingEmp(String from_date, String to_date){
+    public static ArrayList findWorkingEmp(String from_date, String to_date, User user){
         ArrayList list = new ArrayList();
+        
+        //check permission
+        Set<String> empsPermission = new HashSet<String>();
+        if(user!=null && user.getEmployees()!=null && user.getEmployees().trim().length()>0){
+        	empsPermission.addAll(Arrays.asList(user.getEmployees().split(",")));
+        }
+        
         DBManager dbm = null;
         try{
             dbm = new DBManager();
             Statement st = dbm.getStatement();
-            ResultSet rs = st.executeQuery("SELECT emp.`id`, emp.`fname`, emp.`lname` from `reconciliation` rec\n" +
+            String sql = "SELECT emp.`id`, emp.`fname`, emp.`lname` from `reconciliation` rec\n" +
                     "join `ticket` tic on tic.`code_transaction` = rec.`code_transaction`\n" +
                     "join `employee` emp on emp.`id` = tic.`employee_id`\n" +
                     "where rec.status <> 1 and DATE(rec.`created_dt`) BETWEEN DATE('"+from_date+"') AND DATE('"+to_date+"')\n" +
-                    "group by emp.`id` ORDER BY CONCAT(emp."+FNAME+",' ',emp."+LNAME+")");
+                    "group by emp.`id` ORDER BY CONCAT(emp."+FNAME+",' ',emp."+LNAME+")";
+            ResultSet rs = st.executeQuery(sql);
+            log.debug("findWorkingEmpv sql:"+sql);
             while(rs.next()){
-                Employee emp = new Employee();
-                list.add(emp);
-                emp.setId(rs.getInt(1));
-                emp.setFname(rs.getString(2));
-                emp.setLname(rs.getString(3));
+            	int id = rs.getInt(1);
+            	if(empsPermission.size()==0 || empsPermission.contains(id+"")){
+	                Employee emp = new Employee();
+	                list.add(emp);
+	                emp.setId(id);
+	                emp.setFname(rs.getString(2));
+	                emp.setLname(rs.getString(3));
+            	}
             }
             rs.close();
             st.close();
