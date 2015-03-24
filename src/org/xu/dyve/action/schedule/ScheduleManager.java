@@ -110,6 +110,7 @@ public class ScheduleManager extends HttpServlet {
               boolean added = false;
               boolean delete = false;
               boolean delcust = false;
+              boolean moved = false;
               //int idEditCustomer = -1;
               BigDecimal servicePrice = new BigDecimal(-1);
               int idCategory = -1;
@@ -185,6 +186,7 @@ public class ScheduleManager extends HttpServlet {
 
 
               if (operation.equals("REZ") && startDate != null && endDate != null && idAppointment != -1) {
+            	  moved = true;
                   if (user_ses.getPermission() != Role.R_VIEW && user_ses.getPermission() != Role.R_SHD_CHK){
                   Appointment ap = Appointment.findById(idAppointment);
                       if (ap != null){
@@ -429,48 +431,55 @@ public class ScheduleManager extends HttpServlet {
 
               if (operation.equals("MOV") && startDate != null && endDate != null && idNewEmployee != -1) {
                   if (user_ses.getPermission() != Role.R_VIEW && user_ses.getPermission() != Role.R_SHD_CHK){
-                  if (idNewEmployee > 0) {
-                      Appointment ap = Appointment.findById(idAppointment);
-                      
-                      if (ap != null){
-                      if(ap.getState() == 3)
-                    	  return;
-                      st_old = ap.getSt_time();
-                      et_old = ap.getEt_time();
-                      emp_old = ap.getEmployee_id();
-                      ap.setSt_time(DateUtil.toSqlTime(startDate));
-                      ap.setEt_time(DateUtil.toSqlTime(endDate));
-                      ap.setEmployee_id(idNewEmployee);
-                      if (ap!=null && ap.getTicket_id()!=0)
-                          Ticket.updateTicketSetEmpId(ap.getTicket_id(),idNewEmployee);
-                      if (ap!= null && ap.getState()!=3){
-                          Ticket t = Ticket.findTicketById(ap.getTicket_id());
-                          if(t != null){
-                              ArrayList arr = Reconciliation.findTransByCode(t.getCode_transaction());
-                              if(arr != null && arr.size() > 0){
-                                  Reconciliation r = (Reconciliation)arr.get(0);
-                                  if(r != null && r.getStatus() != 0){
-                                      Appointment.updateAppointment(ap.getId(), ap.getEmployee_id(), ap.getPrice(),
-                                              ap.getApp_dt(), ap.getSt_time(), ap.getEt_time(), ap.getComment());
-                                  }
-                              }else{
-                                  Appointment.updateAppointment(ap.getId(), ap.getEmployee_id(), ap.getPrice(),
-                                          ap.getApp_dt(), ap.getSt_time(), ap.getEt_time(), ap.getComment());
-                              }
-                          }else {
-                              Appointment.updateAppointment(ap.getId(), ap.getEmployee_id(), ap.getPrice(),
-                                      ap.getApp_dt(), ap.getSt_time(), ap.getEt_time(), ap.getComment());
-                          }
-                      }
-
-                      st = ap.getSt_time();
-                      et = ap.getEt_time();
-                      employee_id = ap.getEmployee_id();
-                      edit = true;
-                      }else{
-                          operation = "REFRESHALL";
-                      }
-                  }
+	                  if (idNewEmployee > 0) {
+	                	  	Set<Integer> empPermission  = (Set<Integer>) request.getSession(true).getAttribute("empPermission");
+                  			if(empPermission.contains(idNewEmployee)){
+                  				Appointment ap = Appointment.findById(idAppointment);
+  							  
+                      			if (ap != null){
+                      				if(ap.getState() == 3)
+                      					return;
+                      				st_old = ap.getSt_time();
+                      				et_old = ap.getEt_time();
+                      				emp_old = ap.getEmployee_id();
+                      				ap.setSt_time(DateUtil.toSqlTime(startDate));
+                      				ap.setEt_time(DateUtil.toSqlTime(endDate));
+                      				ap.setEmployee_id(idNewEmployee);
+                      				if (ap!=null && ap.getTicket_id()!=0)
+                      					Ticket.updateTicketSetEmpId(ap.getTicket_id(),idNewEmployee);
+                      				if (ap!= null && ap.getState()!=3){
+                      					Ticket t = Ticket.findTicketById(ap.getTicket_id());
+                      					if(t != null){
+                      						ArrayList arr = Reconciliation.findTransByCode(t.getCode_transaction());
+                      						if(arr != null && arr.size() > 0){
+                      							Reconciliation r = (Reconciliation)arr.get(0);
+                      							if(r != null && r.getStatus() != 0){
+                      								Appointment.updateAppointment(ap.getId(), ap.getEmployee_id(), ap.getPrice(),
+    							                          ap.getApp_dt(), ap.getSt_time(), ap.getEt_time(), ap.getComment());
+                      							}
+                      						}else{
+                      							Appointment.updateAppointment(ap.getId(), ap.getEmployee_id(), ap.getPrice(),
+    							                      ap.getApp_dt(), ap.getSt_time(), ap.getEt_time(), ap.getComment());
+                      						}
+    							      }else {
+    							          Appointment.updateAppointment(ap.getId(), ap.getEmployee_id(), ap.getPrice(),
+    							                  ap.getApp_dt(), ap.getSt_time(), ap.getEt_time(), ap.getComment());
+    							      }
+    							  }
+    							
+    							  st = ap.getSt_time();
+    							  et = ap.getEt_time();
+    							  employee_id = ap.getEmployee_id();
+    							  edit = true;
+                      			}else{
+                  					operation = "REFRESHALL";
+                  				}
+                      			
+                  				moved = true;
+                  			}else {
+                  				moved =  false;
+                  			}
+	                  }
                   }
               }
 
@@ -524,79 +533,81 @@ public class ScheduleManager extends HttpServlet {
             	  Set<Integer> empPermissionSet = (HashSet<Integer>)request.getSession().getAttribute("empPermission");
                   if (user_ses.getPermission() != Role.R_VIEW 
                 		  && user_ses.getPermission() != Role.R_SHD_CHK
-                		  && empPermissionSet.contains(idNewEmployee)){
+                		  && (empPermissionSet.size()==0 || empPermissionSet.contains(idNewEmployee)))
+                  {
 	                  try {
 	                      idCustomer = Integer.parseInt(request.getParameter("idcustomer"));
 	                  } catch (Exception ex) {
-                  }
-
-                  Appointment ap = new Appointment();
-                  ap.setSt_time(DateUtil.toSqlTime(startDate));
-                  ap.setEmployee_id(idNewEmployee);
-
-//                  EmpServ servLink = null;
-                  BigDecimal price = BigDecimal.ZERO;
-                  int duration = 15;
-                  Boolean find = false;
-
-                      EmpServ servLink = EmpServ.findByEmployeeIdAndServiceID(idNewEmployee, idService);
-                      if (servLink == null)
-                      {
-                          Service servLinks = Service.findById(idService);
-                          if (servLinks != null){
-                              duration = servLinks.getDuration();
-                              if (duration > 360) duration = 360;
-                              price = servLinks.getPrice();
-                              find = true;
-                          }
-                      }else {
-                          duration = servLink.getDuration();
-                          if (duration > 360) duration = 360;
-                          price = servLink.getPrice();
-                          find = true;
-                      }
-
-                  if (duration < 15) duration = 15;
-                  Service serv = null;
-
-                      serv = Service.findById(idService);
-                      GregorianCalendar calendar = new GregorianCalendar();
-                      calendar.setTime(startDate);
-                      if (underEND.equals("1")){
-                          calendar.add(GregorianCalendar.MINUTE, 15);
-                      } else if (underEND.equals("0")){
-//                          calendar.add(GregorianCalendar.MINUTE, 30); //always create appoinmetn with duration 30min
-                          calendar.add(GregorianCalendar.MINUTE, duration); //create appointment with some duration
-                      }
-                      endDate = calendar.getTime();
-                      ap.setEt_time(DateUtil.toSqlTime(endDate));
-
-                  //!!!every employee mast have a price for every service defined in service table!!!
-                  Boolean req = false;
-                  if (find && serv != null) {
-//                      System.out.println("appointment 1");
-                  String rq = request.getParameter("req");
-                  String reshedule = request.getParameter("reshedule");
-                  String id_booking = request.getParameter("idb");
-                  if ((rq != null)&&(rq.equals("true")))
-                      req = true;
-//                  System.out.println("appointment 1 " + req);
-                  Appointment ap_new = Appointment.insertAppointment(idLocation, idCustomer, idNewEmployee, idService, serv.getCategory_id(), price, DateUtil.toSqlDate(currentDate), ap.getSt_time(), ap.getEt_time(), 0, comment, req);
-                      Inbox ii = Inbox.findById(Integer.parseInt(id_booking));
-                      if (ap_new!= null && reshedule.equals("1") && ii!=null && ii.getCustomer_id()==idCustomer){
-                          InboxPublicBean ipb_old = InboxPublicBean.getBookingById(Integer.parseInt(id_booking));
-                          Inbox i = Inbox.updateAfterReschedule(Integer.parseInt(id_booking), ap_new.getApp_dt(), ap_new.getSt_time(), ap_new.getService_id(), ap_new.getEmployee_id(),ap_new.getId());
-                          if (i!= null){
-                              InboxPublicBean ipb_new = InboxPublicBean.getBookingById(i.getId());
-                              boolean send = sendEmail(ipb_old, ipb_new, 3);
-                          }
-                      }
-                      st = ap_new.getSt_time();
-                      et = ap_new.getEt_time();
-                      employee_id = ap_new.getEmployee_id();
-                      app_new_id = ap_new.getId();
-                      added = true;
-                  }
+	                  
+	                  }
+	
+	                  Appointment ap = new Appointment();
+	                  ap.setSt_time(DateUtil.toSqlTime(startDate));
+	                  ap.setEmployee_id(idNewEmployee);
+	
+	//                  EmpServ servLink = null;
+	                  BigDecimal price = BigDecimal.ZERO;
+	                  int duration = 15;
+	                  Boolean find = false;
+	
+	                      EmpServ servLink = EmpServ.findByEmployeeIdAndServiceID(idNewEmployee, idService);
+	                      if (servLink == null)
+	                      {
+	                          Service servLinks = Service.findById(idService);
+	                          if (servLinks != null){
+	                              duration = servLinks.getDuration();
+	                              if (duration > 360) duration = 360;
+	                              price = servLinks.getPrice();
+	                              find = true;
+	                          }
+	                      }else {
+	                          duration = servLink.getDuration();
+	                          if (duration > 360) duration = 360;
+	                          price = servLink.getPrice();
+	                          find = true;
+	                      }
+	
+	                  if (duration < 15) duration = 15;
+	                  Service serv = null;
+	
+	                      serv = Service.findById(idService);
+	                      GregorianCalendar calendar = new GregorianCalendar();
+	                      calendar.setTime(startDate);
+	                      if (underEND.equals("1")){
+	                          calendar.add(GregorianCalendar.MINUTE, 15);
+	                      } else if (underEND.equals("0")){
+	//                          calendar.add(GregorianCalendar.MINUTE, 30); //always create appoinmetn with duration 30min
+	                          calendar.add(GregorianCalendar.MINUTE, duration); //create appointment with some duration
+	                      }
+	                      endDate = calendar.getTime();
+	                      ap.setEt_time(DateUtil.toSqlTime(endDate));
+	
+	                  //!!!every employee mast have a price for every service defined in service table!!!
+	                  Boolean req = false;
+	                  if (find && serv != null) {
+	//                      System.out.println("appointment 1");
+	                  String rq = request.getParameter("req");
+	                  String reshedule = request.getParameter("reshedule");
+	                  String id_booking = request.getParameter("idb");
+	                  if ((rq != null)&&(rq.equals("true")))
+	                      req = true;
+	//                  System.out.println("appointment 1 " + req);
+	                  Appointment ap_new = Appointment.insertAppointment(idLocation, idCustomer, idNewEmployee, idService, serv.getCategory_id(), price, DateUtil.toSqlDate(currentDate), ap.getSt_time(), ap.getEt_time(), 0, comment, req);
+	                      Inbox ii = Inbox.findById(Integer.parseInt(id_booking));
+	                      if (ap_new!= null && reshedule.equals("1") && ii!=null && ii.getCustomer_id()==idCustomer){
+	                          InboxPublicBean ipb_old = InboxPublicBean.getBookingById(Integer.parseInt(id_booking));
+	                          Inbox i = Inbox.updateAfterReschedule(Integer.parseInt(id_booking), ap_new.getApp_dt(), ap_new.getSt_time(), ap_new.getService_id(), ap_new.getEmployee_id(),ap_new.getId());
+	                          if (i!= null){
+	                              InboxPublicBean ipb_new = InboxPublicBean.getBookingById(i.getId());
+	                              boolean send = sendEmail(ipb_old, ipb_new, 3);
+	                          }
+	                      }
+	                      st = ap_new.getSt_time();
+	                      et = ap_new.getEt_time();
+	                      employee_id = ap_new.getEmployee_id();
+	                      app_new_id = ap_new.getId();
+	                      added = true;
+	                  }
                   }else
                 	  added = false;
               }
@@ -624,7 +635,8 @@ public class ScheduleManager extends HttpServlet {
               response.setCharacterEncoding("UTF-8");
 
               if (operation.equals("MOV") || operation.equals("REZ")){
-                  response.getWriter().write(generateAroundEventsArray(idLocation,  today, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, st_old, et_old, emp_old));
+            	  if(moved)
+            		  response.getWriter().write(generateAroundEventsArray(idLocation,  today, DateUtil.toSqlDate(currentDate), pageNum, st, et, employee_id, st_old, et_old, emp_old));
               }
               else if (operation.equals("NEW")){
                   if (added)

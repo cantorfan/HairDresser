@@ -137,18 +137,32 @@ DayPilotCalendar.saveAppointment = function (start, end, column, event) {
             var serviceName = document.getElementById('cloned').firstChild.innerHTML.replace(/(<([^>]+)>)/ig,"").replace(/(^\s+)|(\s+$)/ig,"");
             if (serviceName.toLowerCase() != "break") {
                 if (!idCustomer && idEmployee > 0) {
-                    //var MouseX = event.clientX + document.body.scrollLeft;
-                    //var MouseY = event.clientY + document.body.scrollTop;
-                    obj = document.getElementById("win");
-                    //obj.style.top = MouseY + 10 + "px";
-                    //obj.style.left = MouseX + "px";
-                    setWindowCenter(obj);
-//                    alert("save");
-                    obj.style.visibility = "visible";
-                    document.getElementById("dr_start").value = DayPilotCalendar.dragFromOutsideStart;
-                    document.getElementById("dr_end").value = DayPilotCalendar.dragFromOutsideEnd;
-                    document.getElementById("dr_column").value = DayPilotCalendar.dragFromOutsideColumn;
-                    document.getElementById("underEND").value = underEND;
+                	
+                	//check permission
+                	//status
+                	jQuery.get("login", {"query": "permission", "employeeId": idEmployee, "timestamp" : new Date().getTime()}, 
+            			function(data, textStatus, response)
+                	{
+                		var result = jQuery.parseJSON(response.responseText);
+                		if(result.status==true){
+                			//var MouseX = event.clientX + document.body.scrollLeft;
+                            //var MouseY = event.clientY + document.body.scrollTop;
+                            obj = document.getElementById("win");
+                            //obj.style.top = MouseY + 10 + "px";
+                            //obj.style.left = MouseX + "px";
+                            setWindowCenter(obj);
+//                            alert("save");
+                            obj.style.visibility = "visible";
+                            document.getElementById("dr_start").value = DayPilotCalendar.dragFromOutsideStart;
+                            document.getElementById("dr_end").value = DayPilotCalendar.dragFromOutsideEnd;
+                            document.getElementById("dr_column").value = DayPilotCalendar.dragFromOutsideColumn;
+                            document.getElementById("underEND").value = underEND;
+                		}else{
+                			var pop = new popup();
+                			pop.tip({message: result.message, "visiable" : false, "type": "error", "showLocation" : "center"});
+                		}
+                	});
+                	
                 } else {
 //                    alert(req);
                     var reshedule = document.getElementById("reshedule").value;
@@ -2397,6 +2411,7 @@ DayPilotCalendar.Calendar = function(id)
             }
             ;
             c.setAttribute("dpColumnDate", $0u[j].Date);
+            //c.id = "dpColumn_"+$0u[j].Value;
             c.setAttribute("dpColumn", $0u[j].Value);
         }
         ;

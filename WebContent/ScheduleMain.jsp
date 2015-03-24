@@ -1428,7 +1428,7 @@ hr {
                     };
                     
                     var datetime = new Date().getTime();
-                    xmlRequestAppointment.open("POST", "ScheduleManager?optype=NEW&start=" + newStartUTC + "&end=" + newEndUTC +"&datetime="+datetime+'&datetime='+datetime + "&idnewemployee=" + idEmployee + "&idcustomer=" + idCustomer + "&idservice=" + idService + "&idlocation=" + idLocation + "&dateutc=" + newCurrentDate + "&pageNum=" + pageNum + "&comment=" + comment +"&req=" + _req + "&browser=" + browser_name + "&underEND=" + underEND + "&reshedule=" + reshedule + "&idb=" + id_booking);
+                    xmlRequestAppointment.open("POST", "ScheduleManager?optype=NEW&start=" + newStartUTC + "&end=" + newEndUTC +"&datetime="+datetime + "&idnewemployee=" + idEmployee + "&idcustomer=" + idCustomer + "&idservice=" + idService + "&idlocation=" + idLocation + "&dateutc=" + newCurrentDate + "&pageNum=" + pageNum + "&comment=" + comment +"&req=" + _req + "&browser=" + browser_name + "&underEND=" + underEND + "&reshedule=" + reshedule + "&idb=" + id_booking);
                     xmlRequestAppointment.setRequestHeader("Accept-Encoding", "text/html; charset=utf-8");
                     xmlRequestAppointment.send('');
                     document.getElementById('com').value = '';
@@ -1737,6 +1737,7 @@ hr {
 			c.eventMoveHandling = 'JavaScript';
 			c.eventMoveCustom = function(e, newStart, newEnd, oldColumn, newColumn, external) 
 			{
+				
 				if (newColumn > 0 && newColumn!=oldColumn){
                     var dateUtc = c.startDate.getUTCFullYear() + "/" + (c.startDate.getUTCMonth() + 1) + "/" + c.startDate.getUTCDate();
 				    //.x.m.
@@ -1768,7 +1769,10 @@ hr {
     						/*eval("c.events = [" + xmlRequest.responseText + "]");
     						c.drawEvents();*/
                             var req2 = xmlRequest.responseText;
-                            if ((req2!=null) && (req2.indexOf("REDIRECT") != -1)){
+    						if(req2==null || req2==""){
+    							var pop12 = new popup();
+    							pop12.tip({message:"not permission!","visiable" : false, "type": "warning", "showLocation" : "buttom"});
+    						}else if ((req2!=null) && (req2.indexOf("REDIRECT") != -1)){
                                 var arr = req2.split(":");
 //                                alert(arr[2].toString());
                                 document.location.href = arr[1].toString();

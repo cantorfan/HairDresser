@@ -178,6 +178,8 @@
                                     zip = loc.getZipcode();
                                     currency = loc.getCurrency();
                                     timezone = loc.getTimezone();
+                                    if(timezone==null || timezone.length()==0)
+                                    	timezone="";
                                     if (facebook.equals("")) facebook = "http://www.facebook.com/";
                                     if (twitter.equals("")) twitter = "http://www.twitter.com/";
                                     if (blog.equals("")) blog = "http://www.blogger.com/";
@@ -346,6 +348,7 @@
                                     <%
 
                                         ArrayList<String> TimeZones=new ArrayList<String>();
+                                        TimeZones.add("");
                                         TimeZones.add("GMT-12:00=-720=Eniwelok, Kwajalein");
                                         TimeZones.add("GMT-11:00=-660=Midway Island, Samoa");
                                         TimeZones.add("GMT-10:30=-630=Cook Islands");
@@ -437,7 +440,13 @@
                                     <select name="timezone" id="timezone">
                                         <%
                                         for (int i=0; i<TimeZones.size(); i++){
-                                            String[] arr = TimeZones.get(i).split("=");
+                                        	String tz = TimeZones.get(i);
+                                        	String[] arr = null;
+                                        	if(tz==""){
+                                        		arr = new String[]{"","",""};
+                                        	}else{
+                                        		arr = tz.split("=");
+                                        	}
                                         %>
                                         <option value="<%=arr[0]%>" <%=(timezone.equals(arr[0])?"selected":"")%>><%=arr[0] + " " + arr[2]%></option>
                                         <%}%>

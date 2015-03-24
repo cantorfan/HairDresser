@@ -142,6 +142,15 @@ public class AccessServlet  extends HttpServlet {
                 String newPwd = User.changePwdByEmail(email);
                 response.sendRedirect("index.jsp");
                 return;
+            }else if(query.equalsIgnoreCase("permission")){
+            	@SuppressWarnings("unchecked")
+				Set<Integer> empPermission  = (Set<Integer>) request.getSession(true).getAttribute("empPermission");
+            	Integer employeeId = Integer.parseInt(request.getParameter("employeeId"));
+            	if(empPermission.contains(employeeId)){
+            		response.getWriter().write("{\"status\":true}");
+            	}else {
+            		response.getWriter().write("{\"status\":false, \"message\":\"not permission\"}");
+            	}
             }
         }catch(Exception ex){
             response.getWriter().write(ex.getMessage());//ex.printStackTrace();
