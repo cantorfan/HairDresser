@@ -40,6 +40,9 @@ public class Log4jInit implements ServletContextListener {
         prp.put("log4j.logger.org.apache.commons.digester", "ERROR");
         prp.put("log4j.logger.org.apache.jasper.compiler", "ERROR");
         prp.put("log4j.logger.org.apache.jasper.servlet", "ERROR");
+        prp.put("log4j.logger.net.sf.jasperreports", "ERROR");
+        prp.put("log4j.logger.net.sf.jasperreports.engine", "ERROR");
+        prp.put("log4j.logger.net.sf.jasperreports.engine.fill", "ERROR");
         
         prp.put("log4j.logger.org.xu.swan.action.AccessServlet", "DEBUG");
         prp.put("log4j.logger.org.xu.dyve.action.schedule.ScheduleManager", "DEBUG");

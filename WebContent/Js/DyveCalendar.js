@@ -1865,6 +1865,7 @@ DayPilotCalendar.Calendar = function(id)
             $I.style.fontSize = this.eventFontSize;
             $I.style.color = this.eventFontColor;
             //$I.style.left = $C.Left + '%';
+            $I.style.left = ($C.Left%100) + '%';
             $I.style.top = $C.Top + 'px';
             $I.style.width = $C.Width + '%';
             $I.style.height = Math.max($C.Height, 2) + 'px';
@@ -2051,6 +2052,7 @@ DayPilotCalendar.Calendar = function(id)
             $I.style.fontSize = this.eventFontSize;
             $I.style.color = this.eventFontColor;
             //$I.style.left = $C.Left + '%';
+            $I.style.left = ($C.Left%100) + '%';
             $I.style.top = $C.Top + 'px';
             $I.style.width = $C.Width + '%';
             $I.style.height = Math.max($C.Height, 2) + 'px';
@@ -2185,8 +2187,17 @@ DayPilotCalendar.Calendar = function(id)
             ;
             $0q.push($C.InnerHTML);
             $0q.push("</div></div>");
-            if(add)
-            	$I.innerHTML = $0q.join('');
+           
+        	$I.innerHTML = $0q.join('');
+            
+            if (!add){
+            	var old = document.getElementById($C.ServerId);
+            	var parentElement = old.parentNode;
+            	if(parentElement){
+            		parentElement.removeChild(old);
+            	}
+            }
+            
             if ($E.rows[0].cells[$C.DayIndex])
             {
                 // var $0r = $E.rows[0].cells[$C.DayIndex].firstChild;
@@ -2198,14 +2209,7 @@ DayPilotCalendar.Calendar = function(id)
                     $t.afterEventRender(e, $I);
                 }
             }
-            /*
-            if (!add){
-            	var parentElement = $I.parentNode;
-            	if(parentElement){
-            		parentElement.removeChild($I);
-            	}
-            }
-            */
+            
         }
     };
 
