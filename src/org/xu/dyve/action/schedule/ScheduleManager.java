@@ -139,10 +139,7 @@ public class ScheduleManager extends HttpServlet {
                   currentDate = (new SimpleDateFormat("yyyy/MM/dd")).parse(request.getParameter("dateutc"));
 
                   if(request.getParameter("datetime")!=null){
-                	  //System.out.println(request.getParameter("datetime"));
-                	  today = new java.util.Date();
-                	  today.setTime(Long.parseLong(request.getParameter("datetime")));
-                	  //currentDate = (new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")).parse(request.getParameter("dateutc"));
+                	  today = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(request.getParameter("datetime"));
                   }
                   
                   if(request.getParameter("pageNum") != null)

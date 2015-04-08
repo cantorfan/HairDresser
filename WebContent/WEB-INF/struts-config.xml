@@ -47,7 +47,7 @@
                 type="org.xu.swan.action.UserAction"
                 input="/admin/edit_user.jsp">
             <forward name="add"  redirect="false"  path="/admin/edit_user.jsp?action=add"/>
-            <forward name="edit"  redirect="false"  path="/admin/edit_user.jsp?action=edit"/>
+            <forward name="edit"  redirect="true"  path="/admin/list_user.jsp"/>
             <forward name="list"  redirect="false"  path="/admin/list_user.jsp"/> 
         </action>
         <action path="/admin/category"

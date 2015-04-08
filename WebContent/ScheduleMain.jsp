@@ -1266,7 +1266,7 @@ hr {
                 var newCurrentDate = currentDate.getUTCFullYear() + "/" + (currentDate.getUTCMonth() + 1) + "/" + currentDate.getUTCDate() + " " + currentDate.getUTCHours() + ":" + currentDate.getUTCMinutes();
                 var strURL = null;
                 var req = false;
-                var datetime = new Date().getTime();
+                var datetime = dateformat(new Date(), "yyyy-MM-dd hh:mm:ss");  //DyveCalendar.dateformat;
                 if (document.getElementById('txtFN').value != "") {
                     if (customerId.value != "") {
                         var randomnumber = Math.floor(Math.random() * 11);
@@ -1427,7 +1427,7 @@ hr {
                         }
                     };
                     
-                    var datetime = new Date().getTime();
+                    var datetime = dateformat(new Date(), "yyyy-MM-dd hh:mm:ss");  //DyveCalendar.dateformat;
                     xmlRequestAppointment.open("POST", "ScheduleManager?optype=NEW&start=" + newStartUTC + "&end=" + newEndUTC +"&datetime="+datetime + "&idnewemployee=" + idEmployee + "&idcustomer=" + idCustomer + "&idservice=" + idService + "&idlocation=" + idLocation + "&dateutc=" + newCurrentDate + "&pageNum=" + pageNum + "&comment=" + comment +"&req=" + _req + "&browser=" + browser_name + "&underEND=" + underEND + "&reshedule=" + reshedule + "&idb=" + id_booking);
                     xmlRequestAppointment.setRequestHeader("Accept-Encoding", "text/html; charset=utf-8");
                     xmlRequestAppointment.send('');
@@ -1680,7 +1680,7 @@ hr {
                     }
 				};
                 
-				var datetime = new Date().getTime();
+				var datetime = dateformat(new Date(), "yyyy-MM-dd hh:mm:ss");  //DyveCalendar.dateformat;
                 xmlRequest.open("POST", "ScheduleManager?optype=DEL&idappointment="+app_id +'&datetime='+datetime+ "&idlocation="+c.LocationId+"&dateutc="+dateUtc + "&pageNum=" + c.pageNum + "&delParam=" + del + "&browser=" + browser_name);
                 xmlRequest.send('');
                 document.getElementById("app_id").value = null;
@@ -1730,7 +1730,7 @@ hr {
                     }
 				};
 				
-				var datetime = new Date().getTime();
+				var datetime = dateformat(new Date(), "yyyy-MM-dd hh:mm:ss");  //DyveCalendar.dateformat;
 				xmlRequest.open("POST", "ScheduleManager?optype=REZ&start="+newStartUTC+"&datetime="+datetime+"&end="+newEndUTC +"&idappointment="+e.div.data.ServerId+ "&idlocation="+c.LocationId+"&dateutc="+dateUtc + "&pageNum=" + c.pageNum + "&browser=" + browser_name);
 				xmlRequest.send('');
 			};
@@ -1738,7 +1738,7 @@ hr {
 			c.eventMoveCustom = function(e, newStart, newEnd, oldColumn, newColumn, external) 
 			{
 				
-				if (newColumn > 0 && newColumn!=oldColumn){
+				if (newColumn > 0 /* && newColumn!=oldColumn */){
                     var dateUtc = c.startDate.getUTCFullYear() + "/" + (c.startDate.getUTCMonth() + 1) + "/" + c.startDate.getUTCDate();
 				    //.x.m.
                     //alert(newStart);
@@ -1771,7 +1771,7 @@ hr {
                             var req2 = xmlRequest.responseText;
     						if(req2==null || req2==""){
     							var pop12 = new popup();
-    							pop12.tip({message:"not permission!","visiable" : false, "type": "warning", "showLocation" : "buttom"});
+    							pop12.tip({message:"not permission!","visiable" : false, "type": "error", "showLocation" : "buttom"});
     						}else if ((req2!=null) && (req2.indexOf("REDIRECT") != -1)){
                                 var arr = req2.split(":");
 //                                alert(arr[2].toString());
@@ -1784,7 +1784,7 @@ hr {
                         }
     				};
     				
-    				var datetime = new Date().getTime();
+    				var datetime = dateformat(new Date(), "yyyy-MM-dd hh:mm:ss");  //DyveCalendar.dateformat;
 	    			xmlRequest.open("POST", "ScheduleManager?optype=MOV&start="+newStartUTC+"&datetime="+datetime+"&end="+newEndUTC +"&idappointment="+e.div.data.ServerId+"&idoldemployee="+oldColumn+"&idnewemployee="+newColumn+ "&idlocation=" + c.LocationId + "&dateutc=" + dateUtc + "&pageNum=" + c.pageNum + "&browser=" + browser_name);
     				xmlRequest.send('');
                 }
@@ -1834,7 +1834,9 @@ hr {
                 }
 
                 var dateUtc = c.startDate.getUTCFullYear() + "/" + (c.startDate.getUTCMonth() + 1) + "/" + c.startDate.getUTCDate();
-
+				
+                var datetime1 = dateformat(new Date(), "yyyy-MM-dd hh:mm:ss");  //DyveCalendar.dateformat
+                
                 new Ajax.Request( './ScheduleManager?rnd=' + Math.random() * 99999, { method: 'get',
                 parameters: {
                     optype: "FLAG",
@@ -1842,6 +1844,7 @@ hr {
                     state: eventState,
                     idlocation: c.LocationId,
                     dateutc: dateUtc,
+                    datetime: datetime1,
                     pageNum: c.pageNum,
                     browser: browser_name
                 },
@@ -2079,7 +2082,7 @@ hr {
 				}
 			};
 	
-			var datetime = new Date().getTime();
+			var datetime = dateformat(new Date(), "yyyy-MM-dd hh:mm:ss");  //DyveCalendar.dateformat;
 			xmlRequestEvents.open("POST", "ScheduleManager?optype=ALL&idlocation=" + c.LocationId +"&datetime="+datetime+ "&dateutc=" + dateUtc + '&pageNum=' + c.pageNum + "&browser=" + browser_name);
 			xmlRequestEvents.setRequestHeader("Accept-Encoding","text/html; charset=utf-8");
 			xmlRequestEvents.send('');
@@ -2321,7 +2324,7 @@ hr {
             };
             var browser_name = document.getElementById("mainCalendar_browser").value;
             var pageNum = document.getElementById("mainCalendar_pagenum").value;
-            var datetime = new Date().getTime();
+            var datetime = dateformat(new Date(), "yyyy-MM-dd hh:mm:ss");  //DyveCalendar.dateformat;
             xmlRequestEvents.open("POST", "ScheduleManager?optype=ALL&idlocation=1" +"&datetime="+datetime+ "&dateutc=" + dateUtc + '&pageNum=' +pageNum + "&browser=" + browser_name);
             xmlRequestEvents.setRequestHeader("Accept-Encoding","text/html; charset=utf-8");
             xmlRequestEvents.send('');
