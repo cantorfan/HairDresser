@@ -52,7 +52,7 @@ public class SendMailHelper{
 			try {
 				props = new Properties();
 				String path = SendMailHelper.class.getResource("/").getPath()+"email.config.properties";
-				logger.debug("email.config.properties path: "+path);
+				logger.error("email.config.properties path: "+path);
 				InputStream in = new BufferedInputStream(new FileInputStream(path));
 				props.load(in);
 			} catch (Exception e) {
