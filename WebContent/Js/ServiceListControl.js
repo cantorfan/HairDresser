@@ -51,6 +51,7 @@ var ServiceListControl = {};
 ServiceListControl.drag = false;
 ServiceListControl.clickedX = 0;
 ServiceListControl.clickedY = 0;
+ServiceListControl.MobileDrag = false;
 	
 ServiceListControl = function () {	
 	this.initialDiv = null;
@@ -176,6 +177,11 @@ ServiceListControl = function () {
     				service.addEventListener	("mousedown", this.handleEventMouseDown	, false);
     				document.addEventListener	("mouseup"	, this.handleEventMouseUp	, false);
     				document.addEventListener	("mousemove", this.handleEventMouseMove	, false);
+    				//mobile 
+    				service.addEventListener	("touchstart",this.handleEventMouseDown , false);
+    				//document.addEventListener	("touchmove", this.handleEventMouseMove	, false);
+    				//document.addEventListener	("touchend"	, this.handleEventMouseUp	, false);
+    				
     			} else {
     				service.onmousedown 	= this.handleEventMouseDown;
     				document.onmouseup 		= this.handleEventMouseUp;
@@ -193,29 +199,55 @@ ServiceListControl = function () {
 		var serviceEvent = new ServiceEvent (event ? event : window.event);		
 	}
 	
-	this.handleEventMouseUp = function (event) {		
+	this.handleEventMouseUp = function (event) {
 		ServiceListControl.drag 	= false		;
 		document.body.style.cursor	='default'	;
 		
 		//document.getElementById('ServiceControlClone').innerHTML = "";
-		document.getElementById('ServiceControlClone').style.display = "none";				
+		document.getElementById('ServiceControlClone').style.display = "none";
 	}
 	
-	this.handleEventMouseMove = function (event) {		
+	this.handleEventMouseMove = function (event) {
 		var clonedElement 	= document.getElementById('cloned')	;
 		var compatibleEvent = event ? event : window.event		;
-					
-		if (clonedElement && ServiceListControl.drag) {		
+		
+		//alert("compatibleEvent:"+compatibleEvent+", ServiceListControl:"+ServiceListControl);
+		
+		if (clonedElement && ServiceListControl.drag) {	
 			var schedulerPosition 		= findPosition (document.getElementById('mainCalendar_main'));
 
-			if ( compatibleEvent.clientY > schedulerPosition[1] && compatibleEvent.clientX > schedulerPosition[0] ) {
+			if ( compatibleEvent.clientY > schedulerPosition[1] 
+				&& compatibleEvent.clientX > schedulerPosition[0] 
+				&& ServiceListControl.MobileDrag==false) {
 				//document.getElementById('ServiceControlClone').innerHTML = "";
-				clonedElement.style.display = "none";				
+				clonedElement.style.display = "none";	
+				alert("333333");
 			}
 			
-			clonedElement.style.top 	= compatibleEvent.clientY + ServiceListControl.clickedY + "px";
-			clonedElement.style.left 	= compatibleEvent.clientX + ServiceListControl.clickedX + "px";													
+			//var t=t=e.touches[0]
+			
+			var comClientY = compatibleEvent.clientY;
+			var comClientX = compatibleEvent.clientX;
+			if(!comClientY){
+				var t=compatibleEvent.touches[0];
+				comClientY = t.clientY;
+			}
+			if(!comClientX){
+				var t=compatibleEvent.touches[0];
+				comClientX = t.clientX;
+			}
+			
+			//alert("compatibleEvent.clientY:"+comClientY+", ServiceListControl.clickedY:"+ServiceListControl.clickedY);
+			
+			var top = comClientY + ServiceListControl.clickedY;
+			var left = comClientX + ServiceListControl.clickedX;
+			
+			//alert("top:"+top+", left:"+left);
+			clonedElement.style.top 	= top+"px";
+			clonedElement.style.left 	= left+"px";	
+			
 		}
+		e.preventDefault();
 	}
 };
 
@@ -236,16 +268,30 @@ function findPosition(obj) {
 var ServiceEvent = {};
 
 ServiceEvent = function (e) {	
-	this.clonedDiv 				= document.getElementById('ServiceControlClone');
+	this.clonedDiv 			= document.getElementById('ServiceControlClone');
 
-	var originalElement 		= e.srcElement ? e.srcElement: (e.target ? e.target : e.currentTarget);
-	var originalPosition		= findPosition(originalElement);
+	var originalElement 	= e.srcElement ? e.srcElement: (e.target ? e.target : e.currentTarget);
+	var originalPosition	= findPosition(originalElement);
 			
-	var serviceId 				= originalElement.id.replace("service_id_", "").replace("content_", "");
-    var serviceName 			= document.getElementById("content_service_id_" + serviceId).innerHTML;
-
-    ServiceListControl.clickedX = originalPosition[0] - e.clientX;
-	ServiceListControl.clickedY = originalPosition[1] - e.clientY;	
+	var serviceId 			= originalElement.id.replace("service_id_", "").replace("content_", "");
+    var serviceName 		= document.getElementById("content_service_id_" + serviceId).innerHTML;
+    
+    //mobile
+    var clientX = e.clientX;
+    var clientY = e.clientY;
+    if(!clientX){
+    	var t=e.touches[0];
+    	clientX = t.clientX;
+    }
+    if(!clientY){
+    	var t=e.touches[0];
+    	clientY = t.clientY;
+    }
+    
+    //alert("originalPosition[0]:"+originalPosition[0]+", e.clientX:"+clientX);
+    //alert("originalPosition[0]:"+originalPosition[1]+", e.clientX:"+clientY);
+    ServiceListControl.clickedX = originalPosition[0] - clientX;
+	ServiceListControl.clickedY = originalPosition[1] - clientY;	
 	
 	var clonedStyle 			= "" 				 +						
 			"display: block;"						 + 
@@ -269,4 +315,11 @@ ServiceEvent = function (e) {
                                     /*			"<div id=\"cloned_content_id_service_"+serviceId+"\" type ="+serviceType+" style='padding-left: 8px; font: 11px Arial; color #000; border-left: 5px solid blue; line-height: 20px; background-color: #fff;'>"+serviceName+"</div>" +*/
         "</div>";
 	this.clonedDiv.style.display = "block";
+	
+	jQuery("#cloned").draggable({
+		drag: function( event, ui ) {
+			ServiceListControl.MobileDrag = true;
+		}
+	});
+	
 }

@@ -76,6 +76,7 @@ DayPilotCalendar.dragFromOutsideStart = null;
 DayPilotCalendar.dragFromOutsideEnd = null;
 DayPilotCalendar.dragFromOutsideColumn = null;
 DayPilotCalendar.dragUnderEnd = false;
+DayPilotCalendar._this = null;
 
 function setWindowCenter(obj)
 {
@@ -110,9 +111,13 @@ function drawTimeColumns(){
 }
 
 DayPilotCalendar.saveAppointment = function (start, end, column, event) {
+	
     if (DayPilotCalendar.dragFromOutsideStart && DayPilotCalendar.dragFromOutsideEnd && DayPilotCalendar.dragFromOutsideColumn) {
-        var idEmployee = DayPilotCalendar.dragFromOutsideColumn;
-        var idCustomer = document.getElementById("cust_id").value;
+    	var idEmployee = DayPilotCalendar.dragFromOutsideColumn;
+    	
+    	DayPilotCalendar.dragFromOutsideColumn = null;  //stop spare event 
+
+    	var idCustomer = document.getElementById("cust_id").value;
         var idLocation = document.getElementById("locationId").value;
         var currentDate = new Date(document.getElementById("mainCalendar_datecurrent").value);
         var pageNum = document.getElementById("mainCalendar_pagenum").value;
@@ -212,7 +217,9 @@ DayPilotCalendar.saveAppointment = function (start, end, column, event) {
                     };
                    
                     var datetime = dateformat(new Date(), "yyyy-MM-dd hh:mm:ss");  //DyveCalendar.dateformat;
-                    xmlRequestAppointment.open("POST", "ScheduleManager?optype=NEW&start=" + newStartUTC + "&end=" + newEndUTC +"&datetime="+datetime+ "&idnewemployee=" + idEmployee + "&idcustomer=" + idCustomer + "&idservice=" + idService + "&idlocation=" + idLocation + "&dateutc=" + newCurrentDate + "&pageNum=" + pageNum + "&comment=" + comment+ "&req=" + req + "&browser=" + browser_name + "&underEND=" + underEND + "&reshedule=" + reshedule + "&idb=" + id_booking);
+                    var reqURL = "ScheduleManager?optype=NEW&start=" + newStartUTC + "&end=" + newEndUTC +"&datetime="+datetime+ "&idnewemployee=" + idEmployee + "&idcustomer=" + idCustomer + "&idservice=" + idService + "&idlocation=" + idLocation + "&dateutc=" + newCurrentDate + "&pageNum=" + pageNum + "&comment=" + comment+ "&req=" + req + "&browser=" + browser_name + "&underEND=" + underEND + "&reshedule=" + reshedule + "&idb=" + id_booking;
+                    alert(reqURL);
+                    xmlRequestAppointment.open("POST", reqURL);
                     xmlRequestAppointment.setRequestHeader("Accept-Encoding", "text/html; charset=utf-8");
                     xmlRequestAppointment.send('');
                 }
@@ -567,7 +574,7 @@ DayPilotCalendar.getScrollWidth = function($t) {
 };
 DayPilotCalendar.Calendar = function(id)
 {
-    var $t = this;
+    var $t = DayPilotCalendar._this = this;
     this.uniqueID = null;
     this.id = id;
     this.selectedEvents = [];
@@ -1350,15 +1357,15 @@ DayPilotCalendar.Calendar = function(id)
             var $q = DayPilotCalendar.getColumn(this);
             var $04 = $t.$('main');
             var $P = new Date($04.rows[0].cells[$q].getAttribute("dpColumnDate")).getTime();
-//            alert($P)
             //$P.setTime(Date.UTC($P.getUTCFullYear(),$P.getUTCMonth(),$P.getUTCDate()));
             var $05 = $04.rows[0].cells[$q].getAttribute("dpColumn");
             var $L = new Date();
             //window.status=$P + ";" + this.start + ";" + this.end;
             $L.setTime($P + this.start);
             var end = new Date();
+            
             end.setTime($P + this.end);
-
+            
             // if ($t.colors[i][$q] != "#ACACAE"){}
             var dateTime = new Date($L);
             var dateEndTime = new Date(end);
@@ -2593,6 +2600,7 @@ DayPilotCalendar.Calendar = function(id)
         $04.onmouseup = this.mouseup;
         $04.root = this;
         var scroll = $t.$("scroll");
+        
         $04.onmousemove = function(ev)
         {
             DayPilotCalendar.activeCalendar = this;
@@ -2826,6 +2834,42 @@ DayPilotCalendar.Calendar = function(id)
         while ($0E.tagName !== "DIV")
             $0E = $0E.nextSibling;
         $0E.style.display = 'none';
+        
+        //mobile
+        var _this = this;
+        jQuery("#mainCalendar_main td").droppable({
+    		drop: function( event, ui ) {
+    			var currTdIndex = jQuery( this ).index();
+    			var infoTd = jQuery("#mainCalendar_events td")[currTdIndex];
+    			
+        		var baseDateObj = infoTd.getAttribute("dpcolumndate");
+        		var baseDate = new Date(baseDateObj);
+    			
+    			var start = new Date(baseDate.getTime()+this.start);
+    			var end = new Date(baseDate.getTime()+this.end);
+    			var column = infoTd.getAttribute("dpcolumn");
+    			
+    			var dateTime = new Date(start);
+    			var dateEndTime = new Date(end); //_from init for ScheduleMain.jsp
+    			var intTime = (dateTime.getUTCHours() - _from) * 4 + dateTime.getUTCMinutes() / 15;           // for esalonsoft/vogue
+    			var intEndTime = (dateEndTime.getUTCHours() - _from) * 4 + dateEndTime.getUTCMinutes() / 15;  // for esalonsoft/vogue
+    			if (DayPilotCalendar._this.colors[intTime][currTdIndex] != "#ACACAE") {
+    				if (DayPilotCalendar._this.colors[intTime + 1][currTdIndex] == "#ACACAE"){
+    					DayPilotCalendar.dragUnderEnd = true;
+    				} else {
+    					DayPilotCalendar.dragUnderEnd = false;
+    				}
+    			}
+    			
+    			DayPilotCalendar.dragFromOutsideStart = start;
+    			DayPilotCalendar.dragFromOutsideEnd = end;
+    			DayPilotCalendar.dragFromOutsideColumn = column;
+    			DayPilotCalendar.dragFromOutside = false;
+    			
+    			DayPilotCalendar.saveAppointment(start, end, column, null);
+    		}
+    	});
+        
     };
 
     this.drawHeaderRow = function($0g, $0v) {
@@ -3430,4 +3474,15 @@ function dateformat(date, fmt) { //author: meizz
   return fmt;
 }
 
-
+/*
+jQuery(function() {
+	
+	jQuery("#mainCalendar_main td").droppable({
+		drop: function( event, ui ) {
+			var td = jQuery( this );
+			td.html("dsflsdaldsfljkds");
+		}
+	});
+	
+});
+*/
