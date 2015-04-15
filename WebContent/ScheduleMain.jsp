@@ -115,8 +115,13 @@
 		}
 	}
 %>
-<script type="text/javascript" src="./plugins/jQuery v1.7.2.js"></script>
-<script type="text/javascript" src="./plugins/jquery-ui-1.11.4/jquery-ui.min.js"></script>
+<script type="text/javascript" src="./plugins/jquery-ui-1.8/jquery-1.8.2.js"></script>
+<script type="text/javascript" src="./plugins/util.js"></script>
+<script type="text/javascript" src="./plugins/jquery-ui-1.8/jquery-ui.js"></script>
+<script type="text/javascript" src="./plugins/jquery-ui-1.8/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="./plugins/jquery-ui-1.8/jquery.ui.mouse.js"></script>
+<script type="text/javascript" src="./plugins/jquery-ui-1.8/jquery.ui.draggable.js"></script>
+<script type="text/javascript" src="./plugins/jquery-ui-1.8/jquery.ui.droppable.js"></script>
 <script type="text/javascript" src="./plugins/jquery.ui.touch-punch.js"></script>
 <script language="javascript" type="text/javascript"
 	src="plugins/calendar/tcal.js"></script>

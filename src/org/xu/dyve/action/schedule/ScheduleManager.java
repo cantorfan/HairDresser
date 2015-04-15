@@ -2317,13 +2317,18 @@ public class ScheduleManager extends HttpServlet {
                     try {
 //                        int startIndex = (temp.getSt_time().getHours() * 60 + temp.getSt_time().getMinutes()) / 15 - 36;
 //                        int endIndex = (temp.getEt_time().getHours() * 60 + temp.getEt_time().getMinutes()) / 15 - 36;
+                    	int hour = temp.getSt_time().getHours();
+                    	int min =  temp.getSt_time().getMinutes();
+                    	
                         int startIndex = (temp.getSt_time().getHours() * 60 + temp.getSt_time().getMinutes()) / 15 - _from*4;//32; // for esalonsoft/vogue
+                        
                         int endIndex = (temp.getEt_time().getHours() * 60 + temp.getEt_time().getMinutes()) / 15 - _from*4;//32;   // for esalonsoft/vogue
                         int rowspan = (endIndex - startIndex);
                         int[] tempArr3 = scheduleArray.get("" + temp.getEmployee_id());
                         for (int j = 0; j < rowspan; j++) {
-                        	if(tempArr3.length > startIndex + j)
+                        	if(tempArr3.length > startIndex + j){
                         		tempArr3[startIndex + j] += 1;
+                        	}
                         }
                         scheduleArray.put("" + temp.getEmployee_id(), tempArr3);
                     }

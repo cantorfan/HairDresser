@@ -167,27 +167,36 @@ ServiceListControl = function () {
         }
         //this.initialDiv.innerHTML += '</div>';
 	};
-	
+	this.isMobile = isMobile(); //util.js
 	this.addListeners = function () {
 		for (var i=0; i < this.services.length; i++) {
 			var service = document.getElementById ("service_id_" + this.services[i].Id + "");
             //var type = document.getElementById ("service_id_" + this.services[i].Type + "");
-            try{
-			    if (service.addEventListener) {
-    				service.addEventListener	("mousedown", this.handleEventMouseDown	, false);
-    				document.addEventListener	("mouseup"	, this.handleEventMouseUp	, false);
-    				document.addEventListener	("mousemove", this.handleEventMouseMove	, false);
-    				//mobile 
-    				service.addEventListener	("touchstart",this.handleEventMouseDown , false);
-    				//document.addEventListener	("touchmove", this.handleEventMouseMove	, false);
-    				//document.addEventListener	("touchend"	, this.handleEventMouseUp	, false);
-    				
-    			} else {
-    				service.onmousedown 	= this.handleEventMouseDown;
-    				document.onmouseup 		= this.handleEventMouseUp;
-    				document.onmousemove 	= this.handleEventMouseMove;
-    			}
-            }catch(e){}
+            if(!isMobile){
+            	try{
+    			    if (service.addEventListener) {
+        				service.addEventListener	("mousedown", this.handleEventMouseDown	, false);
+        				document.addEventListener	("mouseup"	, this.handleEventMouseUp	, false);
+        				document.addEventListener	("mousemove", this.handleEventMouseMove	, false);
+        			} else {
+        				service.onmousedown 	= this.handleEventMouseDown;
+        				document.onmouseup 		= this.handleEventMouseUp;
+        				document.onmousemove 	= this.handleEventMouseMove;
+        			}
+                }catch(e){}
+            }else{
+            	try{
+            		if (service.addEventListener) {
+            			//mobile 
+        				service.addEventListener	("touchstart",this.handleEventMouseDown , false);
+        				//document.addEventListener	("touchmove", this.handleEventMouseMove	, false);
+        				//document.addEventListener	("touchend"	, this.handleEventMouseUp	, false);
+        			} else {
+        				service.ontouchstart 	= this.handleEventMouseDown;
+        			}
+                }catch(e){}
+            	
+            }
 		}
 	}
 	
@@ -316,10 +325,12 @@ ServiceEvent = function (e) {
         "</div>";
 	this.clonedDiv.style.display = "block";
 	
-	jQuery("#cloned").draggable({
-		drag: function( event, ui ) {
-			ServiceListControl.MobileDrag = true;
-		}
-	});
+	if(isMobile){
+		jQuery("#cloned").draggable({
+			drag: function( event, ui ) {
+				ServiceListControl.MobileDrag = true;
+			}
+		});
+	}
 	
 }

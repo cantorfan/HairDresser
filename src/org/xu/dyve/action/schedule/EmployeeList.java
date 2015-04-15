@@ -1,20 +1,17 @@
 package org.xu.dyve.action.schedule;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-
 import java.util.ArrayList;
-import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.xu.swan.bean.Employee;
 import org.xu.swan.util.DateUtil;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 
 public class EmployeeList extends HttpServlet
 {
