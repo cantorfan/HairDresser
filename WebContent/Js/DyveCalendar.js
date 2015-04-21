@@ -352,7 +352,7 @@ DayPilotCalendar.gMouseMove = function(ev)
 };
 DayPilotCalendar.gMouseUp = function(e)
 {
-	if(isMobile)
+	if(isMobile())
 		return ;
     //silviu
     if (DayPilotCalendar.dragFromOutside == true)
@@ -460,7 +460,7 @@ DayPilotCalendar.dragStart = function(element, $n, id, $o)
 
 DayPilotCalendar.createShadow = function($d)
 {
-	if(isMobile)
+	if(isMobile())
 		return;
 	
     var $e = $d.parentNode;
@@ -1346,7 +1346,7 @@ DayPilotCalendar.Calendar = function(id)
     };
     this.mousemove = function(ev)
     {
-    	if(isMobile)
+    	if(isMobile())
     		return ;
         if (typeof(DayPilotCalendar) === 'undefined')
         {
@@ -2844,7 +2844,7 @@ DayPilotCalendar.Calendar = function(id)
         
         //mobile
         var _this = this;
-        if(isMobile){
+        if(isMobile()){
         	jQuery("#mainCalendar_main td").droppable({
         		drop: function( event, ui ) {
         			var currTdIndex = jQuery( this ).index();

@@ -172,7 +172,7 @@ ServiceListControl = function () {
 		for (var i=0; i < this.services.length; i++) {
 			var service = document.getElementById ("service_id_" + this.services[i].Id + "");
             //var type = document.getElementById ("service_id_" + this.services[i].Type + "");
-            if(!isMobile){
+            if(!this.isMobile){
             	try{
     			    if (service.addEventListener) {
         				service.addEventListener	("mousedown", this.handleEventMouseDown	, false);
@@ -325,7 +325,7 @@ ServiceEvent = function (e) {
         "</div>";
 	this.clonedDiv.style.display = "block";
 	
-	if(isMobile){
+	if(isMobile()){
 		jQuery("#cloned").draggable({
 			drag: function( event, ui ) {
 				ServiceListControl.MobileDrag = true;
