@@ -108,7 +108,6 @@
 	#add_new_record{margin-top:20px; margin-left:100px;}
 	.save_box{width:960px; height:40px; text-align:center;margin-top:20px;}
 </style>
-<script src="../plugins/jQuery v1.7.2.js" type="text/javascript"></script>
 <script type="text/javascript">
 
 	$(document).ready(function(){
