@@ -72,13 +72,13 @@ SUM(COALESCE(if(rec1.`status` <> 2 and rec1.`status` <> 6,
 	if(rec1.`status` = 4,
 		if(tic1.`service_id` <> 0,
 			if(tic1.`status` = 4,
-				-((tic1.`price`*tic1.`qty`)*(1-(tic1.`discount`/100)))*(em1.`commission`/100),
+				-((tic1.`price`*tic1.`qty`)*(1-(tic1.`discount`/100)))*(if(semp1.`commission`<>0,semp1.`commission`,em1.`commission`)/100),
 				0
 			),
 			0
 		),
 		if(tic1.`service_id` <> 0,
-			((tic1.`price`*tic1.`qty`)*(1-(tic1.`discount`/100)))*(em1.`commission`/100),
+			((tic1.`price`*tic1.`qty`)*(1-(tic1.`discount`/100)))*(if(semp1.`commission`<>0,semp1.`commission`,em1.`commission`)/100),
 			0
 		)
 	),
@@ -125,6 +125,8 @@ SUM(COALESCE(if(rec1.`status` <> 2 and rec1.`status` <> 6,
 from `ticket` tic1
 left join `reconciliation` rec1 on rec1.`code_transaction` = tic1.`code_transaction` and rec1.status <> 1
 left join `employee` em1 on em1.`id` = tic1.`employee_id`
+left join `serv_emp` semp1 on (semp1.`employee_id` = tic1.`employee_id` and semp1.`service_id` = tic1.`service_id`)
+
 where DATE(rec1.`created_dt`) between DATE($P{START_DATE}) and DATE($P{END_DATE}) and em1.`id`=$P{EMP_ID}]]>
 	</queryString>
 	<field name="product_total" class="java.math.BigDecimal">

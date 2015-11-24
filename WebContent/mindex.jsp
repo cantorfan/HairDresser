@@ -16,8 +16,8 @@
 			<div class="loginformLayout">
 				<span id="error" style="color:red;"></span>
 				<form id="login" name="login" method="post" action="login?query=login">
-					<div class="right"><input id="IdUserInput"  class="userInput" name="user" type="text" size="40" placeholder="User Name" /></div>
-					<div class="right"><input id="IdPwdInput" class="userInput" name="pwd" type="text" size="40" placeholder="Password" /></div>
+					<div class="right"><input id="IdUserInput"  class="userInput" name="user" type="text" size="35" placeholder="User Name" /></div>
+					<div class="right"><input id="IdPwdInput" class="userInput" name="pwd" type="password" size="35" placeholder="Password" /></div>
 					<div class="right"><input type="submit" class="loginBtn" value="Log In" /></div>
 				</form>
 			</div>
@@ -33,7 +33,7 @@
 	table{width:100%; height:100%; }
 	td{text-align:center; vertical-align: middle; }
 	.loginformLayout{background: rgba(100,100, 100, 0.5); margin:0px; padding-top:10px;}
-	.loginform input[type='text']{
+	.loginform input[type='text'], .loginform input[type='password']{
 		margin:10px; padding:8px 14px; 
 	}
 	.loginform input[type='submit']{

@@ -38,7 +38,6 @@ public class ExportToExcelServlet extends HttpServlet
             String email = request.getParameter("email");
             String phone = request.getParameter("phone");
             String cellphone = request.getParameter("cellphone");
-            String work_phone_ext = request.getParameter("work_phone_ext");
             HSSFWorkbook wb = null;
             try{
                 wb = new HSSFWorkbook();
@@ -63,8 +62,7 @@ public class ExportToExcelServlet extends HttpServlet
                   Customer.LNAME + " LIKE '%" + lname + "%' AND " +
                   Customer.EMAIL + " LIKE '%" + email + "%' AND " +
                   Customer.PHONE + " LIKE '%" + phone + "%' AND " +
-                  Customer.CELL + " LIKE '%" + cellphone + "%' AND " +
-                  Customer.WORK_PHONE_EXT  + " LIKE '%" + work_phone_ext + "%'";
+                  Customer.CELL + " LIKE '%" + cellphone + "%' ";
                   list = Customer.findByFilter(filter);
                 int current_row = 2;
                 for(int i = 0; i<list.size(); i++)

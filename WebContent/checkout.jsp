@@ -10,6 +10,17 @@
 <%@ page import="org.apache.log4j.Logger" %>
 
 <%
+	String url = request.getRequestURL().toString();
+	String params = "";
+	for(String key : request.getParameterMap().keySet()){
+		params += key+"="+request.getParameter(key)+"&";
+	}
+	if(params.endsWith("&")){
+		params = params.substring(0, params.length()-1);
+	}
+	
+	System.out.println(url+"?"+params);
+	
     Logger logger=Logger.getLogger(getClass());
     User user_ses = (User) session.getAttribute("user");
     if (user_ses == null){
@@ -30,7 +41,7 @@
     }
     String loc = StringUtils.defaultString(request.getParameter("loc"), "1");//TODO location_id
 //    String tran_code = StringUtils.defaultString(request.getParameter("code"), "");//TODO transacton_code
-
+	
     String p_appt = StringUtils.defaultString(request.getParameter("appt"), "0");
     String p_svc = StringUtils.defaultString(request.getParameter("svc"), "0");
     String p_cust = StringUtils.defaultString(request.getParameter("cust"), "0");
@@ -278,7 +289,7 @@
 <html>
 <head>
     <LINK href="css/default.css" type=text/css rel=stylesheet>
-    <LINK hrcheckout_le_final_38ef="css/modalbox.css" type=text/css rel=stylesheet>
+    <LINK href="css/modalbox.css" type=text/css rel=stylesheet>
     <LINK href="css/hd.css" type=text/css rel=stylesheet>
     <title>checkout</title>
     <meta http-equiv="Content-Type" content="text/html; charset=gb2312">

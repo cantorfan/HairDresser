@@ -173,14 +173,12 @@
         var lname = document.getElementById('lname').value;
         var email = document.getElementById('email').value;
         var phone = document.getElementById('phone').value;
-        var cellphone = document.getElementById('cellphone').value;
-        var work_phone_ext = document.getElementById('work_phone_ext').value;
+        var cellphone = document.getElementById('phone').value;
         window.location.href="../exporttoexcel?action=exporttoexcelcustomer&fname="+fname+
                                 "&lname="+lname+
                                  "&email="+email+
                                  "&phone="+phone+
-                                 "&cellphone="+cellphone+
-                                 "&work_phone_ext="+work_phone_ext;
+                                 "&cellphone="+cellphone;
     }
 
     //-->

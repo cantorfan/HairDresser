@@ -30,7 +30,9 @@
 <tr>
     <td rowspan="2" style="padding-left: 10px;" width="228" height="64"><img alt="iSalon2You" src="<%=rootPath%>images/logo.jpg" /></td>
     <td>
+    <!--  
             <iframe src="http://rcm.amazon.com/e/cm?t=sdqnyc-20&o=1&p=48&l=ur1&category=beauty&banner=0Q2M96KTPZ1JX0G12SR2&f=ifr" width="728" height="90" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>
+    -->
     </td>
 <tr>
 
