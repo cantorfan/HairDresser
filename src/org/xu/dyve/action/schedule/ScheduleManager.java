@@ -735,13 +735,13 @@ public class ScheduleManager extends HttpServlet {
 		long startTime = startDate.getHours()*60+startDate.getMinutes();
 		long endTime = endDate.getHours()*60+endDate.getMinutes();
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm:ss");
-		System.out.println("startWorkTime:"+sdf1.format(workingtimeEmp.getH_from())+
-				", endWorkTime:"+sdf1.format(workingtimeEmp.getH_to())
-				+", startTime:"+sdf.format(startDate)+", endTime:"+sdf.format(endDate));
-		
-		System.out.println("startWorkTime:"+startWorkTime+", endWorkTime:"+endWorkTime+", startTime:"+startTime+", endTime:"+endTime);
+//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//		SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm:ss");
+//		System.out.println("startWorkTime:"+sdf1.format(workingtimeEmp.getH_from())+
+//				", endWorkTime:"+sdf1.format(workingtimeEmp.getH_to())
+//				+", startTime:"+sdf.format(startDate)+", endTime:"+sdf.format(endDate));
+//		
+//		System.out.println("startWorkTime:"+startWorkTime+", endWorkTime:"+endWorkTime+", startTime:"+startTime+", endTime:"+endTime);
 		
 		boolean result = false;
 		java.util.Date resultTime = endDate;
@@ -759,7 +759,7 @@ public class ScheduleManager extends HttpServlet {
 		}
 		results.add(result);
 		results.add(resultTime);
-		System.out.println("isWorkTime:"+result+", endTime:"+resultTime);
+//		System.out.println("isWorkTime:"+result+", endTime:"+resultTime);
 		return results;
 	}
  

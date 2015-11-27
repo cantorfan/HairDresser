@@ -791,12 +791,17 @@ function smartInputWindow() {
 
 var siw = null;
 
-if (document.addEventListener) {
-    document.addEventListener("keydown", handleKeyDown, false);
+if (isMobile()) {
+	document.addEventListener("keydown", handleKeyDown, false);
+    document.addEventListener("keyup", handleKeyPress, false);
+    document.addEventListener("onclick",handleClick , false);
+}
+else if(document.addEventListener){
+	document.addEventListener("keydown", handleKeyDown, false);
     document.addEventListener("keyup", handleKeyPress, false);
     document.addEventListener("mouseup", handleClick, false);
     document.addEventListener("mouseover", handleMouseOver, false);
-} else {
+}else {
     if (document.attachEvent) {
         document.attachEvent("onkeydown", handleKeyDown);
         document.attachEvent("onkeyup", handleKeyPress);

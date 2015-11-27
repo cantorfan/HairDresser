@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 import javax.imageio.ImageIO;
+
 import java.io.*;
 import java.awt.image.RenderedImage;
 import java.awt.image.BufferedImage;
@@ -13,6 +14,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 public class ImageServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -37,7 +39,7 @@ public class ImageServlet extends HttpServlet {
     }
 
     // Returns a generated image.
-    private RenderedImage myCreateImage(String text, int color, float fontsize, int width) throws IOException, FontFormatException {
+    private RenderedImage myCreateImage(String text, int color, float fontsize, int width) throws IOException, FontFormatException, URISyntaxException {
 
         // Create a buffered image in which to draw
         BufferedImage bufferedImage = new BufferedImage((int)fontsize*text.length(), (int)(fontsize*1.2), BufferedImage.TYPE_4BYTE_ABGR);
@@ -52,12 +54,15 @@ public class ImageServlet extends HttpServlet {
         g2d.setRenderingHint( RenderingHints.KEY_TEXT_ANTIALIASING,
                             RenderingHints.VALUE_TEXT_ANTIALIAS_ON );
 
-        InputStream is = getClass().getResourceAsStream("/org/xu/images/ZeroTwos.ttf");
 
         FontRenderContext frc = g2d.getFontRenderContext();
         
 //        File f = new File("D:\\work\\MA-HairDresser\\trunk\\sources\\design\\css\\ZeroTwos.ttf");
         
+//        File fontFile = new File(this.getClass().getResource("/org/xu/images/ZeroTwos.ttf").toURI());
+//        Font font = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+        
+        InputStream is = getClass().getResourceAsStream("/org/xu/images/ZeroTwos.ttf");
         Font font = Font.createFont(Font.TRUETYPE_FONT, is);
 
         Font myFont = font.deriveFont(fontsize);

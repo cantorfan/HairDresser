@@ -116,6 +116,12 @@
 	}
 %>
 <script type="text/javascript" src="./plugins/jQuery v1.7.2.js"></script>
+<script type="text/javascript" src="./plugins/util.js"></script>
+<script type="text/javascript" src="./plugins/jquery-ui/js/jquery-ui.js"></script>
+<script type="text/javascript" src="./plugins/jquery.ui.touch-punch.js"></script>
+
+<link rel='stylesheet' type='text/css' href="./plugins/jquery-ui/css/base/jquery-ui.css"></link>
+
 <script language="javascript" type="text/javascript"
 	src="plugins/calendar/tcal.js"></script>
 <link rel='stylesheet' type='text/css' href='./plugins/popup/popup.css' />

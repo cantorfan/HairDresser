@@ -38,6 +38,10 @@
         session.invalidate();
 //        session.removeAttribute("user");
     }
+    
+    session = request.getSession(true);
+	String loginErrorMessage = (String)session.getAttribute("loginErrorMessage");
+    
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -45,17 +49,21 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=gb2312"/>
     <title>Home</title>
-    <style type="text/css">
-
-    </style>
+    <script type="text/javascript" src="./plugins/util.js"></script>
+    <script type="text/javascript">
+	    if(isMobile()){
+	    	window.location.href="./mindex.jsp?<%if(loginErrorMessage!=null){%><%=loginErrorMessage%><%}%>";
+	    }
+    </script>
     <link href="css/index.css" rel="stylesheet" type="text/css"/>
     
     <script type="text/javascript" src="./plugins/jQuery v1.7.2.js"></script>
+    
     <link rel='stylesheet' type='text/css' href='./plugins/popup/popup.css' />
     <script type="text/javascript" src="./plugins/popup/popup.js"></script>
     
     <script type="text/javascript">
-
+    
     function focusChangedUserInput() {
         var str = document.getElementById("IdUserInput").value;
         if (str=="User Name"){
@@ -138,8 +146,6 @@
 	
 	<%
 	
-	session = request.getSession(true);
-	String loginErrorMessage = (String)session.getAttribute("loginErrorMessage");
 	if(loginErrorMessage!=null && loginErrorMessage.trim().length()>0){
 	
 	%>
